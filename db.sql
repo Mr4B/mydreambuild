@@ -108,5 +108,3 @@ CREATE TABLE Periferiche (
 CREATE TABLE tipologia_periferiche (
 
 );
-
--- Le tabelle per i tago sono da fare in futuro per una possibile ricerca di articoli
