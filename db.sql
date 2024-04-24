@@ -1,7 +1,7 @@
 -- Tabelle database yourpc
 
 CREATE TABLE Utente (
-    username VARCHAR(255) PRIMARY KEY,
+    username VARCHAR(20) PRIMARY KEY,
     password VARCHAR(255) NOT NULL,
     nome VARCHAR(255),
     cognome VARCHAR(255),
@@ -31,7 +31,7 @@ CREATE TABLE articolo_tag (
     id_articolo INTEGER,
     id_tag VARCHAR(15),
     PRIMARY KEY (id_articolo, id_zonainteresse),
-    FOREIGN KEY (id_articolo) REFERENCES Articolo(id) ON DELETE CASCADE ON UPDATE CASCADE
+    FOREIGN KEY (id_articolo) REFERENCES Articolo(id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (id_tag) REFERENCES Tag(tag) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -40,17 +40,41 @@ CREATE TABLE Tag (
     descrizione VARCHAR(500) DEFAULT NULL
 );
 
-CREATE TABLE Configurazione (
+-- relazione n/n fra i componenti e il tag a loro associato
+CREATE TABLE componenti_tag (
 
+);
+
+CREATE TABLE Configurazione (
+    id INTEGER PRIMARY KEY AUTOINCREMENT, --autoincrement???
+    denominazione VARCHAR(50),
+    descrizione VARCHAR(500) DEFAULT 'La mia configurazione',
+    id_utente VARCHAR(20),
+    FOREIGN KEY (id_utente) REFERENCES Utente(username) ON DELETE CASCADE ON UPDATE CASCADE,
+    --ci vanno tutti gli id dei componenti del pc (foreign key)
 );
 
 CREATE TABLE Lista (
-
+    id INTEGER PRIMARY KEY AUTOINCREMENT, --autoincrement???
+    denominazione VARCHAR(50),
+    id_utente VARCHAR(20),
+    FOREIGN KEY (id_utente) REFERENCES Utente(username) ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+/* 
+non so come farla 
+una tabella per ogni componente? (lista_cpu, lista_ram, ecc...)
+un id_componente che non è foreign key e quindi poi va a cercare nelle tabelle?
+*/
 
 CREATE TABLE componenti_lista (
-
+    id_lista INTEGER,
+    id_componente VARCHAR(9),
+    FOREIGN KEY (id_lista) REFERENCES Lista(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (id_componente) REFERENCES Utente(username) ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+-- TUTTI I COMPONENTI DEVONO AVERE LA CHIAVE PRIMARIA DELLO STESSO TIPO
 
 CREATE TABLE CPU (
 
