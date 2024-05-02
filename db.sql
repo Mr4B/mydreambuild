@@ -1,4 +1,7 @@
--- Tabelle database yourpc
+-- Tabelle database mydreambuild
+/* 
+    hostato nel sito "000webhost.com"
+*/
 
 CREATE TABLE Utente (
     username VARCHAR(20) PRIMARY KEY,
@@ -55,7 +58,7 @@ CREATE TABLE Configurazione (
     id_motherboard INT,
     id_ram INT,
     id_hdd INT,
-    id_ssd INT,
+    id_ssd INT, --ne può volere anche 2
     id_psu INT,
     id_case INT,
     id_coolyng INT,
