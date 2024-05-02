@@ -67,11 +67,14 @@ una tabella per ogni componente? (lista_cpu, lista_ram, ecc...)
 un id_componente che non è foreign key e quindi poi va a cercare nelle tabelle?
 
 -- chiarire anche le immagini nel db o il percorso?
+
+-- tabella socket?
 */
 
 CREATE TABLE componenti_lista (
     id_lista INTEGER,
     id_componente VARCHAR(9),
+    PRIMARY KEY(id_lista, id_componente),
     FOREIGN KEY (id_lista) REFERENCES Lista(id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (id_componente) REFERENCES Utente(username) ON DELETE CASCADE ON UPDATE CASCADE
 );
@@ -158,23 +161,57 @@ CREATE TABLE PSU (
 );
 
 CREATE TABLE Case (
-
+    id_case INT PRIMARY KEY AUTO_INCREMENT,
+    marca VARCHAR(255),
+    modello VARCHAR(255),
+    categoria INT NOT NULL, --atx, micro-atx, ecc..
+    colore VARCHAR(255),
+    link VARCHAR(255), --amazon
+    descrizione TEXT,
+    pesi INT,
+    dimensioni VARCHAR(255),
+    finestra_laterale BOOLEAN,
+    prezzo DECIMAL(10,2) NOT NULL
 );
 
 CREATE TABLE Raffreddamento (
-
+    id_coolyng INT PRIMARY KEY AUTO_INCREMENT,
+    marca VARCHAR(255) NOT NULL,
+    modello VARCHAR(255) NOT NULL,
+    tipologia INT, --1 liquido, 2 aria
+    --compatibilita relazione nn con socket 
+    link VARCHAR(255), --amazon
+    descrizione TEXT,
 );
 
-CREATE TABLE coolyng_type (
-
+CREATE TABLE Raffreddamento_Socket (
+    id_coolyng INT,
+    id_socket INT,
+    PRIMARY KEY(id_coolyng, id_socket),
+    FOREIGN KEY (id_coolyng) REFERENCES Raffreddamento(id_coolyng) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (id_socket) REFERENCES Socket(id_socket) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE TABLE Ventole (
-
+CREATE TABLE Socket (
+    id_socket INT PRIMARY KEY AUTO_INCREMENT,
+    denominazione VARCHAR(255)
 );
 
 CREATE TABLE Monitor (
-
+    id_monitor INT PRIMARY KEY AUTO_INCREMENT,
+    modello VARCHAR(255) NOT NULL,
+    marca VARCHAR(255) NOT NULL,
+    dimensione_schermo DECIMAL(10,2) NOT NULL,
+    risoluzione VARCHAR(255) NOT NULL,
+    proporzioni VARCHAR(255) NOT NULL,
+    tipo_display VARCHAR(255) NOT NULL, -- IPS, FULL HD
+    connettori VARCHAR(255) NOT NULL, --HDMI, VGA, ecc..
+    frequenza_di_aggiornamento INT NOT NULL,
+    tempo_di_risposta DECIMAL(10,2) NOT NULL,
+    autoparlanti BOOLEAN,
+    prezzo DECIMAL(10,2) NOT NULL,
+    link_acquisto VARCHAR(255),
+    descrizione TEXT
 );
 
 CREATE TABLE Periferiche (
