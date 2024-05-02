@@ -48,9 +48,28 @@ CREATE TABLE componenti_tag (
 CREATE TABLE Configurazione (
     id INTEGER PRIMARY KEY AUTOINCREMENT, --autoincrement???
     denominazione VARCHAR(50),
-    descrizione VARCHAR(500) DEFAULT 'La mia configurazione',
+    descrizione TEXT DEFAULT 'La mia configurazione',
     id_utente VARCHAR(20),
+    prezzo_totale DECIMAL(10,2) NOT NULL,
+    id_cpu INT,
+    id_motherboard INT,
+    id_ram INT,
+    id_hdd INT,
+    id_ssd INT,
+    id_psu INT,
+    id_case INT,
+    id_coolyng INT,
     FOREIGN KEY (id_utente) REFERENCES Utente(username) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (id_motherboard) REFERENCES Scheda_madre(id_motherboard) ON DELETE SET NULL ON UPDATE CASCADE,
+    FOREIGN KEY (id_ram) REFERENCES Ram(id_ram) ON DELETE SET NULL ON UPDATE CASCADE,
+    FOREIGN KEY (id_hdd) REFERENCES HDD(id_hdd) ON DELETE SET NULL ON UPDATE CASCADE,
+    FOREIGN KEY (id_ssd) REFERENCES SSD(id_ssd) ON DELETE SET NULL ON UPDATE CASCADE,
+    FOREIGN KEY (id_psu) REFERENCES PSU(id_psu) ON DELETE SET NULL ON UPDATE CASCADE,
+    FOREIGN KEY (id_case) REFERENCES Case(id_case) ON DELETE SET NULL ON UPDATE CASCADE,
+    FOREIGN KEY (id_coolyng) REFERENCES Raffreddamento(id_coolyng) ON DELETE SET NULL ON UPDATE CASCADE,
+    FOREIGN KEY (id_cpu) REFERENCES Cpu(id_cpu) ON DELETE SET NULL ON UPDATE CASCADE,
+    FOREIGN KEY (id_cpu) REFERENCES Cpu(id_cpu) ON DELETE SET NULL ON UPDATE CASCADE
+
     --ci vanno tutti gli id dei componenti del pc (foreign key)
 );
 
@@ -61,14 +80,11 @@ CREATE TABLE Lista (
     FOREIGN KEY (id_utente) REFERENCES Utente(username) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-/* 
-non so come farla 
+/* non so come farla 
 una tabella per ogni componente? (lista_cpu, lista_ram, ecc...)
 un id_componente che non è foreign key e quindi poi va a cercare nelle tabelle?
 
 -- chiarire anche le immagini nel db o il percorso?
-
--- tabella socket?
 */
 
 CREATE TABLE componenti_lista (
@@ -82,7 +98,7 @@ CREATE TABLE componenti_lista (
 -- TUTTI I COMPONENTI DEVONO AVERE LA CHIAVE PRIMARIA DELLO STESSO TIPO
 
 CREATE TABLE CPU (
-    id VARCHAR(9) PRIMARY KEY, -- xxxxxxxxx 1° dice la marca (intel/amd),  2/3 il modello (ix/rx), 
+    id_cpu INT PRIMARY KEY AUTO_INCREMENT  --VARCHAR(9) PRIMARY KEY, -- xxxxxxxxx 1° dice la marca (intel/amd),  2/3 il modello (ix/rx), 
     marca VARCHAR(10) NOT NULL,
     famiglia VARCHAR(10) NOT NULL, -- (core i3, Ryzen 7, ecc...)
     modello VARCHAR(10), -- (12400, ecc...)
@@ -92,28 +108,31 @@ CREATE TABLE CPU (
     n_thread INT NOT NULL,
     consumo_energetico INT NOT NULL,
     dim_cache INT NOT NULL,
-    socket VARCHAR(10) NOT NULL,
+    id_socket INT NOT NULL,
     link VARCHAR(255), --amazon
-    descrizione TEXT
+    descrizione TEXT,
+    prezzo DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (id_socket) REFERENCES Socket(id_socket) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE Scheda_madre (
-    id_scheda_madre INT PRIMARY KEY AUTO_INCREMENT, --Da studiare poi
+    id_motherboard INT PRIMARY KEY AUTO_INCREMENT, --Da studiare poi
     modello VARCHAR(255) NOT NULL,
     formato VARCHAR(255) NOT NULL,
-    socket VARCHAR(255) NOT NULL,
+    id_socket INT NOT NULL,
     chipset VARCHAR(255) NOT NULL,
     numero_slot_ram INT NOT NULL,
     tipologia_ram VARCHAR(255) NOT NULL,
     numero_slot_pcie INT NOT NULL,
     version_pcie VARCHAR(255) NOT NULL,
     link VARCHAR(255), --amazon
-    descrizione TEXT
-
+    descrizione TEXT,
+    prezzo DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (id_socket) REFERENCES Socket(id_socket) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE RAM (
-    ram_id INT AUTO_INCREMENT PRIMARY KEY,
+    id_ram INT AUTO_INCREMENT PRIMARY KEY,
     marca VARCHAR(255),
     modello VARCHAR(255),
     dimensione INT,
@@ -131,7 +150,8 @@ CREATE TABLE HDD (
     fattore_di_forma VARCHAR(255) NOT NULL, --3,5 pollici
     velocita_rotazione INT NOT NULL,
     tipologia_interfaccia VARCHAR(255) NOT NULL, --sata 6 0 gb
-    cache_mb INT NOT NULL
+    cache_mb INT NOT NULL,
+    prezzo DECIMAL(10,2) NOT NULL,
     link VARCHAR(255), --amazon
     descrizione TEXT
 );
@@ -142,9 +162,10 @@ CREATE TABLE SSD (
     capacita_tb INT NOT NULL,
     tipologia_ssd VARCHAR(255) NOT NULL,
     fattore_di_forma VARCHAR(255) NOT NULL, --m.2
-    interfaccia VARCHAR(255) NOT NULL, --NVMe PCIe
+    interfaccia VARCHAR(255) NOT NULL, --NVMe PCIe, gestiti da client
     velocita_lettura_mb_s INT NOT NULL,
-    velocita_scrittura_mb_s INT NOT NULL
+    velocita_scrittura_mb_s INT NOT NULL,
+    prezzo DECIMAL(10,2) NOT NULL,
     link VARCHAR(255), --amazon
     descrizione TEXT
 );
@@ -156,6 +177,7 @@ CREATE TABLE PSU (
     fattore_di_forma VARCHAR(255) NOT NULL, --ATX
     watt INT,
     schema_alimentazione VARCHAR(255) NOT NULL, --modulare, semi-modulare, ...
+    prezzo DECIMAL(10,2) NOT NULL,
     link VARCHAR(255), --amazon
     descrizione TEXT
 );
@@ -179,12 +201,12 @@ CREATE TABLE Raffreddamento (
     marca VARCHAR(255) NOT NULL,
     modello VARCHAR(255) NOT NULL,
     tipologia INT, --1 liquido, 2 aria
-    --compatibilita relazione nn con socket 
+    prezzo DECIMAL(10,2) NOT NULL,
     link VARCHAR(255), --amazon
     descrizione TEXT,
 );
 
-CREATE TABLE Raffreddamento_Socket (
+CREATE TABLE Raffreddamento_Socket ( --tabella nn per collegare i socket compatibili con un tipo di cooler
     id_coolyng INT,
     id_socket INT,
     PRIMARY KEY(id_coolyng, id_socket),
