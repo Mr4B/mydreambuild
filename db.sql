@@ -4,11 +4,10 @@
 */
 
 CREATE TABLE Utente (
-    username VARCHAR(20) PRIMARY KEY,
+    email VARCHAR(255) PRIMARY KEY,
     password VARCHAR(255) NOT NULL,
     nome VARCHAR(255),
     cognome VARCHAR(255),
-    email VARCHAR(255),
     ruolo INTEGER NOT NULL,
     FOREIGN KEY (ruolo) REFERENCES Ruolo(id) ON DELETE NO ACTION ON UPDATE CASCADE
 );
@@ -72,12 +71,10 @@ CREATE TABLE Configurazione (
     FOREIGN KEY (id_coolyng) REFERENCES Raffreddamento(id_coolyng) ON DELETE SET NULL ON UPDATE CASCADE,
     FOREIGN KEY (id_cpu) REFERENCES Cpu(id_cpu) ON DELETE SET NULL ON UPDATE CASCADE,
     FOREIGN KEY (id_cpu) REFERENCES Cpu(id_cpu) ON DELETE SET NULL ON UPDATE CASCADE
-
-    --ci vanno tutti gli id dei componenti del pc (foreign key)
 );
 
 CREATE TABLE Lista (
-    id INTEGER PRIMARY KEY AUTOINCREMENT, --autoincrement???
+    id VARCHAR(255) PRIMARY KEY --INTEGER AUTOINCREMENT, -- composto da prima parte di email e numero lista
     denominazione VARCHAR(50),
     id_utente VARCHAR(20),
     FOREIGN KEY (id_utente) REFERENCES Utente(username) ON DELETE CASCADE ON UPDATE CASCADE
@@ -98,7 +95,7 @@ CREATE TABLE componenti_lista (
     FOREIGN KEY (id_componente) REFERENCES Utente(username) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
--- TUTTI I COMPONENTI DEVONO AVERE LA CHIAVE PRIMARIA DELLO STESSO TIPO
+-- TUTTI I COMPONENTI DEVONO AVERE LA CHIAVE PRIMARIA DELLO STESSO TIPO (se la faccio composta)
 
 CREATE TABLE CPU (
     id_cpu INT PRIMARY KEY AUTO_INCREMENT  --VARCHAR(9) PRIMARY KEY, -- xxxxxxxxx 1° dice la marca (intel/amd),  2/3 il modello (ix/rx), 
