@@ -53,24 +53,15 @@ CREATE TABLE Configurazione (
     descrizione TEXT DEFAULT 'La mia configurazione',
     id_utente VARCHAR(20),
     prezzo_totale DECIMAL(10,2) NOT NULL,
-    id_cpu INT,
-    id_motherboard INT,
-    id_ram INT,
-    id_hdd INT,
-    id_ssd INT, --ne può volere anche 2
-    id_psu INT,
-    id_case INT,
-    id_coolyng INT,
     FOREIGN KEY (id_utente) REFERENCES Utente(username) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (id_motherboard) REFERENCES Scheda_madre(id_motherboard) ON DELETE SET NULL ON UPDATE CASCADE,
-    FOREIGN KEY (id_ram) REFERENCES Ram(id_ram) ON DELETE SET NULL ON UPDATE CASCADE,
-    FOREIGN KEY (id_hdd) REFERENCES HDD(id_hdd) ON DELETE SET NULL ON UPDATE CASCADE,
-    FOREIGN KEY (id_ssd) REFERENCES SSD(id_ssd) ON DELETE SET NULL ON UPDATE CASCADE,
-    FOREIGN KEY (id_psu) REFERENCES PSU(id_psu) ON DELETE SET NULL ON UPDATE CASCADE,
-    FOREIGN KEY (id_case) REFERENCES Case(id_case) ON DELETE SET NULL ON UPDATE CASCADE,
-    FOREIGN KEY (id_coolyng) REFERENCES Raffreddamento(id_coolyng) ON DELETE SET NULL ON UPDATE CASCADE,
-    FOREIGN KEY (id_cpu) REFERENCES Cpu(id_cpu) ON DELETE SET NULL ON UPDATE CASCADE,
-    FOREIGN KEY (id_cpu) REFERENCES Cpu(id_cpu) ON DELETE SET NULL ON UPDATE CASCADE
+);
+
+CREATE TABLE articoli_configurazione (
+    id_configurazione INT,
+    id_articolo VARCHAR(9),
+    PRIMARY KEY(id_lista, id_articolo),
+    FOREIGN KEY (id_configurazione) REFERENCES Configurazione(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (id_articolo) REFERENCES Articolo(id_articolo) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE Lista (
@@ -80,22 +71,84 @@ CREATE TABLE Lista (
     FOREIGN KEY (id_utente) REFERENCES Utente(username) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-/* non so come farla 
-una tabella per ogni componente? (lista_cpu, lista_ram, ecc...)
-un id_componente che non è foreign key e quindi poi va a cercare nelle tabelle?
-
--- chiarire anche le immagini nel db o il percorso?
-*/
-
-CREATE TABLE componenti_lista (
+CREATE TABLE articoli_lista (
     id_lista INTEGER,
-    id_componente VARCHAR(9),
-    PRIMARY KEY(id_lista, id_componente),
+    id_articolo VARCHAR(9),
+    PRIMARY KEY(id_lista, id_articolo),
     FOREIGN KEY (id_lista) REFERENCES Lista(id) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (id_componente) REFERENCES Utente(username) ON DELETE CASCADE ON UPDATE CASCADE
+    FOREIGN KEY (id_articolo) REFERENCES Articolo(id_articolo) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
--- TUTTI I COMPONENTI DEVONO AVERE LA CHIAVE PRIMARIA DELLO STESSO TIPO (se la faccio composta)
+CREATE TABLE Articolo (
+    id_articolo VARCHAR(255) PRIMARY KEY, -- studiarsi una primarykey fatta bene che mi aiuti nella ricerca
+    id_categoria INT NOT NULL, --foreign key alla tabella che mi definisce la categoria (cpu, psu, ram, ecc.)
+    marca VARCHAR(255) NOT NULL,
+    modello VARCHAR(255) NOT NULL,
+    link VARCHAR(255), --amazon
+    descrizione TEXT,
+    prezzo DECIMAL(10,2) NOT NULL,
+--cpu
+    c_frequenza_base DECIMAL(10,2) ,
+    c_frequenza_boost DECIMAL(10,2),
+    c_n_core INT,
+    c_n_thread INT,
+    c_consumo_energetico INT,
+    c_dim_cache INT,
+--motherboard
+    m_formato VARCHAR(255),
+    m_chipset VARCHAR(255),
+    m_numero_slot_ram INT,
+    m_tipologia_ram VARCHAR(255),
+    m_numero_slot_pcie INT,
+    m_version_pcie VARCHAR(255),
+--ram
+    r_dimensione INT,
+    r_velocita INT, --MHz
+    r_tipo VARCHAR(50), --ddrx
+--archiviazione
+    a_tipo_archiviazione VARCHAR(255) NOT NULL,
+    a_capacita_gb INT NOT NULL,
+    fattore_di_forma VARCHAR(255) NOT NULL, --3,5 pollici, m.2, ecc. ANCHE PER LA PSU E CASE (atx)
+    a_velocita_rotazione INT NOT NULL,
+    a_cache_mb INT NOT NULL,
+    a_interfaccia VARCHAR(255) NOT NULL, --NVMe PCIe, sata 6 0 gestiti da client
+    a_velocita_lettura_mb_s INT NOT NULL,
+    a_velocita_scrittura_mb_s INT NOT NULL,
+--psu
+    p_watt INT,
+    p_schema_alimentazione VARCHAR(255) NOT NULL, --modulare, semi-modulare, ...
+--Case
+    cs_colore VARCHAR(255),
+    cs_pesi INT,
+    cs_dimensioni VARCHAR(255),
+    cs_finestra_laterale BOOLEAN,
+--cooling
+    tipo_cooling INT, --1 liquido, 2 aria
+
+    FOREIGN KEY (id_categoria) REFERENCES Categoria(id) ON DELETE CASCADE ON UPDATE CASCADE
+    --i socket sono gestiti nella relazione n/n
+);
+
+CREATE TABLE Categoria (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    definizione VARCHAR(255) NOT NULL 
+);
+
+CREATE TABLE Articolo_Socket ( --tabella nn per collegare i socket compatibili con un articolo
+    id_articolo VARCHAR(255),
+    id_socket INT,
+    PRIMARY KEY(id_coolyng, id_socket),
+    FOREIGN KEY (id_coolyng) REFERENCES Raffreddamento(id_coolyng) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (id_socket) REFERENCES Socket(id_socket) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE Socket (
+    id_socket INT PRIMARY KEY AUTO_INCREMENT,
+    denominazione VARCHAR(255)
+);
+
+
+/*
 
 CREATE TABLE CPU (
     id_cpu INT PRIMARY KEY AUTO_INCREMENT  --VARCHAR(9) PRIMARY KEY, -- xxxxxxxxx 1° dice la marca (intel/amd),  2/3 il modello (ix/rx), 
@@ -197,26 +250,13 @@ CREATE TABLE Case (
 );
 
 CREATE TABLE Raffreddamento (
-    id_coolyng INT PRIMARY KEY AUTO_INCREMENT,
+    id_cooling INT PRIMARY KEY AUTO_INCREMENT,
     marca VARCHAR(255) NOT NULL,
     modello VARCHAR(255) NOT NULL,
     tipologia INT, --1 liquido, 2 aria
     prezzo DECIMAL(10,2) NOT NULL,
     link VARCHAR(255), --amazon
     descrizione TEXT,
-);
-
-CREATE TABLE Raffreddamento_Socket ( --tabella nn per collegare i socket compatibili con un tipo di cooler
-    id_coolyng INT,
-    id_socket INT,
-    PRIMARY KEY(id_coolyng, id_socket),
-    FOREIGN KEY (id_coolyng) REFERENCES Raffreddamento(id_coolyng) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (id_socket) REFERENCES Socket(id_socket) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
-CREATE TABLE Socket (
-    id_socket INT PRIMARY KEY AUTO_INCREMENT,
-    denominazione VARCHAR(255)
 );
 
 CREATE TABLE Monitor (
@@ -244,3 +284,4 @@ CREATE TABLE Periferiche (
 CREATE TABLE tipologia_periferiche (
 
 );
+*/
