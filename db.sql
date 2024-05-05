@@ -56,9 +56,9 @@ CREATE TABLE Configurazione (
     FOREIGN KEY (id_utente) REFERENCES Utente(username) ON DELETE CASCADE ON UPDATE CASCADE,
 );
 
-CREATE TABLE articoli_configurazione (
+CREATE TABLE prodotti_configurazione (
     id_configurazione INT,
-    id_articolo VARCHAR(9),
+    id_prodotto VARCHAR(9),
     PRIMARY KEY(id_lista, id_articolo),
     FOREIGN KEY (id_configurazione) REFERENCES Configurazione(id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (id_articolo) REFERENCES Articolo(id_articolo) ON DELETE CASCADE ON UPDATE CASCADE
@@ -73,14 +73,14 @@ CREATE TABLE Lista (
 
 CREATE TABLE articoli_lista (
     id_lista INTEGER,
-    id_articolo VARCHAR(9),
+    id_prodotto VARCHAR(9),
     PRIMARY KEY(id_lista, id_articolo),
     FOREIGN KEY (id_lista) REFERENCES Lista(id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (id_articolo) REFERENCES Articolo(id_articolo) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE TABLE Articolo (
-    id_articolo VARCHAR(255) PRIMARY KEY, -- studiarsi una primarykey fatta bene che mi aiuti nella ricerca
+CREATE TABLE Prodotto (
+    id_prodotto VARCHAR(255) PRIMARY KEY, -- studiarsi una primarykey fatta bene che mi aiuti nella ricerca
     id_categoria INT NOT NULL, --foreign key alla tabella che mi definisce la categoria (cpu, psu, ram, ecc.)
     marca VARCHAR(255) NOT NULL,
     modello VARCHAR(255) NOT NULL,
@@ -134,8 +134,8 @@ CREATE TABLE Categoria (
     definizione VARCHAR(255) NOT NULL 
 );
 
-CREATE TABLE Articolo_Socket ( --tabella nn per collegare i socket compatibili con un articolo
-    id_articolo VARCHAR(255),
+CREATE TABLE prodotto_Socket ( --tabella nn per collegare i socket compatibili con un prodotto
+    id_prodotto VARCHAR(255),
     id_socket INT,
     PRIMARY KEY(id_coolyng, id_socket),
     FOREIGN KEY (id_coolyng) REFERENCES Raffreddamento(id_coolyng) ON DELETE CASCADE ON UPDATE CASCADE,
