@@ -32,7 +32,7 @@ switch ($method) {
         switch($action) {
             case 'get_products':
                 // Ritorna tutti i prodotti
-                $query = "SELECT * FROM Prova;";
+                $query = "SELECT * FROM Prodotto;";
                 break;
                 
             case 'get_byID':
