@@ -1,6 +1,8 @@
 <?php
-include '../../db_connect.php';
-include 'common/auth.php';
+include '..\..\db_connect.php';
+include 'common\auth.php';
+
+$conn = getConnection();
 
 //Recupera il metodo richiesto
 $method = $_SERVER['REQUEST_METHOD'];
@@ -30,7 +32,7 @@ switch ($method) {
         switch($action) {
             case 'get_products':
                 // Ritorna tutti i prodotti
-                $query = "SELECT * FROM Prodotto;";
+                $query = "SELECT * FROM Prova;";
                 break;
                 
             case 'get_byID':
