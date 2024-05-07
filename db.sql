@@ -106,17 +106,17 @@ CREATE TABLE Prodotto (
     r_velocita INT, --MHz
     r_tipo VARCHAR(50), --ddrx
 --archiviazione
-    a_tipo_archiviazione VARCHAR(255) NOT NULL,
-    a_capacita_gb INT NOT NULL,
-    fattore_di_forma VARCHAR(255) NOT NULL, --3,5 pollici, m.2, ecc. ANCHE PER LA PSU E CASE (atx)
-    a_velocita_rotazione INT NOT NULL,
-    a_cache_mb INT NOT NULL,
-    a_interfaccia VARCHAR(255) NOT NULL, --NVMe PCIe, sata 6 0 gestiti da client
-    a_velocita_lettura_mb_s INT NOT NULL,
-    a_velocita_scrittura_mb_s INT NOT NULL,
+    a_tipo_archiviazione VARCHAR(255),
+    a_capacita_gb INT,
+    fattore_di_forma VARCHAR(255), --3,5 pollici, m.2, ecc. ANCHE PER LA PSU E CASE (atx)
+    a_velocita_rotazione INT,
+    a_cache_mb INT,
+    a_interfaccia VARCHAR(255), --NVMe PCIe, sata 6 0 gestiti da client
+    a_velocita_lettura_mb_s INT,
+    a_velocita_scrittura_mb_s INT,
 --psu
     p_watt INT,
-    p_schema_alimentazione VARCHAR(255) NOT NULL, --modulare, semi-modulare, ...
+    p_schema_alimentazione VARCHAR(255), --modulare, semi-modulare, ...
 --Case
     cs_colore VARCHAR(255),
     cs_pesi INT,
@@ -138,7 +138,7 @@ CREATE TABLE prodotto_Socket ( --tabella nn per collegare i socket compatibili c
     id_prodotto VARCHAR(255),
     id_socket INT,
     PRIMARY KEY(id_coolyng, id_socket),
-    FOREIGN KEY (id_coolyng) REFERENCES Raffreddamento(id_coolyng) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (id_prodotto) REFERENCES Prodotto(id_prodotto) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (id_socket) REFERENCES Socket(id_socket) ON DELETE CASCADE ON UPDATE CASCADE
 );
 

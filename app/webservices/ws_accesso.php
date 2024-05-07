@@ -14,7 +14,8 @@ $content_type = 'application/json';
 // Risposta da restituire
 $content_type_response = 'application/json';
 
-authenticateUser();
+$query = "";
+// authenticateUser();
 
 
 /* Azione a seconda del metodo */
@@ -27,70 +28,10 @@ switch ($method) {
         $action = isset($_GET['action']) ? $_GET['action'] : '';
         $id = isset($_GET['id']) ? $_GET['id'] : '';
 
-        $cat = null;
-
         switch($action) {
-            case 'get_products':
+            case 'get_users':
                 // Ritorna tutti i prodotti
-                $query = "SELECT * FROM Prodotto;";
-                break;
-                
-            case 'get_byID':
-                $query = "SELECT * FROM Prodotto WHERE id_prodotto = ?;";
-                break;
-
-            case 'get_GPU':
-                // Ritorna tutte le schede video
-                $query = "SELECT * FROM Prodotto WHERE id_categoria = ?;";
-                $cat = 1;
-                break;
-
-            case 'get_CPU':
-                // Ritorna tutte le schede video
-                $query = "SELECT * FROM Prodotto WHERE id_categoria = ?;";
-                $cat = 2;
-                break;
-
-            case 'get_motherboard':
-                // Ritorna tutte le schede video
-                $query = "SELECT * FROM Prodotto WHERE id_categoria = ?;";
-                $cat = 3;
-                break;
-            
-            case 'get_RAM':
-                // Ritorna tutte le schede video
-                $query = "SELECT * FROM Prodotto WHERE id_categoria = ?;";
-                $cat = 4;
-                break;
-
-            case 'get_SSD':
-                // Ritorna tutte le schede video
-                $query = "SELECT * FROM Prodotto WHERE id_categoria = ?;";
-                $cat = 5;
-                break;
-
-            case 'get_HDD':
-                // Ritorna tutte le schede video
-                $query = "SELECT * FROM Prodotto WHERE id_categoria = ?;";
-                $cat = 6;
-                break;
-
-            case 'get_PSU':
-                // Ritorna tutte le schede video
-                $query = "SELECT * FROM Prodotto WHERE id_categoria = ?;";
-                $cat = 7;
-                break;
-
-            case 'get_case':
-                // Ritorna tutte le schede video
-                $query = "SELECT * FROM Prodotto WHERE id_categoria = ?;";
-                $cat = 8;
-                break;
-
-            case 'get_cooling':
-                // Ritorna tutte le schede video
-                $query = "SELECT * FROM Prodotto WHERE id_categoria = ?;";
-                $cat = 9;
+                $query = "SELECT * FROM Utente;";
                 break;
 
             default:
@@ -100,14 +41,6 @@ switch ($method) {
         }
 
         $stmt = $conn->prepare($query);
-
-        if(isset($cat)){
-            $stmt->bind_param("i", $cat);
-        }
-
-        if($id != '') {
-            $stmt->bind_param("i", $id);
-        }
         
         // Esecuzione query
         $stmt->execute();
@@ -131,13 +64,13 @@ switch ($method) {
     case 'POST':
         // Recupero del payload (body of message)
         $userRole = getUserRole(authenticateUser());
-        if($userRole === 'admin' || $userRole === 'moderator') {
+        // if($userRole === 'admin' || $userRole === 'moderator') {
             // Solo un autente autorizzato può accedere a questo codice
 
             $payload = file_get_contents('php://input');
 
 
-            // Trasformazione del payload nell'array che rappresenta il prodotto
+            // Trasformazione del payload nell'array che contiene i dati
             if ($content_type == 'application/json') {
                 $data =  json_decode($payload,true);
             } else {
@@ -152,13 +85,8 @@ switch ($method) {
             $action = isset($_GET['action']) ? $_GET['action'] : '';
 
             switch($action) {
-                case 'post_cpu':
-
-                    $query = "";
-                    break;
-
-                case 'post_':
-                    $query = "";
+                case 'post_signup':
+                    $query = "INSERT INTO Utente (email, password, nome, cognome, ruolo) VALUES (?,?,?,?,?)";
                     break;
 
                 default:
@@ -166,20 +94,23 @@ switch ($method) {
                     break;
             }
 
+            $stmt = $conn->prepare($query);
+            $stmt->bind_param("s,s,s,s,s", $data['email'], $data['password'], $data['nome'], $data['cognome'], $data['ruolo']);
 
-            $result = $conn->query($query);
+            // Esecuzione query
+            $stmt->execute();
 
             if ($result){
-                echo json_encode($user);
+                echo json_encode(["Success" =>`Dati aggiunti con successo: $data`]);
                 http_response_code(200);
             }else {
                 echo json_encode(['errore' => $conn->error]);
                 http_response_code(400); //BAD REQUEST
-            }
+            }/* 
         } else {
             echo json_encode(['errore' => 'Unauthorized']);
             http_response_code(401); //BAD REQUEST
-        }
+        } */
 
 
         break;
