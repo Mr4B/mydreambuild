@@ -76,6 +76,8 @@ switch ($method) {
             // Trasformazione del payload nell'array che contiene i dati
             if ($content_type == 'application/json') {
                 $data =  json_decode($payload,true);
+                $email = isset($data['email']) ? $data['email'] : '';
+                $password = isset($data['password']) ? $data['password'] : '';
             } else {
                 echo json_encode(['errore' => 'Content-Type non ammesso']);
                 http_response_code(400); //BAD REQUEST
@@ -85,9 +87,13 @@ switch ($method) {
             header("Content-Type: application/json; charset=UTF-8");
 
             switch($action) {
-                case 'post_signup':
+                case 'signup':
                     verifyIfExists($data);
-                    $query = "INSERT INTO Utente (email, password, nome, cognome, ruolo) VALUES (?,?,?,?,?)";
+                    addUser($data);
+                    break;
+
+                case 'login':
+                    login($email, $password);
                     break;
 
                 default:
@@ -96,23 +102,7 @@ switch ($method) {
                     break;
             }
 
-            $stmt = $conn->prepare($query);
-            $stmt->bind_param("ssssi", $data['email'], $data['password'], $data['nome'], $data['cognome'], $data['ruolo']);
-
-            // Esecuzione query
-            $stmt->execute();
-            // Recupero dei risultati
-            $result = $stmt->get_result();
-
-            if ($stmt->affected_rows > 0){
-                echo json_encode(["Success" => "Dati aggiunti con successo"]);
-                http_response_code(200);
-                exit();
-            }else {
-                echo json_encode(['errore' => $conn->error]);
-                http_response_code(400); //BAD REQUEST
-                exit();
-            }/* 
+            /* 
         } else {
             echo json_encode(['errore' => 'Unauthorized']);
             http_response_code(401); //BAD REQUEST
@@ -139,9 +129,54 @@ function verifyIfExists($user) {
     $stmt->bind_param("s", $user['email']);
     $stmt->execute();
 
-    if ($stmt->affected_rows <= 0){
+    if ($stmt->affected_rows > 0){
         echo json_encode(["Error" => "User already exists"]);
         http_response_code(400);
         exit();
     }
+}
+
+function addUser($data) {
+    global $conn;
+
+    $query = "INSERT INTO Utente (email, password, nome, cognome, ruolo) VALUES (?,?,?,?,?)";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("ssssi", $data['email'], $data['password'], $data['nome'], $data['cognome'], $data['ruolo']);
+
+    // Esecuzione query
+    $stmt->execute();
+    // Recupero dei risultati
+    $result = $stmt->get_result();
+
+    if ($stmt->affected_rows > 0){
+        echo json_encode(["Success" => "Dati aggiunti con successo"]);
+        http_response_code(200);
+        exit();
+    }else {
+        echo json_encode(['errore' => $conn->error]);
+        http_response_code(400); //BAD REQUEST
+        exit();
+    }
+}
+
+function login($email, $password) {
+    global $conn;
+
+    $query = "SELECT * FROM Utente WHERE email = ? AND password = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("ss", $email, $password);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        $user = $result->fetch_assoc();
+        echo json_encode("Login avvenuto con successo");
+        echo json_encode($user);
+        http_response_code(200);
+    } else {
+        // Altrimenti, restituisci un errore con il codice di stato HTTP 401.
+        echo json_encode(['errore' => 'Credenziali non valide']);
+        http_response_code(401);
+    }
+    exit(); // Termina lo script dopo il login
 }
