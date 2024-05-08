@@ -66,6 +66,9 @@ switch ($method) {
         $userRole = getUserRole(authenticateUser());
         // if($userRole === 'admin' || $userRole === 'moderator') {
             // Solo un autente autorizzato può accedere a questo codice
+            
+            // Recupera il valore del parametro "action" dall'URL
+            $action = isset($_GET['action']) ? $_GET['action'] : '';
 
             $payload = file_get_contents('php://input');
 
@@ -81,31 +84,34 @@ switch ($method) {
 
             header("Content-Type: application/json; charset=UTF-8");
 
-            // Recupera il valore del parametro "action" dall'URL
-            $action = isset($_GET['action']) ? $_GET['action'] : '';
-
             switch($action) {
                 case 'post_signup':
+                    verifyIfExists($data);
                     $query = "INSERT INTO Utente (email, password, nome, cognome, ruolo) VALUES (?,?,?,?,?)";
                     break;
 
                 default:
-                    $query = "SELECT * FROM Veicolo LIMIT 1;";
+                    echo json_encode(['errore' => 'Indirizzo errato']);
+                    http_response_code(400);
                     break;
             }
 
             $stmt = $conn->prepare($query);
-            $stmt->bind_param("s,s,s,s,s", $data['email'], $data['password'], $data['nome'], $data['cognome'], $data['ruolo']);
+            $stmt->bind_param("ssssi", $data['email'], $data['password'], $data['nome'], $data['cognome'], $data['ruolo']);
 
             // Esecuzione query
             $stmt->execute();
+            // Recupero dei risultati
+            $result = $stmt->get_result();
 
-            if ($result){
-                echo json_encode(["Success" =>`Dati aggiunti con successo: $data`]);
+            if ($stmt->affected_rows > 0){
+                echo json_encode(["Success" => "Dati aggiunti con successo"]);
                 http_response_code(200);
+                exit();
             }else {
                 echo json_encode(['errore' => $conn->error]);
                 http_response_code(400); //BAD REQUEST
+                exit();
             }/* 
         } else {
             echo json_encode(['errore' => 'Unauthorized']);
@@ -123,4 +129,19 @@ switch ($method) {
     case 'DELETE':
 
         break;
+}
+
+// Verifica se un utente esiste già
+function verifyIfExists($user) {
+    global $conn;
+    $query = "SELECT * FROM Utente WHERE email = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("s", $user['email']);
+    $stmt->execute();
+
+    if ($stmt->affected_rows <= 0){
+        echo json_encode(["Error" => "User already exists"]);
+        http_response_code(400);
+        exit();
+    }
 }
