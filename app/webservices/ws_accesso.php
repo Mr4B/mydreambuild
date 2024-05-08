@@ -26,12 +26,20 @@ switch ($method) {
 
         // Recupera il valore del parametro "action" dall'URL
         $action = isset($_GET['action']) ? $_GET['action'] : '';
-        $id = isset($_GET['id']) ? $_GET['id'] : '';
+        $email = isset($_GET['email']) ? $_GET['email'] : '';
+        $role = isset($_GET['role']) ? $_GET['role'] : '';
 
         switch($action) {
             case 'get_users':
-                // Ritorna tutti i prodotti
-                $query = "SELECT * FROM Utente;";
+                $query = "SELECT * FROM Utente ORDER BY ruolo;";
+                break;
+
+            case 'get_byRole':
+                $query = "SELECT * FROM Utente WHERE ruolo = ?;";
+                break;
+            
+            case 'user':
+                $query = "SELECT * FROM Utente WHERE email = ?;";
                 break;
 
             default:
@@ -42,11 +50,20 @@ switch ($method) {
 
         $stmt = $conn->prepare($query);
         
+        if($email!='') {
+            $stmt->bind_param("s", $email);
+        }
+        
+        if($role!='') {
+            $stmt->bind_param("i", $role);    
+        }
+
         // Esecuzione query
         $stmt->execute();
 
         // Recupero dei risultati
         $result = $stmt->get_result();
+
 
         $lista = Array();
 
@@ -112,12 +129,56 @@ switch ($method) {
         break;
 
     case 'PUT':
+        // Recupera il payload (body of message)
+        $payload = file_get_contents('php://input');
 
+        // Trasformazione del payload in array che contiene i dati
+        if ($content_type == 'application/json') {
+            $data = json_decode($payload, true);
+            $email = isset($data['email']) ? $data['email'] : '';
+            // Altri dati che desideri modificare
+        } else {
+            echo json_encode(['errore' => 'Content-Type non ammesso']);
+            http_response_code(400); //BAD REQUEST
+            exit();
+        }
 
+        // Esegui la query per aggiornare l'utente
+        $query = "UPDATE Utente SET nome=?, cognome=?, ruolo=? WHERE email=?";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("ssis", $data['nome'], $data['cognome'], $data['ruolo'], $email);
+        $stmt->execute();
+
+        // Verifica se l'aggiornamento è andato a buon fine
+        if ($stmt->affected_rows > 0) {
+            echo json_encode(["Success" => "Utente aggiornato con successo"]);
+            http_response_code(200);
+        } else {
+            echo json_encode(['errore' => 'Errore durante l\'aggiornamento dell\'utente']);
+            http_response_code(400); //BAD REQUEST
+        }
+        exit();
         break;
 
     case 'DELETE':
+        // Recupera l'email dell'utente da eliminare dall'URL
+        $email = isset($_GET['email']) ? $_GET['email'] : '';
 
+        // Esegui la query per eliminare l'utente
+        $query = "DELETE FROM Utente WHERE email=?";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+
+        // Verifica se l'eliminazione è andata a buon fine
+        if ($stmt->affected_rows > 0) {
+            echo json_encode(["Success" => "Utente eliminato con successo"]);
+            http_response_code(200);
+        } else {
+            echo json_encode(['errore' => 'Errore durante l\'eliminazione dell\'utente']);
+            http_response_code(400); //BAD REQUEST
+        }
+        exit();
         break;
 }
 
