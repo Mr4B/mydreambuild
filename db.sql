@@ -4,8 +4,9 @@
 */
 
 CREATE TABLE Utente (
-    email VARCHAR(255) PRIMARY KEY,
+    username VARCHAR(255) PRIMARY KEY,
     password VARCHAR(255) NOT NULL,
+    email VARCHAR(255),
     nome VARCHAR(255),
     cognome VARCHAR(255),
     ruolo INTEGER NOT NULL,
@@ -26,7 +27,7 @@ CREATE TABLE Articolo (
     summary VARCHAR(500),
     testo TEXT,
     id_redattore VARCHAR(255),
-    FOREIGN KEY (id_redattore) REFERENCES Utente(id_redattore) ON DELETE SET NULL ON UPDATE CASCADE
+    FOREIGN KEY (id_redattore) REFERENCES Utente(username) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 CREATE TABLE articolo_tag (

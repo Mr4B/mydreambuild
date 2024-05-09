@@ -1,6 +1,15 @@
 <?php 
-include 'shared/navbar.php';
-$navbar = getNavBar('#', 'cliente/clienti.php', 'tipo_intervento/tipoIntervento.php'); //esempio di link passati per le pagine della navbar
+// include 'shared/navbar.php';
+session_start();
+require_once('../shared/navbar.php');
+
+$navbar = new Navbar();
+// Controlla se l'utente è loggato e in caso positivo aggiorna la navbar
+if(isset($_SESSION['LogedIn'])) {
+    $navbar ->setLogin($_SESSION['username']);
+}
+$_SESSION['navbar'] = $navbar;
+
 ?>
 
 <!DOCTYPE html>
@@ -18,12 +27,12 @@ $navbar = getNavBar('#', 'cliente/clienti.php', 'tipo_intervento/tipoIntervento.
         <header id="header" class role="banner">
             <!--Jumbotron-->
             <div class="jumbotron jumbotron-fluid mb-2">
-                <div class="container">
+                <!-- <div class="container">
                     <img src="../img/logo_mecc.avif" class="d-inline-block align-top" style="float: left; margin-right: 30px;" alt="Logo meccanico" height="75" width="70">
-                    <h1 class="display-4">Benvenuto <?php echo $_SESSION['nome'] . " " . $_SESSION['cognome'] ?></h1>
-                </div>
+                    <h1 class="display-4">Benvenuto</h1>
+                </div> -->
             </div>
-            <?php echo $navbar;?>
+            <?php echo $navbar->getNavBar();?>
         </header>
 
         <!-- Resto della pagina -->

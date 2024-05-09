@@ -93,7 +93,7 @@ switch ($method) {
             // Trasformazione del payload nell'array che contiene i dati
             if ($content_type == 'application/json') {
                 $data =  json_decode($payload,true);
-                $email = isset($data['email']) ? $data['email'] : '';
+                $username = isset($data['username']) ? $data['username'] : '';
                 $password = isset($data['password']) ? $data['password'] : '';
             } else {
                 echo json_encode(['errore' => 'Content-Type non ammesso']);
@@ -110,7 +110,7 @@ switch ($method) {
                     break;
 
                 case 'login':
-                    login($email, $password);
+                    login($username, $password);
                     break;
 
                 default:
@@ -135,7 +135,7 @@ switch ($method) {
         // Trasformazione del payload in array che contiene i dati
         if ($content_type == 'application/json') {
             $data = json_decode($payload, true);
-            $email = isset($data['email']) ? $data['email'] : '';
+            $username = isset($data['username']) ? $data['username'] : '';
             // Altri dati che desideri modificare
         } else {
             echo json_encode(['errore' => 'Content-Type non ammesso']);
@@ -144,9 +144,9 @@ switch ($method) {
         }
 
         // Esegui la query per aggiornare l'utente
-        $query = "UPDATE Utente SET nome=?, cognome=?, ruolo=? WHERE email=?";
+        $query = "UPDATE Utente SET nome=?, cognome=?, ruolo=?, email=? WHERE username=?";
         $stmt = $conn->prepare($query);
-        $stmt->bind_param("ssis", $data['nome'], $data['cognome'], $data['ruolo'], $email);
+        $stmt->bind_param("ssiss", $data['nome'], $data['cognome'], $data['ruolo'], $data['email'], $username);
         $stmt->execute();
 
         // Verifica se l'aggiornamento è andato a buon fine
@@ -162,12 +162,12 @@ switch ($method) {
 
     case 'DELETE':
         // Recupera l'email dell'utente da eliminare dall'URL
-        $email = isset($_GET['email']) ? $_GET['email'] : '';
+        $username = isset($_GET['username']) ? $_GET['username'] : '';
 
         // Esegui la query per eliminare l'utente
-        $query = "DELETE FROM Utente WHERE email=?";
+        $query = "DELETE FROM Utente WHERE username=?";
         $stmt = $conn->prepare($query);
-        $stmt->bind_param("s", $email);
+        $stmt->bind_param("s", $username);
         $stmt->execute();
 
         // Verifica se l'eliminazione è andata a buon fine
@@ -185,9 +185,9 @@ switch ($method) {
 // Verifica se un utente esiste già
 function verifyIfExists($user) {
     global $conn;
-    $query = "SELECT * FROM Utente WHERE email = ?";
+    $query = "SELECT * FROM Utente WHERE username = ?";
     $stmt = $conn->prepare($query);
-    $stmt->bind_param("s", $user['email']);
+    $stmt->bind_param("s", $user['username']);
     $stmt->execute();
 
     if ($stmt->affected_rows > 0){
@@ -200,9 +200,9 @@ function verifyIfExists($user) {
 function addUser($data) {
     global $conn;
 
-    $query = "INSERT INTO Utente (email, password, nome, cognome, ruolo) VALUES (?,?,?,?,?)";
+    $query = "INSERT INTO Utente (username, password,  email, nome, cognome, ruolo) VALUES (?,?,?,?,?,?)";
     $stmt = $conn->prepare($query);
-    $stmt->bind_param("ssssi", $data['email'], $data['password'], $data['nome'], $data['cognome'], $data['ruolo']);
+    $stmt->bind_param("sssssi", $data['username'], $data['email'], $data['password'], $data['nome'], $data['cognome'], $data['ruolo']);
 
     // Esecuzione query
     $stmt->execute();
@@ -220,12 +220,12 @@ function addUser($data) {
     }
 }
 
-function login($email, $password) {
+function login($username, $password) {
     global $conn;
 
-    $query = "SELECT * FROM Utente WHERE email = ? AND password = ?";
+    $query = "SELECT * FROM Utente WHERE username = ? AND password = ?";
     $stmt = $conn->prepare($query);
-    $stmt->bind_param("ss", $email, $password);
+    $stmt->bind_param("ss", $username, $password);
     $stmt->execute();
     $result = $stmt->get_result();
 
