@@ -226,7 +226,6 @@ function login($username, $password) {
 
     if ($result->num_rows > 0) {
         $user = $result->fetch_assoc();
-        echo json_encode("Login avvenuto con successo");
         echo json_encode($user);
         http_response_code(200);
     } else {

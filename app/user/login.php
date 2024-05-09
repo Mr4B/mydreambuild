@@ -29,7 +29,12 @@ $token = $_SESSION['jwt'];
                 contentType: "application/json",
                 data: JSON.stringify(formData),
                 success: function(data) {
-                    console.log(response);
+                    // console.log(data.ruolo);
+                    <?php
+                    $_SESSION['LogedIn'] = true;
+                    // $_SESSION['ruolo'] = ; da risolvere, maybe mandare il ruolo in un altra pagina tramite url o form (variabile nascosta)
+                    echo $_SESSION['ruolo'];
+                    ?>
                 },
                 error: function(xhr, status, error) {
                     console.error('Errore durante la richiesta:', status, error);

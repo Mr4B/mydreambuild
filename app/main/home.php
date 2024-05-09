@@ -4,6 +4,8 @@ session_start();
 require_once('../shared/navbar.php');
 require_once('../webservices/common/auth.php');
 
+// finire di gestire il token che bisogna ricrearlo se l'utente è loggato
+
 // Token Authentication
 $gestioneJWT = new TokenJWT('ciao');
 // Ruolo dell'utente da includere nel token
