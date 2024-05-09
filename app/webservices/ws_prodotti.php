@@ -14,7 +14,12 @@ $content_type = 'application/json';
 // Risposta da restituire
 $content_type_response = 'application/json';
 
-authenticateUser();
+
+$gestioneJWT = new TokenJWT('ciao');
+
+$token = $gestioneJWT->getJWT($headers);
+
+$gestioneJWT -> validate($token);
 
 
 /* Azione a seconda del metodo */
@@ -130,7 +135,7 @@ switch ($method) {
 
     case 'POST':
         // Recupero del payload (body of message)
-        $userRole = getUserRole(authenticateUser());
+        $userRole = $gestioneJWT->decode($token)['ruolo'];
         if($userRole === 'admin' || $userRole === 'moderator') {
             // Solo un autente autorizzato può accedere a questo codice
 

@@ -5,66 +5,87 @@ require __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRE
 use \Firebase\JWT\JWT;
 use \Firebase\JWT\Key;
 
-// Funzione per verificare l'autenticazione dell'utente utilizzando il token JWT
-function authenticateUser() {
-    global $headers;
+class TokenJWT {
 
-    // Controlla se l'header Authorization è presente nella richiesta
+    private static $secretKey; // Chiave segreta per la firma (impostala nel constructor)
+    private static $algo = 'HS256'; // Algoritmo di firma (HS256, SHA256, ecc.)
+
+    public function __construct($secretKey) {
+        self::$secretKey = $secretKey;
+    }
+
+    public static function encode($payload) {
+        // Libreria JWT è necessaria
+
+        // Crea l'oggetto JWT
+        $jwt = new JWT;
+
+        // Genera il token JWT
+        $token = $jwt->encode($payload, self::$secretKey, self::$algo);
+
+        return $token;
+    }
+
+    public static function decode($token) {
+        // Libreria JWT è necessaria
+        require_once '../../../vendor/autoload.php'; // Assumi che la libreria sia caricata
+
+        try {
+            // Decodifica il token JWT
+            $payload = $jwt->decode($token, self::$secretKey, array(self::$algo));
+
+            return $payload;
+        } catch (\Exception $e) {
+            return false; // Errore di decodifica
+        }
+    }
+
+    public static function validate($token) {
+        // Libreria JWT è necessaria
+        require_once '../../../vendor/autoload.php'; // Assumi che la libreria sia caricata
+
+        try {
+            // Decodifica il token JWT
+            $payload = $jwt->decode($token, self::$secretKey, array(self::$algo));
+
+            // Verifica se il token è scaduto
+            if (isset($payload['exp']) && time() > $payload['exp']) {
+                return false; // Token scaduto
+            }
+
+            // Altri controlli di validità opzionali (es: audience, issuer)
+
+            return true; // Token valido
+        } catch (\Exception $e) {
+            return false; // Errore di decodifica o validazione
+        }
+    }
+
+    public function getJWT($headers) {
+        // Controlla se l'header Authorization è presente nella richiesta
     if (!isset($headers['Authorization'])) {
         // Se l'header Authorization non è presente, l'utente non è autenticato
         header("HTTP/1.1 401 Unauthorized");
+        echo json_encode(['errore' => 'Manca autorizzazione']);
         http_response_code(401); //Unauthorized
         exit();
     }
-
+    
     // Estrai il token JWT dall'header Authorization
     $authHeader = $headers['Authorization'];
-
     // Verifica che l'header Authorization contenga un token JWT valido
     if (preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
         $token = $matches[1];
-
-        // Decodifica il token JWT utilizzando la chiave segreta
-        $key = 'ciao';
-        try {
-            $decodedToken = JWT::decode($token, new Key($key, 'HS256'));
-
-            // L'utente è autenticato
-            return $token;
-        } catch (Exception $e) {
-            // Errore nella decodifica del token JWT (token non valido o scaduto)
-            header("HTTP/1.1 401 Unauthorized");
-            exit();
-        }
+        return $token;
     } else {
         // Formato dell'header Authorization non corretto
+        echo json_encode($authHeader);
+        echo json_encode(['errore' => 'Token JWT passato male']);
         header("HTTP/1.1 401 Unauthorized");
         exit();
     }
-}
-
-// Funzione per ottenere il ruolo dall'utente dal token JWT
-function getUserRole($token) {
-    try {
-        // Decodifica il token JWT utilizzando la chiave segreta
-        $key = 'ciao';
-        $decodedToken = JWT::decode($token, new Key($key, 'HS256'));
-
-        // Verifica che il token decodificato contenga il campo 'ruolo'
-        if (isset($decodedToken->ruolo)) {
-            // Restituisci il ruolo dell'utente
-            return $decodedToken->ruolo;
-        } else {
-            // Il token non contiene il campo 'ruolo'
-            throw new Exception("Il token JWT non contiene il campo 'ruolo'.");
-        }
-    } catch (Exception $e) {
-        // Gestione degli errori durante la decodifica del token JWT
-        // Puoi registrare l'errore, inviare una risposta di errore, ecc.
-        return null; // o gestisci l'errore in un altro modo
     }
 }
 
 
-
-?>
+// Funzione per verificare l'autenticazione dell'utente utilizzando il token JWT?>

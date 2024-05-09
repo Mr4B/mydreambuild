@@ -15,7 +15,14 @@ $content_type = 'application/json';
 $content_type_response = 'application/json';
 
 $query = "";
-// authenticateUser();
+
+
+$gestioneJWT = new TokenJWT('ciao');
+
+$token = $gestioneJWT->getJWT($headers);
+
+// Per validare il token ma non serve subito
+// $gestioneJWT -> validate($token);
 
 
 /* Azione a seconda del metodo */
@@ -79,52 +86,40 @@ switch ($method) {
         break;
 
     case 'POST':
-        // Recupero del payload (body of message)
-        $userRole = getUserRole(authenticateUser());
-        // if($userRole === 'admin' || $userRole === 'moderator') {
-            // Solo un autente autorizzato può accedere a questo codice
-            
-            // Recupera il valore del parametro "action" dall'URL
-            $action = isset($_GET['action']) ? $_GET['action'] : '';
+        // Recupera il valore del parametro "action" dall'URL
+        $action = isset($_GET['action']) ? $_GET['action'] : '';
 
-            $payload = file_get_contents('php://input');
+        $payload = file_get_contents('php://input');
 
 
-            // Trasformazione del payload nell'array che contiene i dati
-            if ($content_type == 'application/json') {
-                $data =  json_decode($payload,true);
-                $username = isset($data['username']) ? $data['username'] : '';
-                $password = isset($data['password']) ? $data['password'] : '';
-            } else {
-                echo json_encode(['errore' => 'Content-Type non ammesso']);
-                http_response_code(400); //BAD REQUEST
-                exit();
-            }
-
-            header("Content-Type: application/json; charset=UTF-8");
-
-            switch($action) {
-                case 'signup':
-                    verifyIfExists($data);
-                    addUser($data);
-                    break;
-
-                case 'login':
-                    login($username, $password);
-                    break;
-
-                default:
-                    echo json_encode(['errore' => 'Indirizzo errato']);
-                    http_response_code(400);
-                    break;
-            }
-
-            /* 
+        // Trasformazione del payload nell'array che contiene i dati
+        if ($content_type == 'application/json') {
+            $data =  json_decode($payload,true);
+            $username = isset($data['username']) ? $data['username'] : '';
+            $password = isset($data['password']) ? $data['password'] : '';
         } else {
-            echo json_encode(['errore' => 'Unauthorized']);
-            http_response_code(401); //BAD REQUEST
-        } */
+            echo json_encode(['errore' => 'Content-Type non ammesso']);
+            http_response_code(400); //BAD REQUEST
+            exit();
+        }
 
+        header("Content-Type: application/json; charset=UTF-8");
+
+        switch($action) {
+            case 'signup':
+                verifyIfExists($data);
+                addUser($data);
+                break;
+
+            case 'login':
+                login($username, $password);
+                break;
+
+            default:
+                echo json_encode(['errore' => 'Indirizzo errato']);
+                http_response_code(400);
+                break;
+        }
 
         break;
 
@@ -237,7 +232,7 @@ function login($username, $password) {
     } else {
         // Altrimenti, restituisci un errore con il codice di stato HTTP 401.
         echo json_encode(['errore' => 'Credenziali non valide']);
-        http_response_code(401);
+        http_response_code(400);
     }
     exit(); // Termina lo script dopo il login
 }

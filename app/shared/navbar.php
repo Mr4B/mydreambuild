@@ -10,9 +10,10 @@ class NavBar {
         // $this->logedIn = $logedIn;
     }
     
-    public function setLogin($username) {
+    public function setLogin($username, $role) {
         $this->logedIn = true;
         $this->username = $username;
+        $this->role = $role;
     }
 
     public function getLogin() {

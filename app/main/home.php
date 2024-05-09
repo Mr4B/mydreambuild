@@ -2,11 +2,28 @@
 // include 'shared/navbar.php';
 session_start();
 require_once('../shared/navbar.php');
+require_once('../webservices/common/auth.php');
 
+// Token Authentication
+$gestioneJWT = new TokenJWT('ciao');
+// Ruolo dell'utente da includere nel token
+$role = 4; // di base imposta 'guest'
+// Creazione del payload del token con il ruolo
+$payload = array(
+    "ruolo" => $role,
+    "exp" => time() + 3600*2 // Scadenza del token impostata a 1 ora (3600 secondi)
+);
+$token = $gestioneJWT->encode($payload);
+$_SESSION['jwt'] = $token;
+$_SESSION['ruolo'] = 4;
+
+echo "<script>console.log(".$token.");</script>";
+
+// NAVBAR
 $navbar = new Navbar();
 // Controlla se l'utente è loggato e in caso positivo aggiorna la navbar
-if(isset($_SESSION['LogedIn'])) {
-    $navbar ->setLogin($_SESSION['username']);
+if(isset($_SESSION['LogedIn']) && $_SESSION['LogedIn'] === true) {
+    $navbar ->setLogin($_SESSION['username'], $_SESSION['ruolo']);
 }
 $_SESSION['navbar'] = $navbar;
 

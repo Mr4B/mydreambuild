@@ -1,3 +1,8 @@
+<?php 
+session_start();
+$token = $_SESSION['jwt'];
+?>
+
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -14,11 +19,12 @@
                 password: $("#password").val()
             };
             $.ajax({
-                url: 'http://localhost/capolavoro/app/webservices/ws_accesso.php?action=login',
+                url: 'http://localhost/mydreambuild/capolavoro/app/webservices/ws_accesso.php?action=login',
                 type: 'POST',
                 dataType: 'json',
                 headers: {
-                    'Accept': 'application/json'
+                    'Accept': 'application/json',
+                    "Authorization": "Bearer <?php echo $token; ?>"
                 },
                 contentType: "application/json",
                 data: JSON.stringify(formData),
