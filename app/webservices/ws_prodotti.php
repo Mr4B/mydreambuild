@@ -104,6 +104,10 @@ switch ($method) {
                 $query = "SELECT * FROM Prodotto WHERE id_categoria = ?;";
                 $cat = 9;
                 break;
+            
+            case 'get_categorie':
+                $query = "SELECT * FROM Categoria;";
+                break;
 
             default:
                 echo json_encode(['errore' => 'Indirizzo errato']);

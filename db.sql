@@ -100,12 +100,15 @@ CREATE TABLE Prodotto (
     descrizione TEXT,
     prezzo DECIMAL(10,2) NOT NULL,
 -- cpu
-    c_frequenza_base DECIMAL(10,2) ,
+    frequenza_base DECIMAL(10,2), -- Anche GPU
     c_frequenza_boost DECIMAL(10,2),
     c_n_core INT,
     c_n_thread INT,
     c_consumo_energetico INT,
     c_dim_cache INT,
+-- gpu
+    g_memoria INT,
+    g_tipo_memoria VARCHAR(255),
 -- motherboard
     m_formato VARCHAR(255),
     m_chipset VARCHAR(255),
@@ -119,7 +122,7 @@ CREATE TABLE Prodotto (
     r_tipo VARCHAR(50), -- ddrx
 -- archiviazione
     a_tipo_archiviazione VARCHAR(255),
-    a_capacita_gb INT,
+    capacita_gb INT, -- Anche GPU
     fattore_di_forma VARCHAR(255), -- 3,5 pollici, m.2, ecc. ANCHE PER LA PSU E CASE (atx)
     a_velocita_rotazione INT,
     a_cache_mb INT,
@@ -131,8 +134,8 @@ CREATE TABLE Prodotto (
     p_schema_alimentazione VARCHAR(255), -- modulare, semi-modulare, ...
 -- Case
     cs_colore VARCHAR(255),
-    cs_pesi INT,
-    cs_dimensioni VARCHAR(255),
+    cs_peso INT,
+    dimensioni VARCHAR(255), -- GPU
     cs_finestra_laterale BOOLEAN,
 -- cooling
     tipo_cooling INT, -- 1 liquido, 2 aria
