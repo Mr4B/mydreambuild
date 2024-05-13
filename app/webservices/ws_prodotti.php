@@ -19,7 +19,11 @@ $gestioneJWT = new TokenJWT('ciao');
 
 $token = $gestioneJWT->getJWT($headers);
 
-$gestioneJWT -> validate($token);
+
+if(!($gestioneJWT -> validate($token))) {
+    echo json_encode(['errore' => 'Token errato']);
+    http_response_code(404);
+}
 
 
 /* Azione a seconda del metodo */
@@ -37,7 +41,10 @@ switch ($method) {
         switch($action) {
             case 'get_products':
                 // Ritorna tutti i prodotti
-                $query = "SELECT p.id_categoria, p.marca, p.modello, p.prezzo, i.immagine FROM Prodotto AS p, Immagini AS i WHERE p.id_immagine = i.id_immagine;";
+                $query = "SELECT p.id_prodotto, p.id_categoria, p.marca, p.modello, p.prezzo, i.immagine 
+                FROM Prodotto AS p 
+                LEFT JOIN Immagini AS i ON p.id_immagine = i.id_immagine
+                ORDER BY p.id_categoria;";
                 break;
                 
             case 'get_byID':

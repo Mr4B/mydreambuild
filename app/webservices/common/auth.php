@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
+require_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
 
 
 use \Firebase\JWT\JWT;
@@ -28,11 +28,11 @@ class TokenJWT {
 
     public static function decode($token) {
         // Libreria JWT è necessaria
-        require_once '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
+        require_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
         
         try {
             // Decodifica il token JWT
-            $payload = $jwt->decode($token, self::$secretKey, array(self::$algo));
+            $payload = JWT::decode($token, new KEY(self::$secretKey, self::$algo));
 
             return $payload;
         } catch (\Exception $e) {
@@ -42,14 +42,16 @@ class TokenJWT {
 
     public static function validate($token) {
         // Libreria JWT è necessaria
-        require_once '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
+        require_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
         
+        $jwt = new JWT;
+
         try {
             // Decodifica il token JWT
-            $payload = $jwt->decode($token, self::$secretKey, array(self::$algo));
+            $payload = JWT::decode($token, new KEY(self::$secretKey, self::$algo));
 
             // Verifica se il token è scaduto
-            if (isset($payload['exp']) && time() > $payload['exp']) {
+            if (isset($payload->exp) && time() > $payload->exp) {
                 return false; // Token scaduto
             }
 

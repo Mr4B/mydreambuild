@@ -22,7 +22,7 @@ $token = $_SESSION['jwt'];
             <?php echo $navbar->getNavBar(); ?>
         </header>
         <!-- Corpo della pagina -->
-        <div id="response" class="mt-3"></div>
+        <div id="table" class="mt-3"></div>
     </div>
 
     <!-- Script jQuery -->
@@ -30,7 +30,8 @@ $token = $_SESSION['jwt'];
     <script type="text/javascript">
         $(document).ready(function(){
             $.ajax({
-                url: 'http://10.25.0.15/~s_bttkvn05l18d488f/capolavoro-main/app/webservices/ws_prodotti.php?action=get_products',
+                // url: 'http://10.25.0.15/~s_bttkvn05l18d488f/capolavoro-main/app/webservices/ws_prodotti.php?action=get_products',
+                url: 'http://localhost/mydreambuild/capolavoro/app/webservices/ws_prodotti.php?action=get_products',
                 type: 'GET',
                 dataType: 'json',
                 headers: {
@@ -39,12 +40,28 @@ $token = $_SESSION['jwt'];
                 },
                 success: function(data) {
                     console.log(data);
-                    // Inserisci qui il codice per gestire la risposta JSON
-                    // Ad esempio, visualizza i prodotti nella pagina HTML
+                    // Creazione tabella con tutti i prodotti
+                    var table = '<table class="table"><thead><tr><th>ID Prodotto</th><th>Immagine</th><th>Marca</th><th>Modello</th><th>Prezzo</th><th></th></tr></thead><tbody>';
+                    $.each(data, function(index, product) {
+                        table += '<tr>';
+                        table += '<td>' + product.id_prodotto + '</td>';
+                        if (product.immagine) {
+                            table += '<td><img src="' + product.immagine + '" alt="Immagine Prodotto" width="40" height="40"></td>';
+                        } else {
+                            table += '<td></td>';
+                        }
+                        table += '<td>' + product.marca + '</td>';
+                        table += '<td>' + product.modello + '</td>';
+                        table += '<td>' + product.prezzo + '</td>';
+                        table += '<td><a href="edit_prodotto.php?id=' + product.id_prodotto + '"><img src="../img/edit.png" alt="modifica" width="25" height="25"></a></td>';
+                        table += '</tr>';
+                    });
+                    table += '</tbody></table>';
+                    $("#table").html(table);
                 },
                 error: function(xhr, status, error) {
                     console.error('Errore durante la richiesta:', status, error);
-                    $("#response").html("Errore");
+                    $("#table").html("Errore");
                 }
             });            
             return false;

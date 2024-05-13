@@ -89,6 +89,8 @@ CREATE TABLE articoli_lista (
     FOREIGN KEY (id_prodotto) REFERENCES Prodotto(id_prodotto) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+-- Le GPUUUUUU!!!!!!
+
 CREATE TABLE Prodotto (
     id_prodotto VARCHAR(255) PRIMARY KEY, -- studiarsi una primarykey fatta bene che mi aiuti nella ricerca
     id_categoria INT NOT NULL, -- foreign key alla tabella che mi definisce la categoria (cpu, psu, ram, ecc.)
