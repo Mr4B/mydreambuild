@@ -1,6 +1,6 @@
 <?php
-include '..\..\db_connect.php';
-include 'common\auth.php';
+include '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'db_connect.php';
+include 'common' . DIRECTORY_SEPARATOR . 'auth.php';
 
 $conn = getConnection();
 
@@ -37,7 +37,7 @@ switch ($method) {
         switch($action) {
             case 'get_products':
                 // Ritorna tutti i prodotti
-                $query = "SELECT * FROM Prodotto;";
+                $query = "SELECT p.id_categoria, p.marca, p.modello, p.prezzo, i.immagine FROM Prodotto AS p, Immagini AS i WHERE p.id_immagine = i.id_immagine;";
                 break;
                 
             case 'get_byID':

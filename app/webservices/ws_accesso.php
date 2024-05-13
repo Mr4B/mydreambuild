@@ -1,6 +1,6 @@
 <?php
-include '..\..\db_connect.php';
-include 'common\auth.php';
+include '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'db_connect.php';
+include 'common' . DIRECTORY_SEPARATOR . 'auth.php';
 
 $conn = getConnection();
 
@@ -184,6 +184,9 @@ function verifyIfExists($user) {
     $stmt = $conn->prepare($query);
     $stmt->bind_param("s", $user['username']);
     $stmt->execute();
+    $result = $stmt->get_result();
+
+    // echo json_encode($stmt->affected_rows);
 
     if ($stmt->affected_rows > 0){
         echo json_encode(["Error" => "User already exists"]);
@@ -197,7 +200,7 @@ function addUser($data) {
 
     $query = "INSERT INTO Utente (username, password,  email, nome, cognome, ruolo) VALUES (?,?,?,?,?,?)";
     $stmt = $conn->prepare($query);
-    $stmt->bind_param("sssssi", $data['username'], $data['email'], $data['password'], $data['nome'], $data['cognome'], $data['ruolo']);
+    $stmt->bind_param("sssssi", $data['username'], $data['password'], $data['email'], $data['nome'], $data['cognome'], $data['ruolo']);
 
     // Esecuzione query
     $stmt->execute();

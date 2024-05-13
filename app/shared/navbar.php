@@ -30,9 +30,8 @@ class NavBar {
     
     public function getNavBar() {
         $html = 
-        "<script>console.log('Sono nella funzione della classe');</script>
-        <nav class='navbar navbar-expand-lg navbar-light bg-secondary mb-3'> <!--mb-[x] = margin-bottom-->
-        <div class='container'>
+        "<nav class='navbar navbar-expand-lg navbar-light bg-secondary mb-3'> <!--mb-[x] = margin-bottom-->
+        <div class='container-fluid'>
             <!--Burger-->
             <button class='navbar-toggler' type='button' 
             data-toggle='collapse' data-target='#nav-content'
@@ -44,22 +43,36 @@ class NavBar {
             <div class='collapse navbar-collapse' id='nav-content'>
                 <ul class='navbar-nav mx-auto'>
                     <li class='nav-item mr-sm-4'>
-                    <a class='nav-link' href='../main/home.php' title='Home'>Home</a>
+                        <a class='nav-link' href='../main/home.php' title='Home'>Home</a>
                     </li>
 
                     <!-- esempio dropdown // COMMENTATO
                     <li class='nav-item dropdown mr-sm-4'>
-                    <a class='nav-link dropdown-toggle' href='#' title='Contatti' id='utili' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>Servizi</a>
-                    <div class='dropdown-menu' aria-labelledby='utili'>
-                    <a class='dropdown-item' href='utili/link/link.html'>Link utili</a>
-                    <a class='dropdown-item' href='utili/info/info.html'>Info turistiche</a>
-                    </div>
+                        <a class='nav-link dropdown-toggle' href='#' title='Contatti' id='utili' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>Servizi</a>
+                        <div class='dropdown-menu' aria-labelledby='utili'>
+                            <a class='dropdown-item' href='utili/link/link.html'>Link utili</a>
+                            <a class='dropdown-item' href='utili/info/info.html'>Info turistiche</a>
+                        </div>
                     </li> -->
                     ";
+        if($this->role <= 2) {
+            $html.= "
+                    <li class='nav-item mr-sm-4'>
+                        <a class='nav-link' href='../product/gestione_prodotti.php'>Gestione prodotti</a>
+                    </li>
+                    ";
+        }
+        // Gestione profilo
         if($this->getLogin() === true) {
-            $html .= "<li class='nav-item mr-sm-4'>
-                        <a class='nav-link' href='../user/profilo.php' title='Profile'><img src='../img/login.png' alt='Omino stilizzato'> $this->username</a>
-                    </li>    ";
+            $html .= "               
+                    <li class='nav-item dropdown mr-sm-4'>
+                        <a class='nav-link dropdown-toggle' href='#' title='Contatti' id='utili' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><img src='../img/login.png' alt='Omino stilizzato' height=30 width=30></a>
+                        <div class='dropdown-menu' aria-labelledby='utili'>
+                            <a class='dropdown-item' href='../user/profilo.php' title='Profile'>Profilo</a>
+                            <a class='dropdown-item' href='../user/logout.php'>Logout</a>
+                        </div>
+                    </li> 
+                    ";
         } else {
             $html .="<li class='nav-item mr-sm-4'>
                     <a class='nav-link' href='../user/login.php' title='Accedi'>Accedi</a>

@@ -18,16 +18,25 @@ CREATE TABLE Ruolo (
     denominazione VARCHAR(255) NOT NULL
 );
 
+INSERT INTO Ruolo (id, denominazione) VALUES
+(1, 'admin'),
+(2, 'moderator'),
+(3, 'user'),
+(4, 'guest');
+
+
 -- [chiamata ajax che resituisce tutti gli articoli pubblicato = true e li mette in delle card, mostrando titolo e summary]
 CREATE TABLE Articolo (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
     pubblicato BOOLEAN NOT NULL,
     data_pubblicazione DATE DEFAULT NULL,
     titolo VARCHAR(255),
     summary VARCHAR(500),
     testo TEXT,
     id_redattore VARCHAR(255),
+    id_immagine INT,
     FOREIGN KEY (id_redattore) REFERENCES Utente(username) ON DELETE SET NULL ON UPDATE CASCADE
+    FOREIGN KEY (id_immagine) REFERENCES Immagini(id_immagine) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 CREATE TABLE articolo_tag (
@@ -49,24 +58,24 @@ CREATE TABLE componenti_tag (
 );
 
 CREATE TABLE Configurazione (
-    id INTEGER PRIMARY KEY AUTOINCREMENT, --autoincrement???
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
     denominazione VARCHAR(50),
-    descrizione TEXT DEFAULT 'La mia configurazione',
-    id_utente VARCHAR(20),
+    descrizione TEXT ,
+    id_utente VARCHAR(255),
     prezzo_totale DECIMAL(10,2) NOT NULL,
-    FOREIGN KEY (id_utente) REFERENCES Utente(username) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (id_utente) REFERENCES Utente(username) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE prodotti_configurazione (
     id_configurazione INT,
-    id_prodotto VARCHAR(9),
-    PRIMARY KEY(id_lista, id_articolo),
+    id_prodotto VARCHAR(255),
+    PRIMARY KEY(id_configurazione, id_prodotto),
     FOREIGN KEY (id_configurazione) REFERENCES Configurazione(id) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (id_articolo) REFERENCES Articolo(id_articolo) ON DELETE CASCADE ON UPDATE CASCADE
+    FOREIGN KEY (id_prodotto) REFERENCES Prodotto(id_prodotto) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE Lista (
-    id VARCHAR(255) PRIMARY KEY --INTEGER AUTOINCREMENT, -- composto da prima parte di email e numero lista
+    id INTEGER PRIMARY KEY AUTO_INCREMENT, -- composto da prima parte di email e numero lista
     denominazione VARCHAR(50),
     id_utente VARCHAR(20),
     FOREIGN KEY (id_utente) REFERENCES Utente(username) ON DELETE CASCADE ON UPDATE CASCADE
@@ -75,59 +84,60 @@ CREATE TABLE Lista (
 CREATE TABLE articoli_lista (
     id_lista INTEGER,
     id_prodotto VARCHAR(9),
-    PRIMARY KEY(id_lista, id_articolo),
+    PRIMARY KEY(id_lista, id_prodotto),
     FOREIGN KEY (id_lista) REFERENCES Lista(id) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (id_articolo) REFERENCES Articolo(id_articolo) ON DELETE CASCADE ON UPDATE CASCADE
+    FOREIGN KEY (id_prodotto) REFERENCES Prodotto(id_prodotto) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE Prodotto (
     id_prodotto VARCHAR(255) PRIMARY KEY, -- studiarsi una primarykey fatta bene che mi aiuti nella ricerca
-    id_categoria INT NOT NULL, --foreign key alla tabella che mi definisce la categoria (cpu, psu, ram, ecc.)
+    id_categoria INT NOT NULL, -- foreign key alla tabella che mi definisce la categoria (cpu, psu, ram, ecc.)
     marca VARCHAR(255) NOT NULL,
     modello VARCHAR(255) NOT NULL,
-    link VARCHAR(255), --amazon
+    link VARCHAR(255), -- amazon
     descrizione TEXT,
     prezzo DECIMAL(10,2) NOT NULL,
---cpu
+-- cpu
     c_frequenza_base DECIMAL(10,2) ,
     c_frequenza_boost DECIMAL(10,2),
     c_n_core INT,
     c_n_thread INT,
     c_consumo_energetico INT,
     c_dim_cache INT,
---motherboard
+-- motherboard
     m_formato VARCHAR(255),
     m_chipset VARCHAR(255),
     m_numero_slot_ram INT,
     m_tipologia_ram VARCHAR(255),
     m_numero_slot_pcie INT,
     m_version_pcie VARCHAR(255),
---ram
+-- ram
     r_dimensione INT,
-    r_velocita INT, --MHz
-    r_tipo VARCHAR(50), --ddrx
---archiviazione
+    r_velocita INT, -- MHz
+    r_tipo VARCHAR(50), -- ddrx
+-- archiviazione
     a_tipo_archiviazione VARCHAR(255),
     a_capacita_gb INT,
-    fattore_di_forma VARCHAR(255), --3,5 pollici, m.2, ecc. ANCHE PER LA PSU E CASE (atx)
+    fattore_di_forma VARCHAR(255), -- 3,5 pollici, m.2, ecc. ANCHE PER LA PSU E CASE (atx)
     a_velocita_rotazione INT,
     a_cache_mb INT,
-    a_interfaccia VARCHAR(255), --NVMe PCIe, sata 6 0 gestiti da client
+    a_interfaccia VARCHAR(255), -- NVMe PCIe, sata 6 0 gestiti da client
     a_velocita_lettura_mb_s INT,
     a_velocita_scrittura_mb_s INT,
---psu
+-- psu
     p_watt INT,
-    p_schema_alimentazione VARCHAR(255), --modulare, semi-modulare, ...
---Case
+    p_schema_alimentazione VARCHAR(255), -- modulare, semi-modulare, ...
+-- Case
     cs_colore VARCHAR(255),
     cs_pesi INT,
     cs_dimensioni VARCHAR(255),
     cs_finestra_laterale BOOLEAN,
---cooling
-    tipo_cooling INT, --1 liquido, 2 aria
-
+-- cooling
+    tipo_cooling INT, -- 1 liquido, 2 aria
+    id_immagine INT,
+    FOREIGN KEY (id_immagine) REFERENCES Immagini(id_immagine) ON DELETE SET NULL ON UPDATE CASCADE,
     FOREIGN KEY (id_categoria) REFERENCES Categoria(id) ON DELETE CASCADE ON UPDATE CASCADE
-    --i socket sono gestiti nella relazione n/n
+    -- i socket sono gestiti nella relazione n/n
 );
 
 CREATE TABLE Categoria (
@@ -135,10 +145,10 @@ CREATE TABLE Categoria (
     definizione VARCHAR(255) NOT NULL 
 );
 
-CREATE TABLE prodotto_Socket ( --tabella nn per collegare i socket compatibili con un prodotto
+CREATE TABLE prodotto_Socket ( -- tabella nn per collegare i socket compatibili con un prodotto
     id_prodotto VARCHAR(255),
     id_socket INT,
-    PRIMARY KEY(id_coolyng, id_socket),
+    PRIMARY KEY(id_prodotto, id_socket),
     FOREIGN KEY (id_prodotto) REFERENCES Prodotto(id_prodotto) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (id_socket) REFERENCES Socket(id_socket) ON DELETE CASCADE ON UPDATE CASCADE
 );
@@ -148,6 +158,12 @@ CREATE TABLE Socket (
     denominazione VARCHAR(255)
 );
 
+CREATE TABLE Immagini (
+    id_immagine INT AUTO_INCREMENT PRIMARY KEY,
+    titolo VARCHAR(255), -- posso salvare con main quelle principali e poi farci una query
+    dimensioni VARCHAR(50),
+    immagine BLOB
+);
 
 /*
 

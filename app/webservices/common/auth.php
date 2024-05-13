@@ -28,8 +28,8 @@ class TokenJWT {
 
     public static function decode($token) {
         // Libreria JWT è necessaria
-        require_once '../../../vendor/autoload.php'; // Assumi che la libreria sia caricata
-
+        require_once '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
+        
         try {
             // Decodifica il token JWT
             $payload = $jwt->decode($token, self::$secretKey, array(self::$algo));
@@ -42,8 +42,8 @@ class TokenJWT {
 
     public static function validate($token) {
         // Libreria JWT è necessaria
-        require_once '../../../vendor/autoload.php'; // Assumi che la libreria sia caricata
-
+        require_once '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
+        
         try {
             // Decodifica il token JWT
             $payload = $jwt->decode($token, self::$secretKey, array(self::$algo));
