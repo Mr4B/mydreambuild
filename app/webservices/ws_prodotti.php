@@ -183,6 +183,7 @@ switch ($method) {
             try {
                 // Gestione per l'inserimento dell'immagine
                 if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+                    // NON ENTRA QUI DENTRO
                     // Esegue l'inserimento dell'immagine nel database
                     $insertImageQuery = "INSERT INTO Immagini (titolo, dimensioni, immagine, tipo) VALUES (?, ?, ?, ?)";
                     $stmt = $conn->prepare($insertImageQuery);
@@ -198,7 +199,7 @@ switch ($method) {
                 switch($action) {
                     case 'post_cpu':
 
-                        $query = "INSERT INTO Prodotto (id_immagine, id_categoria, marca, modello, descrizione, prezzo, link, frequenza_base, c_frequenza_boost, c_n_core, c_n_thread, c_consumo_energetico, c_dim_cache) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                        $query = "INSERT INTO Prodotto (id_immagine, id_categoria, marca, modello, descrizione, prezzo, link, frequenza_base, c_frequenza_boost, c_n_core, c_n_thread, c_consumo_energetico, c_dim_cache) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                         $stmt = $conn->prepare($query);
                         $stmt->bind_param("iisssdsddiiii", $imageId, $data['id_categoria'], $data['marca'], $data['modello'], $data['descrizione'], $data['prezzo'], $data['link'], $data['frequenza_base'], $data['frequenza_boost'], $data['n_core'], $data['n_thread'], $data['consumo_energetico'], $data['dim_cache']);
                         
@@ -220,7 +221,7 @@ switch ($method) {
                 echo json_encode(["Success" => "Dati aggiunti con successo"]);
                 http_response_code(200);
                 exit();
-                
+
             } catch (Exception $e) {
                 // Rollback in caso di errore
                 $conn->rollback();
