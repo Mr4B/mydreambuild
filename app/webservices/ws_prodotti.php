@@ -1,4 +1,10 @@
 <?php
+/*  
+i per interi (integer)
+d per numeri con la virgola (double/decimal)
+s per stringhe (string)
+b per blob (binary large object) 
+*/
 include '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'db_connect.php';
 include 'common' . DIRECTORY_SEPARATOR . 'auth.php';
 
@@ -146,8 +152,9 @@ switch ($method) {
 
     case 'POST':
         // Recupero del payload (body of message)
-        $userRole = $gestioneJWT->decode($token)['ruolo'];
-        if($userRole === 'admin' || $userRole === 'moderator') {
+        $userRole = $gestioneJWT->decode($token);
+        // echo $userRole-> ruolo; funziona
+        if($userRole -> ruolo === '1' || $userRole-> ruolo === '2') {
             // Solo un autente autorizzato può accedere a questo codice
 
             $payload = file_get_contents('php://input');
@@ -167,31 +174,60 @@ switch ($method) {
             // Recupera il valore del parametro "action" dall'URL
             $action = isset($_GET['action']) ? $_GET['action'] : '';
 
-            switch($action) {
-                case 'post_cpu':
+            // $query = "INSERT INTO Prodotto (id_cateogoria, marca, modello, descrizione, prezzo, link, ) VALUES";
 
-                    $query = "";
-                    break;
+            // Gestione per l'inserimento dell'immagine
+        
+            $conn->begin_transaction();
 
-                case 'post_':
-                    $query = "";
-                    break;
+            try {
+                // Gestione per l'inserimento dell'immagine
+                if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+                    // Esegue l'inserimento dell'immagine nel database
+                    $insertImageQuery = "INSERT INTO Immagini (titolo, dimensioni, immagine, tipo) VALUES (?, ?, ?, ?)";
+                    $stmt = $conn->prepare($insertImageQuery);
+                    $nullValue = NULL;
+                    $stmt->bind_param("ssbs", $_FILES['image']['name'], $_FILES['image']['size'], file_get_contents($_FILES['image']['tmp_name']), $_FILES['image']['type']);
+                    $stmt->execute();
+                    $imageId = $conn->insert_id;
+                } else {
+                    // L'immagine non è stata caricata, quindi non viene inserita nella query
+                    $imageId = NULL;
+                }
 
-                default:
-                    $query = "SELECT * FROM Veicolo LIMIT 1;";
-                    break;
-            }
+                switch($action) {
+                    case 'post_cpu':
 
+                        $query = "INSERT INTO Prodotto (id_immagine, id_categoria, marca, modello, descrizione, prezzo, link, frequenza_base, c_frequenza_boost, c_n_core, c_n_thread, c_consumo_energetico, c_dim_cache) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                        $stmt = $conn->prepare($query);
+                        $stmt->bind_param("iisssdsddiiii", $imageId, $data['id_categoria'], $data['marca'], $data['modello'], $data['descrizione'], $data['prezzo'], $data['link'], $data['frequenza_base'], $data['frequenza_boost'], $data['n_core'], $data['n_thread'], $data['consumo_energetico'], $data['dim_cache']);
+                        
+                    
+                        break;
 
-            $result = $conn->query($query);
+                    case 'post_':
+                        $query = "";
+                        break;
 
-            if ($result){
-                echo json_encode($user);
+                    default:
+                        $query = "SELECT * FROM Veicolo LIMIT 1;";
+                        break;
+                }
+
+                $stmt->execute();
+                $conn->commit();
+
+                echo json_encode(["Success" => "Dati aggiunti con successo"]);
                 http_response_code(200);
-            }else {
-                echo json_encode(['errore' => $conn->error]);
-                http_response_code(400); //BAD REQUEST
-            }
+                exit();
+                
+            } catch (Exception $e) {
+                // Rollback in caso di errore
+                $conn->rollback();
+                echo json_encode(['errore' => $e->getMessage()]);
+                http_response_code(500);
+                exit();
+            }            
         } else {
             echo json_encode(['errore' => 'Unauthorized']);
             http_response_code(401); //BAD REQUEST

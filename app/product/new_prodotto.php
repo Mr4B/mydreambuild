@@ -17,8 +17,9 @@ $token = $_SESSION['jwt'];
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>    
     <script type="text/javascript">
         $(document).ready(function(){
+            var categorie = [];
             $.ajax({
-                // url: 'http://10.25.0.15/~s_bttkvn05l18d488f/capolavoro-main/app/webservices/ws_prodotti.php?action=get_products',
+                // url: 'http://10.25.0.15/~s_bttkvn05l18d488f/capolavoro-main/app/webservices/ws_prodotti.php?action=get_categorie',
                 url: 'http://localhost/mydreambuild/capolavoro/app/webservices/ws_prodotti.php?action=get_categorie',
                 type: 'GET',
                 dataType: 'json',
@@ -28,15 +29,75 @@ $token = $_SESSION['jwt'];
                 },
                 success: function(data) {
                     // console.log(data);
+                    categorie = data;
                     $.each(data, function(index, categoria) {
-                        $("#categoria").append('<option value="' + categoria.id + '" id= "' + categoria.definizione + '">' + categoria.definizione + '</option>');
+                        $("#categoria").append('<option value="' + categoria.definizione + '" id= "' + categoria.id + '">' + categoria.definizione + '</option>');
                     });
+                    // console.log(categorie);
                 },
                 error: function(xhr, status, error) {
                     console.error('Errore durante il recupero delle categorie: ', status, error);
                     $("#table").html("Errore");
                 }
             });            
+
+            $("#dati_prodotto").submit(function(){
+                event.preventDefault();
+                var denominazione = $("#categoria").val();
+                
+                
+                // Trova la categoria per denominazione
+                var categoriaTrovata = categorie.find(function(categoria) {
+                    return categoria.definizione === denominazione;
+                });
+                // {id: 3, definizione: 'RAM'} ritorna un oggetto di questo tipo
+                
+                var data = 
+                    {
+                        image: $("#image_prodotto").val(),
+                        id_categoria: categoriaTrovata.id,
+                        marca: $("#marca").val(),
+                        modello: $("#modello").val(),
+                        descrizione: $("#descrizione").val(),
+                        prezzo: $("#prezzo").val(),
+                        link: $("#link").val()
+                    };
+
+                switch (categoriaTrovata.definizione.toLowerCase()) {
+                    case 'cpu':
+                        data.frequenza_base = $("#frequenza_base").val();
+                        data.frequenza_boost = $("#frequenza_boost").val();
+                        data.n_core = $("#n_core").val();
+                        data.n_thread = $("#n_thread").val();
+                        data.consumo_energetico = $("#consumo_energetico").val();
+                        data.dim_cache = $("#dim_cache").val();
+                        // console.log(data);
+
+                        $.ajax({
+                            url: 'http://localhost/mydreambuild/capolavoro/app/webservices/ws_prodotti.php?action=post_cpu',
+                            // url: 'http://10.25.0.15/~s_bttkvn05l18d488f/capolavoro-main/app/webservices/ws_accesso.php?action=login',
+                            type: 'POST',
+                            dataType: 'json',
+                            headers: {
+                                'Accept': 'application/json',
+                                "Authorization": "Bearer <?php echo $token; ?>"
+                            },
+                            contentType: "application/json",
+                            data: JSON.stringify(data),
+                            success: function(result) {
+                                console.log(result);
+                                $("#response").html(result.Success);
+                            },
+                            error: function(xhr, status, error) {
+                                console.error('Errore durante la richiesta:', status, error);
+                                $("#response").html("Errore durante l'inserimento dei prodotti");
+                            }
+                        });
+                        break;
+                }
+
+            });
+            
             return false;
         });
     </script>
@@ -48,13 +109,17 @@ $token = $_SESSION['jwt'];
         <?php echo $navbar->getNavBar(); ?>
     </header>
     <h2>Registra un nuovo prodotto</h2>
-    <form id="dati_prodotto">
+    <form id="dati_prodotto" enctype="multipart/form-data">
     <label for="categoria">Categoria:</label>
         <select class="form-select mt-2" name="categoria" id="categoria">
             <option selected>-- seleziona categoria --</option>
         </select>
         <hr>
 
+        <!-- Inserimento immagine -->
+        <label for="image">Seleziona immagine:</label>
+        <input type="file" id="image" name="image">
+        <br>
         <label for="marca">Marca:</label><br>
         <input type="text" name="marca" id="marca" required>
         <br>
@@ -71,33 +136,80 @@ $token = $_SESSION['jwt'];
         <input type="text" name="link" id="link">
         <br>
         <!-- Campi di input per la CPU -->
-        <div id="campi_1" style="display: none;">
+        <div id="campi_cpu" style="display: none;">
             <!-- Sono da gestire i socket che sono in n/n 
                 <label for="socket_cpu">Socket:</label>
             <input type="text" name="socket_cpu" id="socket_cpu">
             <br> -->
             <label for="frequenza_base">Frequenza base:</label> <br>
-            <input type="text" name="frequenza_base" id="frequenza_base">
+            <input type="number" step="0.01" name="frequenza_base" id="frequenza_base">
             <br>
             <label for="frequenza_boost">Frequenza boost:</label> <br>
-            <input type="text" name="frequenza_boost" id="frequenza_boost">
+            <input type="number" step="0.01" name="frequenza_boost" id="frequenza_boost">
             <br>
             <label for="n_core">Numero core:</label> <br>
             <input type="number" name="n_core" id="n_core">
             <br>
             <label for="n_thread">Numero thread:</label> <br>
-            <input type="text" name="n_thread" id="n_thread">
+            <input type="number" name="n_thread" id="n_thread">
             <br>
-            <label for="consumo_energetico">Consumo energetico:</label> <br>
-            <input type="text" name="consumo_energetico" id="consumo_energetico">
+            <label for="consumo_energetico">Consumo energetico (W):</label> <br>
+            <input type="number" name="consumo_energetico" id="consumo_energetico">
             <br>
-            <label for="dim_cache">Dimensione cache:</label> <br>
-            <input type="text" name="dim_cache" id="dim_cache">
+            <label for="dim_cache">Dimensione cache (MB):</label> <br>
+            <input type="number" name="dim_cache" id="dim_cache">
+            <br>
+        </div>
+        <!-- Campi di input per la RAM -->
+        <div id="campi_ram" style="display: none;">
+            <label for="dimensione">Dimensione (GB):</label> <br>
+            <input type="text" name="dimensione" id="dimensione">
+            <br>
+            <label for="velocita">Velocità (MHz):</label> <br>
+            <input type="text" name="velocita" id="velocita">
+            <br>
+            <label for="tipo">Tipologia:</label> <br>
+            <input type="text" name="tipo" id="tipo">
+            <br>
+        </div>
+        <!-- Campi di input per la GPU -->
+        <div id="campi_gpu" style="display: none;">
+            <label for="memoria">Memoria:</label> <br>
+            <input type="text" name="memoria" id="memoria">
+            <br>
+            <label for="tipo_memoria">Tipologia memoria:</label> <br>
+            <input type="text" name="tipo_memoria" id="tipo_memoria">
+            <br>
+            <label for="velocita">Velocità:</label> <br>
+            <input type="text" name="velocita" id="velocita">
+            <br>
+            <label for="dimensioni">Dimensioni:</label> <br>
+            <input type="text" name="dimensioni" id="dimensioni">
+            <br>
+        </div>
+        <!-- Campi di input per la scheda madre -->
+        <div id="campi_scheda madre" style="display: none;">
+            <label for="formato">Formato:</label> <br>
+            <input type="text" name="formato" id="formato">
+            <br>
+            <label for="chipset">Chipset:</label> <br>
+            <input type="text" name="chipset" id="chipset">
+            <br>
+            <label for="n_ram">Slot Ram:</label> <br>
+            <input type="number" name="n_ram" id="n_ram">
+            <br>
+            <label for="tipo_ram">Tipologia ram:</label> <br>
+            <input type="text" name="tipo_ram" id="tipo_ram">
+            <br>
+            <label for="pcie">Versione PCIe:</label> <br>
+            <input type="text" name="pcie" id="pcie">
             <br>
         </div>
 
+        <br>
+        <input type="submit" id="submit" name="submit" class="btn btn-outline-info" value="Inserisci prodotto" disabled>
     </form>
-
+    <div id="response"></div>
 </div>
 <script>
     // Funzione per mostrare i campi di input in base alla categoria selezionata
@@ -109,11 +221,27 @@ $token = $_SESSION['jwt'];
         campi.forEach(function(campo) {
             campo.style.display = "none";
         });
+        // Prende il bottone per disabilitarlo se non c'è nessuna categoria
+        const submitButton = $("#submit");
         // Mostra solo i campi di input per la categoria selezionata
         var campiCategoria = document.getElementById("campi_" + categoria.toLowerCase());
         if (campiCategoria) {
             campiCategoria.style.display = "block";
+            submitButton.prop("disabled", false);
+        } else {
+            submitButton.prop("disabled", true);
         }
+
+        // Ripulisce i campi comuni
+        var inputId = ["marca", "modello", "descrizione", "prezzo", "link"];
+
+        inputId.forEach(function(id) {
+        var input = document.getElementById(id);
+        if (input) {
+            input.value = "";
+        }
+    });
+
     });
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>

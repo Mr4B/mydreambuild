@@ -32,7 +32,7 @@ class NavBar {
         $html = 
         "<nav class='navbar navbar-expand-lg navbar-light bg-info mb-3'>
           <div class='container-fluid'>
-            <a class='navbar-brand' href='../main/home.php'>Home</a>
+            <a class='nav-link navbar-brand' href='../main/home.php'>Home</a>
             <button class='navbar-toggler' type='button' data-bs-toggle='collapse' data-bs-target='#nav-content' aria-controls='nav-content' aria-expanded='false' aria-label='Toggle navigation'>
               <span class='navbar-toggler-icon'></span>
             </button>
@@ -43,7 +43,7 @@ class NavBar {
       if ($this->role <= 2) {
         $html .= "
                   <li class='nav-item dropdown'>
-                    <a class='nav-link dropdown-toggle' href='#' id='gestione' data-bs-toggle='dropdown' aria-expanded='false'>Gestione sito</a>
+                    <a class='nav-link navbar-brand dropdown-toggle' href='#' id='gestione' data-bs-toggle='dropdown' aria-expanded='false'>Gestione sito</a>
                     <ul class='dropdown-menu dropdown-menu-start' aria-labelledby='gestione'>
                       <li><a class='dropdown-item' href='../product/gestione_prodotti.php'>Prodotti</a></li>
                       <li><a class='dropdown-item' href='../articles/gestione_articoli.php'>Articoli</a></li>
@@ -54,7 +54,7 @@ class NavBar {
       if ($this->getLogin() === true) {
         $html .= "
                   <li class='nav-item dropdown'>
-                    <a class='nav-link dropdown-toggle' href='#' id='profilo' data-bs-toggle='dropdown' aria-expanded='false'>
+                    <a class='nav-link navbar-brand dropdown-toggle' href='#' id='profilo' data-bs-toggle='dropdown' aria-expanded='false'>
                       <img src='../img/login.png' alt='Omino stilizzato' height='30' width='30'>
                     </a>
                     <ul class='dropdown-menu dropdown-menu-start' aria-labelledby='profilo'>
@@ -65,7 +65,7 @@ class NavBar {
       } else {
         $html .= "
                   <li class='nav-item'>
-                    <a class='nav-link' href='../user/login.php'>Accedi</a>
+                    <a class='nav-link navbar-brand' href='../user/login.php'>Accedi</a>
                   </li>";
       }
   

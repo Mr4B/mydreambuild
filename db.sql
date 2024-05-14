@@ -92,7 +92,7 @@ CREATE TABLE articoli_lista (
 -- Le GPUUUUUU!!!!!!
 
 CREATE TABLE Prodotto (
-    id_prodotto VARCHAR(255) PRIMARY KEY, -- studiarsi una primarykey fatta bene che mi aiuti nella ricerca
+    id_prodotto INT PRIMARY KEY AUTO_INCREMENT, -- studiarsi una primarykey fatta bene che mi aiuti nella ricerca
     id_categoria INT NOT NULL, -- foreign key alla tabella che mi definisce la categoria (cpu, psu, ram, ecc.)
     marca VARCHAR(255) NOT NULL,
     modello VARCHAR(255) NOT NULL,
@@ -114,7 +114,7 @@ CREATE TABLE Prodotto (
     m_chipset VARCHAR(255),
     m_numero_slot_ram INT,
     m_tipologia_ram VARCHAR(255),
-    m_numero_slot_pcie INT,
+    m_numero_slot_pcie INT, -- elimina
     m_version_pcie VARCHAR(255),
 -- ram
     r_dimensione INT,
@@ -145,18 +145,52 @@ CREATE TABLE Prodotto (
     -- i socket sono gestiti nella relazione n/n
 );
 
+ALTER TABLE `mydreambuild`.`prodotto` 
+CHANGE COLUMN `id_prodotto` `id_prodotto` INT NOT NULL AUTO_INCREMENT ;
+
+
 CREATE TABLE Categoria (
     id INT PRIMARY KEY AUTO_INCREMENT,
     definizione VARCHAR(255) NOT NULL 
 );
 
+/* INSERT INTO Categoria (definizione) VALUES ('RAM');
+INSERT INTO Categoria (definizione) VALUES ('GPU');
+INSERT INTO Categoria (definizione) VALUES ('CPU');
+INSERT INTO Categoria (definizione) VALUES ('Scheda Madre');
+INSERT INTO Categoria (definizione) VALUES ('Alimentatore');
+INSERT INTO Categoria (definizione) VALUES ('Hard Disk');
+INSERT INTO Categoria (definizione) VALUES ('SSD');
+INSERT INTO Categoria (definizione) VALUES ('Dissipatore');
+INSERT INTO Categoria (definizione) VALUES ('Case');
+INSERT INTO Categoria (definizione) VALUES ('Scheda Audio');
+INSERT INTO Categoria (definizione) VALUES ('Scheda di Rete');
+INSERT INTO Categoria (definizione) VALUES ('Lettore DVD/Blu-ray');
+INSERT INTO Categoria (definizione) VALUES ('Monitor');
+INSERT INTO Categoria (definizione) VALUES ('Tastiera');
+INSERT INTO Categoria (definizione) VALUES ('Mouse');
+INSERT INTO Categoria (definizione) VALUES ('Ventole');
+ */
+
 CREATE TABLE prodotto_Socket ( -- tabella nn per collegare i socket compatibili con un prodotto
-    id_prodotto VARCHAR(255),
+    id_prodotto INT,
     id_socket INT,
     PRIMARY KEY(id_prodotto, id_socket),
     FOREIGN KEY (id_prodotto) REFERENCES Prodotto(id_prodotto) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (id_socket) REFERENCES Socket(id_socket) ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+ALTER TABLE `mydreambuild`.`prodotto_socket` 
+DROP FOREIGN KEY `prodotto_socket_fkprodotto`;
+ALTER TABLE `mydreambuild`.`prodotto_socket` 
+CHANGE COLUMN `id_prodotto` `id_prodotto` INT NOT NULL ;
+ALTER TABLE `mydreambuild`.`prodotto_socket` 
+ADD CONSTRAINT `prodotto_socket_fkprodotto`
+  FOREIGN KEY (`id_prodotto`)
+  REFERENCES `mydreambuild`.`prodotto` (`id_prodotto`)
+  ON DELETE CASCADE
+  ON UPDATE CASCADE;
+
 
 CREATE TABLE Socket (
     id_socket INT PRIMARY KEY AUTO_INCREMENT,
@@ -167,8 +201,10 @@ CREATE TABLE Immagini (
     id_immagine INT AUTO_INCREMENT PRIMARY KEY,
     titolo VARCHAR(255), -- posso salvare con main quelle principali e poi farci una query
     dimensioni VARCHAR(50),
-    immagine BLOB
+    immagine BLOB,
+    tipo VARCHAR(45) -- jpeg, png, ecc..
 );
+
 
 /*
 

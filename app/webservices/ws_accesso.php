@@ -4,6 +4,10 @@ include 'common' . DIRECTORY_SEPARATOR . 'auth.php';
 
 $conn = getConnection();
 
+if ($conn === false) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
 //Recupera il metodo richiesto
 $method = $_SERVER['REQUEST_METHOD'];
 
@@ -46,7 +50,7 @@ switch ($method) {
                 break;
             
             case 'user':
-                $query = "SELECT * FROM Utente WHERE email = ?;";
+                $query = "SELECT * FROM Utente WHERE username = ?;";
                 break;
 
             default:
@@ -223,6 +227,13 @@ function login($username, $password) {
 
     $query = "SELECT * FROM Utente WHERE username = ? AND password = ?";
     $stmt = $conn->prepare($query);
+
+    if (!$stmt) {
+        echo json_encode(['errore' => 'Errore nella preparazione della query: ' . $conn->error]);
+        http_response_code(500);
+        exit();
+    }
+
     $stmt->bind_param("ss", $username, $password);
     $stmt->execute();
     $result = $stmt->get_result();
