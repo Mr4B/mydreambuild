@@ -47,10 +47,9 @@ switch ($method) {
         switch($action) {
             case 'get_products':
                 // Ritorna tutti i prodotti
-                $query = "SELECT p.id_prodotto, p.id_categoria, p.marca, p.modello, p.prezzo, i.immagine 
-                FROM Prodotto AS p 
-                LEFT JOIN Immagini AS i ON p.id_immagine = i.id_immagine
-                ORDER BY p.id_categoria;";
+                $query = "SELECT id_prodotto, id_categoria, marca, modello, prezzo, id_immagine 
+                FROM Prodotto
+                ORDER BY id_categoria;";
                 break;
                 
             case 'get_byID':
@@ -177,31 +176,16 @@ switch ($method) {
             // $query = "INSERT INTO Prodotto (id_cateogoria, marca, modello, descrizione, prezzo, link, ) VALUES";
 
             // Gestione per l'inserimento dell'immagine
-        
+            // echo $data;
             $conn->begin_transaction();
 
             try {
-                // Gestione per l'inserimento dell'immagine
-                if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-                    // NON ENTRA QUI DENTRO
-                    // Esegue l'inserimento dell'immagine nel database
-                    $insertImageQuery = "INSERT INTO Immagini (titolo, dimensioni, immagine, tipo) VALUES (?, ?, ?, ?)";
-                    $stmt = $conn->prepare($insertImageQuery);
-                    $nullValue = NULL;
-                    $stmt->bind_param("ssbs", $_FILES['image']['name'], $_FILES['image']['size'], file_get_contents($_FILES['image']['tmp_name']), $_FILES['image']['type']);
-                    $stmt->execute();
-                    $imageId = $conn->insert_id;
-                } else {
-                    // L'immagine non è stata caricata, quindi non viene inserita nella query
-                    $imageId = NULL;
-                }
-
                 switch($action) {
                     case 'post_cpu':
 
                         $query = "INSERT INTO Prodotto (id_immagine, id_categoria, marca, modello, descrizione, prezzo, link, frequenza_base, c_frequenza_boost, c_n_core, c_n_thread, c_consumo_energetico, c_dim_cache) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                         $stmt = $conn->prepare($query);
-                        $stmt->bind_param("iisssdsddiiii", $imageId, $data['id_categoria'], $data['marca'], $data['modello'], $data['descrizione'], $data['prezzo'], $data['link'], $data['frequenza_base'], $data['frequenza_boost'], $data['n_core'], $data['n_thread'], $data['consumo_energetico'], $data['dim_cache']);
+                        $stmt->bind_param("iisssdsddiiii", $data['id_immagine'], $data['id_categoria'], $data['marca'], $data['modello'], $data['descrizione'], $data['prezzo'], $data['link'], $data['frequenza_base'], $data['frequenza_boost'], $data['n_core'], $data['n_thread'], $data['consumo_energetico'], $data['dim_cache']);
                         
                     
                         break;
@@ -211,7 +195,7 @@ switch ($method) {
                         break;
 
                     default:
-                        $query = "SELECT * FROM Veicolo LIMIT 1;";
+                        throw new Exception("Azione non supportata");
                         break;
                 }
 
@@ -225,7 +209,7 @@ switch ($method) {
             } catch (Exception $e) {
                 // Rollback in caso di errore
                 $conn->rollback();
-                echo json_encode(['errore' => $e->getMessage()]);
+                echo json_encode(['Errore' => $e->getMessage()]);
                 http_response_code(500);
                 exit();
             }            

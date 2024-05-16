@@ -1,0 +1,29 @@
+.container2 {
+    justify-content: center;
+    align-items: center;
+    width: 70%;
+    margin-bottom: 10%;
+    margin: 0 auto;
+}
+
+.carosello {
+    width: 100%;
+}
+
+.carousel-description {
+    color: #FFFFFF;
+    text-decoration: underline;
+}
+
+.carousel-description:hover {
+    color: #FFFFFF;
+}
+
+.carousel-description:active {
+    color: #FFFFFF;
+}
+/* 
+body {
+    background-color: #d4d4d4;
+}
+ */

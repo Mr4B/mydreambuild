@@ -1,6 +1,5 @@
-<!--Barra di navigazione-->
 <?php 
-
+// Barra di navigazione
 class NavBar {
     private $logedIn = false;
     private $role = 4;

@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once('../shared/navbar.php');   
+include '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'db_connect.php';
 $navbar = new NavBar();
 $navbar->setLogin($_SESSION['username'], $_SESSION['ruolo']);
 $token = $_SESSION['jwt'];
@@ -34,8 +35,9 @@ $token = $_SESSION['jwt'];
                     $.each(data, function(index, product) {
                         table += '<tr>';
                         table += '<td>' + product.id_prodotto + '</td>';
-                        if (product.immagine) {
-                            table += '<td><img src="' + product.immagine + '" alt="Immagine Prodotto" width="40" height="40"></td>';
+                        if (product.id_immagine) {
+                            // table += '<td>http://localhost/mydreambuild/capolavoro/app/webservices/ws_immagini.php?id=' + product.id_immagine + '</td>';
+                            // NON SO COME RIPRENDERE LE IMMAGINI                            
                         } else {
                             table += '<td>No</td>';
                         }
@@ -53,6 +55,7 @@ $token = $_SESSION['jwt'];
                     $("#table").html("Errore");
                 }
             });            
+
             return false;
         });
     </script>

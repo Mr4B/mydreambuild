@@ -28,16 +28,20 @@ INSERT INTO Ruolo (id, denominazione) VALUES
 -- [chiamata ajax che resituisce tutti gli articoli pubblicato = true e li mette in delle card, mostrando titolo e summary]
 CREATE TABLE Articolo (
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
-    pubblicato BOOLEAN NOT NULL,
+    pubblicato BOOLEAN DEFAULT FALSE,
     data_pubblicazione DATE DEFAULT NULL,
     titolo VARCHAR(255),
     summary VARCHAR(500),
     testo TEXT,
     id_redattore VARCHAR(255),
     id_immagine INT,
-    FOREIGN KEY (id_redattore) REFERENCES Utente(username) ON DELETE SET NULL ON UPDATE CASCADE
+    FOREIGN KEY (id_redattore) REFERENCES Utente(username) ON DELETE SET NULL ON UPDATE CASCADE,
     FOREIGN KEY (id_immagine) REFERENCES Immagini(id_immagine) ON DELETE SET NULL ON UPDATE CASCADE
 );
+
+INSERT INTO `mydreambuild`.`articolo` (`data_pubblicazione`, `titolo`, `summary`, `testo`, `id_redattore`) VALUES ('2024/05/16', 'Nvidia RTX 4090 due volte piu’ veloce della 3090', 'La RTX 4090 dopo gli ultimi leak, sembra essere potenzialmente due volte piu’ veloce di una RTX 3090', 'La futura top di gamma di casa Nvidia, secondo i leak da parte dell’utente di twitter kopite7kimi, includerà 126 multiprocessori di streaming, per un totale di 16128 core CUDA . È molto meno di quanto si dicesse in precedenza 140-142. Ricordiamo che la GPU AD102 completa ne ha 144, il che significa che 2304 core saranno disabilitati. Probabilmente i core disabilitati saranno disponibili nella futura RTX 4090 Ti.', 'kevin');
+INSERT INTO `mydreambuild`.`articolo` (`pubblicato`, `data_pubblicazione`, `titolo`, `summary`, `testo`, `id_redattore`) VALUES ('1', '2024-05-01', 'Leak: RTX 3070Ti 16GB', 'Pare sia in arrivo una nuova 3070Ti con il doppio della memoria', 'Come riportato anche da Videocardz.com, Nvidia ha pronta una nuova versione della RTX 3070Ti con 16GB di memoria. Questa notizia sembra essere confermata dal fatto che due case produttrici di schede video, ASUS e Gigabyte, hanno presentato all’ufficio di regolamentazione della commissione economica euroasiatica, i nuovi modelli di RTX 3070Ti 16GB. Si era gia’ parlato di una possibile data di uscita di questa scheda per l’11 gennaio, ma ovviamente e’ stata posticipata. In realta’ una 3070Ti 16GB era gia’ stata presentata da parte di Gigabyte alla EEC il dicembre scorso. Questo nuovo leak almeno per Gigabyte si reiferisce quindi ad un aggiornamento di nuovi modelli di 3070Ti 16GB.', 'kevin');
+
 
 CREATE TABLE articolo_tag (
     id_articolo INTEGER,
@@ -200,10 +204,14 @@ CREATE TABLE Socket (
 CREATE TABLE Immagini (
     id_immagine INT AUTO_INCREMENT PRIMARY KEY,
     titolo VARCHAR(255), -- posso salvare con main quelle principali e poi farci una query
-    dimensioni VARCHAR(50),
+    dimensioni INT,
     immagine BLOB,
     tipo VARCHAR(45) -- jpeg, png, ecc..
 );
+
+ALTER TABLE `mydreambuild`.`immagini` 
+CHANGE COLUMN `dimensioni` `dimensioni` INT NULL DEFAULT NULL ;
+
 
 
 /*

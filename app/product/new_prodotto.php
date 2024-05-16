@@ -13,13 +13,11 @@ $token = $_SESSION['jwt'];
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nuovo prodotto</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-    <!-- Script jQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>    
     <script type="text/javascript">
         $(document).ready(function(){
             var categorie = [];
             $.ajax({
-                // url: 'http://10.25.0.15/~s_bttkvn05l18d488f/capolavoro-main/app/webservices/ws_prodotti.php?action=get_categorie',
                 url: 'http://localhost/mydreambuild/capolavoro/app/webservices/ws_prodotti.php?action=get_categorie',
                 type: 'GET',
                 dataType: 'json',
@@ -28,12 +26,10 @@ $token = $_SESSION['jwt'];
                     'Authorization': 'Bearer <?php echo $token; ?>'
                 },
                 success: function(data) {
-                    // console.log(data);
                     categorie = data;
                     $.each(data, function(index, categoria) {
                         $("#categoria").append('<option value="' + categoria.definizione + '" id= "' + categoria.id + '">' + categoria.definizione + '</option>');
                     });
-                    // console.log(categorie);
                 },
                 error: function(xhr, status, error) {
                     console.error('Errore durante il recupero delle categorie: ', status, error);
@@ -41,27 +37,26 @@ $token = $_SESSION['jwt'];
                 }
             });            
 
-            $("#dati_prodotto").submit(function(){
+            $("#dati_prodotto").submit(function(event){
                 event.preventDefault();
                 var denominazione = $("#categoria").val();
                 
-                
-                // Trova la categoria per denominazione
                 var categoriaTrovata = categorie.find(function(categoria) {
                     return categoria.definizione === denominazione;
                 });
-                // {id: 3, definizione: 'RAM'} ritorna un oggetto di questo tipo
-                
-                var data = 
-                    {
-                        image: $("#image_prodotto").val(),
-                        id_categoria: categoriaTrovata.id,
-                        marca: $("#marca").val(),
-                        modello: $("#modello").val(),
-                        descrizione: $("#descrizione").val(),
-                        prezzo: $("#prezzo").val(),
-                        link: $("#link").val()
-                    };
+
+                var data = {
+                    id_categoria: categoriaTrovata.id,
+                    marca: $("#marca").val(),
+                    modello: $("#modello").val(),
+                    descrizione: $("#descrizione").val(),
+                    prezzo: $("#prezzo").val(),
+                    link: $("#link").val()
+                };
+
+                // Cambia l'url al webservices desiderato
+                var actionUrl = 'http://localhost/mydreambuild/capolavoro/app/webservices/ws_prodotti.php?action=';
+
 
                 switch (categoriaTrovata.definizione.toLowerCase()) {
                     case 'cpu':
@@ -71,52 +66,86 @@ $token = $_SESSION['jwt'];
                         data.n_thread = $("#n_thread").val();
                         data.consumo_energetico = $("#consumo_energetico").val();
                         data.dim_cache = $("#dim_cache").val();
-                        // console.log(data);
-
-                        $.ajax({
-                            url: 'http://localhost/mydreambuild/capolavoro/app/webservices/ws_prodotti.php?action=post_cpu',
-                            // url: 'http://10.25.0.15/~s_bttkvn05l18d488f/capolavoro-main/app/webservices/ws_accesso.php?action=login',
-                            type: 'POST',
-                            dataType: 'json',
-                            headers: {
-                                'Accept': 'application/json',
-                                "Authorization": "Bearer <?php echo $token; ?>"
-                            },
-                            contentType: "application/json",
-                            data: JSON.stringify(data),
-                            success: function(result) {
-                                console.log(result);
-                                $("#response").html(result.Success);
-                            },
-                            error: function(xhr, status, error) {
-                                console.error('Errore durante la richiesta:', status, error);
-                                $("#response").html("Errore durante l'inserimento dei prodotti");
-                            }
-                        });
+                        actionUrl += 'post_cpu';
                         break;
                 }
 
+                var imageFile = $('#image')[0].files[0];
+
+                if (imageFile) {
+                    var formData = new FormData();
+                    formData.append('image', imageFile);
+
+                    $.ajax({
+                        url: 'http://localhost/mydreambuild/capolavoro/app/webservices/ws_immagini.php',
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        headers: {
+                            "Authorization": "Bearer <?php echo $token; ?>"
+                        },
+                        success: function(response) {
+                            if (response.id_immagine) {
+                                data.id_immagine = response.id_immagine;
+                                console.log(data);
+                                inviaProdotto(data);
+                            } else {
+                                console.error('Errore durante il caricamento dell\'immagine:', response.errore);
+                                $("#response").html("Errore durante il caricamento dell'immagine");
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Errore durante il caricamento dell\'immagine:', status, error);
+                            $("#response").html("Errore durante il caricamento dell'immagine");
+                        }
+                    });
+                } else {
+                    data.id_immagine = null;
+                    inviaProdotto(data);
+                }
+
+                function inviaProdotto(data) {
+
+                    $.ajax({
+                        url: actionUrl,
+                        type: 'POST',
+                        dataType: 'json',
+                        headers: {
+                            'Accept': 'application/json',
+                            "Authorization": "Bearer <?php echo $token; ?>"
+                        },
+                        contentType: "application/json",
+                        data: JSON.stringify(data),
+                        success: function(result) {
+                            console.log(result);
+                            $("#response").html(result.Success);
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Errore durante l\'inserimento del prodotto:', status, error);
+                            $("#response").html("Errore durante l'inserimento del prodotto");
+                        }
+                    });
+                }
             });
-            
+
             return false;
         });
     </script>
 </head>
 <body>
 <div class="container-fluid">
-
-    <header id="header" class role="banner">
+    <header id="header" role="banner">
         <?php echo $navbar->getNavBar(); ?>
     </header>
     <h2>Registra un nuovo prodotto</h2>
     <form id="dati_prodotto" enctype="multipart/form-data">
-    <label for="categoria">Categoria:</label>
+        <label for="categoria">Categoria:</label>
         <select class="form-select mt-2" name="categoria" id="categoria">
             <option selected>-- seleziona categoria --</option>
         </select>
         <hr>
 
-        <!-- Inserimento immagine -->
         <label for="image">Seleziona immagine:</label>
         <input type="file" id="image" name="image">
         <br>
@@ -135,12 +164,8 @@ $token = $_SESSION['jwt'];
         <label for="link">Link d'acquisto:</label><br>
         <input type="text" name="link" id="link">
         <br>
-        <!-- Campi di input per la CPU -->
+
         <div id="campi_cpu" style="display: none;">
-            <!-- Sono da gestire i socket che sono in n/n 
-                <label for="socket_cpu">Socket:</label>
-            <input type="text" name="socket_cpu" id="socket_cpu">
-            <br> -->
             <label for="frequenza_base">Frequenza base:</label> <br>
             <input type="number" step="0.01" name="frequenza_base" id="frequenza_base">
             <br>
@@ -160,7 +185,7 @@ $token = $_SESSION['jwt'];
             <input type="number" name="dim_cache" id="dim_cache">
             <br>
         </div>
-        <!-- Campi di input per la RAM -->
+
         <div id="campi_ram" style="display: none;">
             <label for="dimensione">Dimensione (GB):</label> <br>
             <input type="text" name="dimensione" id="dimensione">
@@ -172,7 +197,7 @@ $token = $_SESSION['jwt'];
             <input type="text" name="tipo" id="tipo">
             <br>
         </div>
-        <!-- Campi di input per la GPU -->
+
         <div id="campi_gpu" style="display: none;">
             <label for="memoria">Memoria:</label> <br>
             <input type="text" name="memoria" id="memoria">
@@ -187,8 +212,8 @@ $token = $_SESSION['jwt'];
             <input type="text" name="dimensioni" id="dimensioni">
             <br>
         </div>
-        <!-- Campi di input per la scheda madre -->
-        <div id="campi_scheda madre" style="display: none;">
+
+        <div id="campi_scheda_madre" style="display: none;">
             <label for="formato">Formato:</label> <br>
             <input type="text" name="formato" id="formato">
             <br>
@@ -212,18 +237,16 @@ $token = $_SESSION['jwt'];
     <div id="response"></div>
 </div>
 <script>
-    // Funzione per mostrare i campi di input in base alla categoria selezionata
     document.getElementById("categoria").addEventListener("change", function() {
         var categoria = this.value;
-        // console.log(categoria);
-        // Nascondi tutti i campi di input
+
         var campi = document.querySelectorAll("[id^='campi_']");
         campi.forEach(function(campo) {
             campo.style.display = "none";
         });
-        // Prende il bottone per disabilitarlo se non c'è nessuna categoria
+
         const submitButton = $("#submit");
-        // Mostra solo i campi di input per la categoria selezionata
+
         var campiCategoria = document.getElementById("campi_" + categoria.toLowerCase());
         if (campiCategoria) {
             campiCategoria.style.display = "block";
@@ -232,16 +255,13 @@ $token = $_SESSION['jwt'];
             submitButton.prop("disabled", true);
         }
 
-        // Ripulisce i campi comuni
         var inputId = ["marca", "modello", "descrizione", "prezzo", "link"];
-
         inputId.forEach(function(id) {
-        var input = document.getElementById(id);
-        if (input) {
-            input.value = "";
-        }
-    });
-
+            var input = document.getElementById(id);
+            if (input) {
+                input.value = "";
+            }
+        });
     });
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
