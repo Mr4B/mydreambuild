@@ -19,6 +19,7 @@ $token = $_SESSION['jwt'];
             var categorie = [];
             $.ajax({
                 url: 'http://localhost/mydreambuild/capolavoro/app/webservices/ws_prodotti.php?action=get_categorie',
+                // url: 'http://10.25.0.15/~s_bttkvn05l18d488f/capolavoro-main/app/webservices/ws_prodotti.php?action=get_categorie',
                 type: 'GET',
                 dataType: 'json',
                 headers: {
@@ -56,6 +57,7 @@ $token = $_SESSION['jwt'];
 
                 // Cambia l'url al webservices desiderato
                 var actionUrl = 'http://localhost/mydreambuild/capolavoro/app/webservices/ws_prodotti.php?action=';
+                // var actionUrl = 'http://10.25.0.15/~s_bttkvn05l18d488f/capolavoro-main/app/webservices/ws_prodotti.php?action=';
 
 
                 switch (categoriaTrovata.definizione.toLowerCase()) {
@@ -67,6 +69,7 @@ $token = $_SESSION['jwt'];
                         data.consumo_energetico = $("#consumo_energetico").val();
                         data.dim_cache = $("#dim_cache").val();
                         actionUrl += 'post_cpu';
+                        console.log(actionUrl);
                         break;
                 }
 
@@ -78,6 +81,7 @@ $token = $_SESSION['jwt'];
 
                     $.ajax({
                         url: 'http://localhost/mydreambuild/capolavoro/app/webservices/ws_immagini.php',
+                        // url: 'http://10.25.0.15/~s_bttkvn05l18d488f/capolavoro-main/app/webservices/ws_immagini.php',
                         type: 'POST',
                         data: formData,
                         processData: false,
@@ -88,7 +92,7 @@ $token = $_SESSION['jwt'];
                         success: function(response) {
                             if (response.id_immagine) {
                                 data.id_immagine = response.id_immagine;
-                                console.log(data);
+                                // console.log(data);
                                 inviaProdotto(data);
                             } else {
                                 console.error('Errore durante il caricamento dell\'immagine:', response.errore);
@@ -147,7 +151,7 @@ $token = $_SESSION['jwt'];
         <hr>
 
         <label for="image">Seleziona immagine:</label>
-        <input type="file" id="image" name="image">
+        <input type="file" id="image" name="image" accept="image/*">
         <br>
         <label for="marca">Marca:</label><br>
         <input type="text" name="marca" id="marca" required>

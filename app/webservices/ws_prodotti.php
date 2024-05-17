@@ -173,51 +173,45 @@ switch ($method) {
             // Recupera il valore del parametro "action" dall'URL
             $action = isset($_GET['action']) ? $_GET['action'] : '';
 
-            // $query = "INSERT INTO Prodotto (id_cateogoria, marca, modello, descrizione, prezzo, link, ) VALUES";
-
             // Gestione per l'inserimento dell'immagine
             // echo $data;
-            $conn->begin_transaction();
+            // $conn->begin_transaction();
 
-            try {
-                switch($action) {
-                    case 'post_cpu':
+            // try {
+            switch($action) {
+                case 'post_cpu':
 
-                        $query = "INSERT INTO Prodotto (id_immagine, id_categoria, marca, modello, descrizione, prezzo, link, frequenza_base, c_frequenza_boost, c_n_core, c_n_thread, c_consumo_energetico, c_dim_cache) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                        $stmt = $conn->prepare($query);
-                        $stmt->bind_param("iisssdsddiiii", $data['id_immagine'], $data['id_categoria'], $data['marca'], $data['modello'], $data['descrizione'], $data['prezzo'], $data['link'], $data['frequenza_base'], $data['frequenza_boost'], $data['n_core'], $data['n_thread'], $data['consumo_energetico'], $data['dim_cache']);
-                        
-                    
-                        break;
+                    $query = "INSERT INTO Prodotto (id_immagine, id_categoria, marca, modello, descrizione, prezzo, link, frequenza_base, c_frequenza_boost, c_n_core, c_n_thread, c_consumo_energetico, c_dim_cache) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    $stmt = $conn->prepare($query);
+                    $stmt->bind_param("iisssdsddiiii", $data['id_immagine'], $data['id_categoria'], $data['marca'], $data['modello'], $data['descrizione'], $data['prezzo'], $data['link'], $data['frequenza_base'], $data['frequenza_boost'], $data['n_core'], $data['n_thread'], $data['consumo_energetico'], $data['dim_cache']);
+                
+                    break;
 
-                    case 'post_':
-                        $query = "";
-                        break;
+                case 'post_':
+                    $query = "";
+                    break;
 
-                    default:
-                        throw new Exception("Azione non supportata");
-                        break;
-                }
+                default:
+                    throw new Exception("Azione non supportata");
+                    break;
+            }
 
-                $stmt->execute();
-                $conn->commit();
-
+            $stmt->execute();
+            // $conn->commit();
+            
+            if ($stmt->affected_rows > 0){
                 echo json_encode(["Success" => "Dati aggiunti con successo"]);
                 http_response_code(200);
                 exit();
-
-            } catch (Exception $e) {
-                // Rollback in caso di errore
-                $conn->rollback();
-                echo json_encode(['Errore' => $e->getMessage()]);
-                http_response_code(500);
+            }else {
+                echo json_encode(['errore' => $conn->error]);
+                http_response_code(400); //BAD REQUEST
                 exit();
-            }            
+            }           
         } else {
             echo json_encode(['errore' => 'Unauthorized']);
             http_response_code(401); //BAD REQUEST
         }
-
 
         break;
 

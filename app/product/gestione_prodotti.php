@@ -29,15 +29,15 @@ $token = $_SESSION['jwt'];
                     'Authorization': 'Bearer <?php echo $token; ?>'
                 },
                 success: function(data) {
-                    console.log(data);
+                    // console.log(data);
                     // Creazione tabella con tutti i prodotti
                     var table = '<table class="table"><thead><tr><th>ID Prodotto</th><th>Immagine</th><th>Marca</th><th>Modello</th><th>Prezzo</th><th></th></tr></thead><tbody>';
                     $.each(data, function(index, product) {
                         table += '<tr>';
                         table += '<td>' + product.id_prodotto + '</td>';
                         if (product.id_immagine) {
-                            // table += '<td>http://localhost/mydreambuild/capolavoro/app/webservices/ws_immagini.php?id=' + product.id_immagine + '</td>';
-                            // NON SO COME RIPRENDERE LE IMMAGINI                            
+                            // table += '<td><img src="http://10.25.0.15/~s_bttkvn05l18d488f/capolavoro-main/app/webservices/ws_immagini.php?id=' + product.id_immagine + '" width="120"></td>';
+                            table += '<td><img class="image" src="http://localhost/mydreambuild/capolavoro/app/webservices/ws_immagini.php?id=' + product.id_immagine + '" width="90"></td>';
                         } else {
                             table += '<td>No</td>';
                         }

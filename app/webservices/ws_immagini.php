@@ -12,13 +12,13 @@ $headers = getallheaders();
 // Gestione del token JWT
 $gestioneJWT = new TokenJWT('ciao');
 // Potrebbe generare errori
-$token = $gestioneJWT->getJWT($headers);
+/* $token = $gestioneJWT->getJWT($headers);
 
 if (!$gestioneJWT->validate($token)) {
     echo json_encode(['errore' => 'Token errato']);
     http_response_code(404);
     exit();
-}
+} */
 
 switch ($method) {
     case 'GET':
@@ -81,7 +81,7 @@ switch ($method) {
             $immagine = file_get_contents($_FILES['image']['tmp_name']);
             $tipo = $_FILES['image']['type'];
 
-            $query = "INSERT INTO Immagini (titolo, dimensioni, immagine, tipo) VALUES (?, ?, ?, ?)";
+            $query = "INSERT INTO Immagini (titolo, immagine, dimensioni, tipo) VALUES (?, ?, ?, ?)";
             $stmt = $conn->prepare($query);
 
             if (!$stmt) {
@@ -90,7 +90,8 @@ switch ($method) {
                 exit();
             }
 
-            $stmt->bind_param("sibs", $titolo, $dimensioni, $immagine, $tipo);
+            $stmt->bind_param("sbis", $titolo, $null, $dimensioni, $tipo);
+            $stmt->send_long_data(1, $immagine);
 
             if ($stmt->execute()) {
                 header("Content-Type: application/json; charset=UTF-8");

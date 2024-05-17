@@ -9,6 +9,9 @@ $method = $_SERVER['REQUEST_METHOD'];
 
 $headers = getallheaders();
 
+$content_type = 'application/json';
+$content_type_response = 'application/json';
+
 // Gestione del token JWT
 $gestioneJWT = new TokenJWT('ciao');
 // Potrebbe generare errori
@@ -32,6 +35,11 @@ switch ($method) {
         $cat = null;
 
         switch($action) {
+            case 'get_articoli':
+                // Ritorna i 4 articoli più recenti (funziona)
+                getArticoli();
+                break;
+
             case 'get_carosello':
                 // Ritorna i 4 articoli più recenti (funziona)
                 getCarosello();
@@ -73,42 +81,60 @@ switch ($method) {
         break;
     
     case 'POST':
-        // Solo un utente autorizzato può accedere a questo codice
         $token = $gestioneJWT->getJWT($headers);
         $userRole = $gestioneJWT->decode($token);
-
+        
         if ($userRole->ruolo === '1' || $userRole->ruolo === '2') {
-            if (!isset($_FILES['image']) || $_FILES['image']['error'] !== UPLOAD_ERR_OK) {
-                echo json_encode(['errore' => 'Errore nel caricamento dell\'immagine']);
-                http_response_code(400); // BAD REQUEST
-                exit();
-            }
+            // Solo un utente autorizzato può accedere a questo codice
+            $payload = file_get_contents('php://input');
 
-            $titolo = $_FILES['image']['name'];
-            $dimensioni = $_FILES['image']['size'];
-            $immagine = file_get_contents($_FILES['image']['tmp_name']);
-            $tipo = $_FILES['image']['type'];
 
-            $query = "INSERT INTO Immagini (titolo, dimensioni, immagine, tipo) VALUES (?, ?, ?, ?)";
-            $stmt = $conn->prepare($query);
-
-            if (!$stmt) {
-                echo json_encode(['errore' => 'Errore nella preparazione della query']);
-                http_response_code(500); // INTERNAL SERVER ERROR
-                exit();
-            }
-
-            $stmt->bind_param("sibs", $titolo, $dimensioni, $immagine, $tipo);
-
-            if ($stmt->execute()) {
-                header("Content-Type: application/json; charset=UTF-8");
-                $imageId = $conn->insert_id;
-                echo json_encode(["id_immagine" => $imageId]);
-                http_response_code(200); // OK
+            // Trasformazione del payload nell'array che rappresenta il prodotto
+            if ($content_type == 'application/json') {
+                $data =  json_decode($payload,true);
             } else {
-                echo json_encode(['errore' => 'Errore nell\'inserimento dell\'immagine']);
-                http_response_code(500); // INTERNAL SERVER ERROR
+                echo json_encode(['errore' => 'Content-Type non ammesso']);
+                http_response_code(400); //BAD REQUEST
+                exit();
             }
+
+            header("Content-Type: application/json; charset=UTF-8");
+
+            // Recupera il valore del parametro "action" dall'URL
+            $action = isset($_GET['action']) ? $_GET['action'] : '';
+
+            switch($action) {
+                case 'insert_articolo':
+                    $pubblicato = $data['pubblicato'] ? 1 : 0;
+                    $query = "INSERT INTO Articolo (pubblicato, data_pubblicazione, titolo, summary, testo, id_redattore, id_immagine) VALUES (?, ?, ?, ?, ?, ?, ?)";
+                    $stmt = $conn->prepare($query);
+                    $stmt->bind_param("isssssi", $pubblicato, $data['data_pubblicazione'], $data['titolo'], $data['summary'], $data['corpo'], $data['redattore'], $data['id_immagine']);
+                    // I Boolean vanno interpretati come 1 o 0
+                    break;
+
+                case 'post_':
+                    $query = "";
+                    break;
+
+                default:
+                    throw new Exception("Azione non supportata");
+                    break;
+            }
+
+            $stmt->execute();
+            // $conn->commit();
+            
+            if ($stmt->affected_rows > 0){
+                echo json_encode(["Success" => "Dati aggiunti con successo"]);
+                http_response_code(200);
+                exit();
+            }else {
+                echo json_encode(['errore' => $conn->error]);
+                http_response_code(400); //BAD REQUEST
+                exit();
+            }    
+
+
         } else {
             echo json_encode(['errore' => 'Unauthorized']);
             http_response_code(401); // UNAUTHORIZED
@@ -125,7 +151,7 @@ switch ($method) {
 function getCarosello() {
     global $conn;
 
-    $query = "SELECT * FROM Articolo ORDER BY data_pubblicazione LIMIT 4;";
+    $query = "SELECT * FROM Articolo ORDER BY data_pubblicazione DESC LIMIT 4;";
     $stmt = $conn->prepare($query);
 
     if (!$stmt) {
@@ -154,5 +180,39 @@ function getCarosello() {
         http_response_code(404);
     }
     exit(); // Termina lo script dopo il login
+}
 
+
+function getArticoli() {
+    global $conn;
+
+    $query = "SELECT * FROM Articolo ORDER BY data_pubblicazione DESC;";
+    $stmt = $conn->prepare($query);
+
+    if (!$stmt) {
+        echo json_encode(['errore' => 'Errore nella preparazione della query: ' . $conn->error]);
+        http_response_code(500);
+        exit();
+    }
+
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        $lista = Array();
+
+        while ($row = $result->fetch_assoc()) {
+            $lista[] = $row;
+        }
+
+        // Impostazione del header field Content-Type
+        header("Content-Type: application/json; charset=UTF-8");
+        echo json_encode($lista);
+        http_response_code(200);
+    } else {
+        // Altrimenti, restituisci un errore con il codice di stato HTTP 401.
+        echo json_encode(['errore' => 'Nessun articolo trovato']);
+        http_response_code(404);
+    }
+    exit(); // Termina lo script dopo il login
 }

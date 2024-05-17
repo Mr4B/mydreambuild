@@ -3,7 +3,7 @@
 $port = 3306;
 $username = "5cbattistelli";
 $password = "5cbattistelli";
-$dbname = "5cbattistelli_ClienteMeccanico"; */
+$dbname = "5cbattistelli_mydreambuild"; */
 
 $servername = "localhost";
 $port = 3306;
