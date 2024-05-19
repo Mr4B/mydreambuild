@@ -66,6 +66,7 @@ $token = $_SESSION['jwt'];
                                 data.id_immagine = response.id_immagine;
                                 // console.log(data);
                                 inviaProdotto(data);
+                                window.location.href = "gestione_articoli.php";
                             } else {
                                 console.error('Errore durante il caricamento dell\'immagine:', response.errore);
                                 $("#response").html("Errore durante il caricamento dell'immagine");

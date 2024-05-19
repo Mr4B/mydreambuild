@@ -1,6 +1,6 @@
 -- Tabelle database mydreambuild
 /* 
-    hostato nel sito "000webhost.com"
+    dump e restore: https://phoenixnap.com/kb/how-to-backup-restore-a-mysql-database
 */
 
 CREATE TABLE Utente (

@@ -49,8 +49,8 @@ switch ($method) {
                 // Ritorna un tot di articoli per generare le card nella home page
                 break;
 
-            case 'get_articolor':
-                // Ritorna un singolo articolo dato l'id
+            case 'get_articolo':
+                getArticolo($id);
                 break;
 
             default:
@@ -151,7 +151,7 @@ switch ($method) {
 function getCarosello() {
     global $conn;
 
-    $query = "SELECT * FROM Articolo ORDER BY data_pubblicazione DESC LIMIT 4;";
+    $query = "SELECT * FROM Articolo WHERE pubblicato = true ORDER BY data_pubblicazione DESC LIMIT 4;";
     $stmt = $conn->prepare($query);
 
     if (!$stmt) {
@@ -215,4 +215,46 @@ function getArticoli() {
         http_response_code(404);
     }
     exit(); // Termina lo script dopo il login
+}
+
+function getArticolo($id) {
+    global $conn;
+
+    if($id != '') {
+        $query = "SELECT * FROM Articolo WHERE id = ?;";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("i", $id);
+
+
+        if (!$stmt) {
+            echo json_encode(['errore' => 'Errore nella preparazione della query: ' . $conn->error]);
+            http_response_code(500);
+            exit();
+        }
+
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            $lista = Array();
+
+            while ($row = $result->fetch_assoc()) {
+                $lista[] = $row;
+            }
+
+            // Impostazione del header field Content-Type
+            header("Content-Type: application/json; charset=UTF-8");
+            echo json_encode($lista);
+            http_response_code(200);
+        } else {
+            // Altrimenti, restituisci un errore con il codice di stato HTTP 401.
+            echo json_encode(['errore' => 'Nessun articolo trovato']);
+            http_response_code(401);
+        }
+    } else {
+        echo json_encode(['errore' => 'ID errato']);
+        http_response_code(404);
+    }
+    exit(); // Termina lo script dopo il login
+
 }

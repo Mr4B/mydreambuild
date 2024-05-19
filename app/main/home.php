@@ -53,16 +53,17 @@ $_SESSION['navbar'] = $navbar;
 <html lang="it">
 <head>
     <!-- Aggiorna bootstrap -->
-    <script src="https://code.jquery.com/jquery-3.6.3.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js" crossorigin="anonymous"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
-    <link rel="stylesheet" type="text/css" href="stile.css">
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js" crossorigin="anonymous"></script>-->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Home</title>
+<link rel="stylesheet" type="text/css" href="stile.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.6.3.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+
     <script type="text/javascript">
         $(document).ready(function(){
             $.ajax({
@@ -79,13 +80,14 @@ $_SESSION['navbar'] = $navbar;
                     // Creazione tabella con tutti i prodotti
                    
                     $("#carousel-inner").html(createCarosello(data));
+                    $('#carosello').carousel();
                     // $("#carousel-inner").html("ciao");
                 },
                 error: function(xhr, status, error) {
                     console.error('Errore durante la richiesta:', status, error);
                     $("#table").html("Errore");
                 }
-            });   
+            });
             
             function createCarosello(data) {
                 // Check if data retrieval was successful
@@ -106,16 +108,15 @@ $_SESSION['navbar'] = $navbar;
                     // Build the carousel item HTML with image and caption
                     carouselHTML += `
                     <div class="carousel-item ${activeClass}">
-                        <img class="d-block carosello" 
+                        <img class="d-block w-100" 
                             src="http://localhost/mydreambuild/capolavoro/app/webservices/ws_immagini.php?id=${product.id_immagine}" width="100" alt="Slide">
                         <div class="carousel-caption d-none d-md-block">
                         <h4>${product.titolo}</h4>
-                        <p><a href="" class="carousel-description">${product.summary}</a></p>
+                        <p><a href="../articles/read_articolo.php?id=${product.id}" class="carousel-description">${product.summary}</a></p>
                         </div>
                     </div>
                     `;
                 });
-                counter = 0;
                 return carouselHTML;
             }
 
@@ -126,6 +127,7 @@ $_SESSION['navbar'] = $navbar;
 
 </head>
 <body>
+
 <!--Esempio di header -->
     <div class="container-fluid">
         <header id="header" class role="banner">
@@ -133,6 +135,7 @@ $_SESSION['navbar'] = $navbar;
             <div class="jumbotron jumbotron-fluid mb-2">
                 <div class="container">  
                     <!-- <img src="../img/logo_mecc.avif" class="d-inline-block align-top" style="float: left; margin-right: 30px;" alt="Logo meccanico" height="75" width="70"> -->
+                    <img src='../img/logo.png' alt='logo' width=70 class="d-inline-block align-top" style="float: left; margin-right: 30px;">
                     <h1 class="display-4">MYDREAMBUILD</h1>
                 </div>
             </div>
@@ -144,30 +147,25 @@ $_SESSION['navbar'] = $navbar;
 
         <!--Carosello-->
         <div class="container2">
-            <div id="carosello" class="carousel slide" data-ride="carousel" data-interval="2"> <!--data-interval = tempo di scorrimento delle immagini-->
+            <div id="carosello" class="carousel" data-ride="carousel" data-interval="100000"> <!--data-interval = tempo di scorrimento delle immagini-->
                 <!--tastini sotto le immagini-->
-                <ol class="carousel-indicators">
+                <!-- <ol class="carousel-indicators">
                     <li data-target="#carosello" data-slide-to="0" class="active"></li>
                     <li data-target="#carosello" data-slide-to="1"></li>
-                    <li data-target="#carosello" data-slide-to="2"></li>
-                    <li data-target="#carosello" data-slide-to="3"></li>
-                </ol>
+                </ol> -->
                 
                 <!--slide che scorrono-->
-                <div id="carousel-inner" class="carousel-inner">
-                    
-                </div>
+                <div id="carousel-inner" class="carousel-inner"></div>
 
                 <!--freccette per scorrere all'immagine precedente e successiva-->
-                <a class="carousel-control-prev" href="#carosello" role="button" data-slide="prev">
+                <button class="carousel-control-prev" type="button" data-bs-target="#carosello" data-bs-slide="prev">
                     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="sr-only"></span>
-                </a>
-
-                <a class="carousel-control-next" href="#carosello" role="button" data-slide="next">
+                    <span class="visually-hidden">Precedente</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carosello" data-bs-slide="next">
                     <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="sr-only"></span>
-                </a>
+                    <span class="visually-hidden">Successivo</span>
+                </button>
             </div>
         </div>
 
