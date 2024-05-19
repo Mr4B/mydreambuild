@@ -131,14 +131,6 @@ $_SESSION['navbar'] = $navbar;
 <!--Esempio di header -->
     <div class="container-fluid">
         <header id="header" class role="banner">
-            <!--Jumbotron-->
-            <div class="jumbotron jumbotron-fluid mb-2">
-                <div class="container">  
-                    <!-- <img src="../img/logo_mecc.avif" class="d-inline-block align-top" style="float: left; margin-right: 30px;" alt="Logo meccanico" height="75" width="70"> -->
-                    <img src='../img/logo.png' alt='logo' width=70 class="d-inline-block align-top" style="float: left; margin-right: 30px;">
-                    <h1 class="display-4">MYDREAMBUILD</h1>
-                </div>
-            </div>
             <?php echo $navbar->getNavBar();?>
         </header>
 
