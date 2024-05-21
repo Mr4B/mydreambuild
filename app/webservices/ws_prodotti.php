@@ -41,6 +41,8 @@ switch ($method) {
         // Recupera il valore del parametro "action" dall'URL
         $action = isset($_GET['action']) ? $_GET['action'] : '';
         $id = isset($_GET['id']) ? $_GET['id'] : '';
+        $search = isset($_GET['search']) ? $_GET['search'] : '';
+        $categoria = isset($_GET['cat']) ? $_GET['cat'] : '';
 
         $cat = null;
 
@@ -50,6 +52,11 @@ switch ($method) {
                 $query = "SELECT id_prodotto, id_categoria, marca, modello, prezzo, id_immagine 
                 FROM Prodotto
                 ORDER BY id_categoria;";
+                break;
+            
+            case 'search_product':
+                // Ritorna le configurazioni create da un utente
+                searchProduct($search, $categoria);
                 break;
                 
             case 'get_byID':
@@ -223,4 +230,59 @@ switch ($method) {
     case 'DELETE':
 
         break;
+}
+
+function searchProduct($search, $cat) {
+    global $conn;
+
+    $query = "SELECT * FROM Prodotto WHERE id_categoria = ? AND (marca LIKE ? OR modello LIKE ?)";
+    $stmt = $conn->prepare($query);
+
+    if (!$stmt) {
+        echo json_encode(['errore' => 'Errore nella preparazione della query: ' . $conn->error]);
+        http_response_code(500);
+        exit();
+    }
+
+    $searchTerm = $search . '%';
+    if (!$stmt->bind_param("iss", $cat, $searchTerm, $searchTerm)) {
+        echo json_encode(['errore' => 'Errore nel binding dei parametri: ' . $stmt->error]);
+        http_response_code(500);
+        exit();
+    }
+
+    if (!$stmt->execute()) {
+        echo json_encode(['errore' => 'Errore nell\'esecuzione della query: ' . $stmt->error]);
+        http_response_code(500);
+        exit();
+    }
+
+    $result = $stmt->get_result();
+    if ($result === false) {
+        echo json_encode(['errore' => 'Errore nel recupero dei risultati: ' . $stmt->error]);
+        http_response_code(500);
+        exit();
+    }
+    
+    // Impostazione del header field Content-Type
+    header("Content-Type: application/json; charset=UTF-8");
+
+    if ($result->num_rows > 0) {
+        $lista = array();
+        while ($row = $result->fetch_assoc()) {
+            $lista[] = $row;
+        }
+
+        echo json_encode($lista);
+        http_response_code(200);
+        exit();
+    } else {
+        // Restituisce un messaggio specifico quando non ci sono prodotti trovati
+        echo json_encode(['status' => 'empty']);
+        http_response_code(200); // Usa 200 OK anche se non ci sono risultati
+        exit();
+    }
+
+    // Chiudere lo statement
+    $stmt->close();
 }

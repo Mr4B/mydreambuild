@@ -1,0 +1,20 @@
+#cpu_risultati {
+    position: absolute;
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    background-color: white;
+    border: 1px solid #ccc;
+    margin-top: 5px;
+    display: none;
+  }
+  
+  #cpu_risultati li {
+    padding: 5px;
+    border-bottom: 1px solid #eee;
+  }
+  
+  #cpu_risultati li:hover {
+    background-color: #f0f0f0;
+  }
+  

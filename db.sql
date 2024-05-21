@@ -63,11 +63,22 @@ CREATE TABLE componenti_tag (
 
 CREATE TABLE Configurazione (
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
-    denominazione VARCHAR(50),
+    denominazione VARCHAR(255),
     descrizione TEXT ,
     id_utente VARCHAR(255),
     prezzo_totale DECIMAL(10,2) NOT NULL,
-    FOREIGN KEY (id_utente) REFERENCES Utente(username) ON DELETE CASCADE ON UPDATE CASCADE
+    tipologia VARCHAR(255),
+    FOREIGN KEY (id_utente) REFERENCES Utente(username) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (tipologia) REFERENCES Tipologia(denominazione) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+ALTER TABLE Configurazione
+ADD CONSTRAINT fk_tipologia
+FOREIGN KEY (tipologia) REFERENCES Tipologia(denominazione)
+ON DELETE CASCADE;
+
+CREATE TABLE Tipologia (
+    denominazione VARCHAR(255) PRIMARY KEY
 );
 
 CREATE TABLE prodotti_configurazione (

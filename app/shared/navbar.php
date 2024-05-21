@@ -45,7 +45,10 @@ class NavBar {
               </button>
               
               <div class='collapse navbar-collapse' id='nav-content'>
-                <ul class='navbar-nav me-auto'>";
+                <ul class='navbar-nav me-auto'>
+                <li class='nav-item'>
+                  <a class='nav-link navbar-brand' href='../configurations/configurazione.php'>Configurazioni</a>
+                </li>";
 
         if ($this->role <= 2) {
           $html .= "
@@ -54,6 +57,7 @@ class NavBar {
                       <ul class='dropdown-menu dropdown-menu-start' aria-labelledby='gestione'>
                         <li><a class='dropdown-item' href='../product/gestione_prodotti.php'>Prodotti</a></li>
                         <li><a class='dropdown-item' href='../articles/gestione_articoli.php'>Articoli</a></li>
+                        <li><a class='dropdown-item' href='../configurations/configurazione.php'>Configurazioni</a></li>
                       </ul>
                     </li>";
         }
