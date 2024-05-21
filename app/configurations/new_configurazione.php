@@ -118,7 +118,7 @@ $token = $_SESSION['jwt'];
                     cpuList.hide();
                 }
             });
-            
+
             return false;
         });
     </script>
