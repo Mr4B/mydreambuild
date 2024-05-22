@@ -17,3 +17,11 @@ sftp user@indirizzo
 get -r remote_directory // Per scaricare la directory da remoto
 put -r local_directory // Per caricare la directory da locale
 exit
+
+
+Lavori da fare:
+- Pagina per la visualizzazione delle configurazioni
+- Sistemare tutti gli stili delle pagine
+- Criptare le password nel db (venerdì)
+- Popolare il db
+- nella pagina configurazioni accentrare le scritte principali ?

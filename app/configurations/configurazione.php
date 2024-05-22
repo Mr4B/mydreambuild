@@ -17,57 +17,12 @@ $token = $_SESSION['jwt'];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
+    <link rel="stylesheet" type="text/css" href="stile.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!-- Script jQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>    
     <style>
-        .config-section {
-            margin-bottom: 30px;
-        }
-        .config-section h4 {
-            /* font-size: 1.5em; */
-            margin-bottom: 10px;
-            padding: 10px;
-            background-color: #f8f9fa;
-            border-left: 5px solid #198754;
-        }
-        .config-card-container {
-            display: flex;
-            overflow-x: auto;
-            padding: 10px 0;
-        }
-        .config-card {
-            flex: 0 0 auto;
-            width: 200px;
-            margin: 0 10px;
-            text-align: center;
-            background-color: white;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        .config-card:hover {
-            transform: scale(1.05);
-        }
-        .config-card img {
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
-        }
-        .config-card .config-details {
-            padding: 10px;
-            background-color: white;
-        }
-        .config-card .config-details h5 {
-            margin: 0;
-            font-size: 1.2em;
-        }
-        .config-card .config-details p {
-            margin: 5px 0 0;
-            font-size: 1em;
-            color: #555;
-        }
     </style>
     <script type="text/javascript">
         $(document).ready(function(){

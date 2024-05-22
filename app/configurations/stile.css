@@ -1,20 +1,67 @@
 #cpu_risultati, #gpu_risultati, #ram_risultati, #hdd_risultati, #ssd_risultati, #case_risultati {
-    position: absolute;
-    width: 100%;
-    max-height: 200px;
-    overflow-y: auto;
-    background-color: white;
-    border: 1px solid #ccc;
-    margin-top: 5px;
-    display: none;
-  }
+  position: absolute;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  background-color: white;
+  border: 1px solid #ccc;
+  margin-top: 5px;
+  display: none;
+}
   
-  #cpu_risultati li, #gpu_risultati li, #ram_risultati li, #hdd_risultati li , #ssd_risultati li, #case_risultati li{
-    padding: 5px;
-    border-bottom: 1px solid #eee;
-  }
+#cpu_risultati li, #gpu_risultati li, #ram_risultati li, #hdd_risultati li , #ssd_risultati li, #case_risultati li{
+  padding: 5px;
+  border-bottom: 1px solid #eee;
+}
   
-  #cpu_risultati li:hover, #gpu_risultati li:hover, #ram_risultati li:hover, #hdd_risultati li:hover , #ssd_risultati li:hover, #case_risultati li:hover {
-    background-color: #f0f0f0;
-  }
-  
+#cpu_risultati li:hover, #gpu_risultati li:hover, #ram_risultati li:hover, #hdd_risultati li:hover , #ssd_risultati li:hover, #case_risultati li:hover {
+  background-color: #f0f0f0;
+}
+
+
+.config-section {
+  margin-bottom: 30px;
+}
+.config-section h4 {
+  font-size: 1.5em;
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-left: 5px solid #198754;
+}
+.config-card-container {
+  display: flex;
+  overflow-x: auto;
+  padding: 10px 0;
+}
+.config-card {
+  flex: 0 0 auto;
+  width: 200px;
+  margin: 0 10px;
+  text-align: center;
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.config-card:hover {
+  transform: scale(1.05);
+}
+.config-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+.config-card .config-details {
+  padding: 10px;
+  background-color: white;
+}
+.config-card .config-details h5 {
+  margin: 0;
+  font-size: 1.2em;
+}
+.config-card .config-details p {
+  margin: 5px 0 0;
+  font-size: 1em;
+  color: #555;
+}
