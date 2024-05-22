@@ -73,6 +73,7 @@ $token = $_SESSION['jwt'];
         $(document).ready(function(){
             <?php 
             if(isset($_SESSION['LogedIn']) && $_SESSION['LogedIn'] === true) { ?>
+            // Accede a questo codice solamente se l'utente è loggato
             // Le mie configurazioni
             $.ajax({
                 url: 'http://localhost/mydreambuild/capolavoro/app/webservices/ws_configurazioni.php?action=get_myconfiguration&id_utente=<?php if(isset($_SESSION['LogedIn']) && $_SESSION['LogedIn'] === true) echo $_SESSION['username']; else 'errore'; ?>',
@@ -83,8 +84,39 @@ $token = $_SESSION['jwt'];
                     'Authorization': 'Bearer <?php echo $token; ?>'
                 },
                 success: function(data) {
-                    console.log(data);
-                    // Aggiungi codice per gestire "Le mie configurazioni" qui
+                    // console.log(data);
+                    const container = $('#your-configurations');
+                    if(data.lengh > 0) {
+
+                        
+                        const cardContainer = $('<div class="config-card-container"></div>');
+                        
+                        data.forEach(function(config) {
+                            const imgSrc = config.id_immagine ? `http://localhost/mydreambuild/capolavoro/app/webservices/ws_immagini.php?id=${config.id_immagine}` : 'https://via.placeholder.com/150/000000/FFFFFF/?text=No+Image';
+                            const card = `
+                            <div class="config-card" data-id="${config.id}">
+                            <img src="${imgSrc}" alt="Immagine">
+                            <div class="config-details">
+                            <h5>${config.denominazione}</h5>
+                            <p>${config.prezzo_totale}€</p>
+                            </div>
+                            </div>
+                            `;
+                            cardContainer.append(card);
+                        });
+                        
+                        container.append(cardContainer);
+                        
+                        // Aggiungi l'evento click alle card
+                        $('.config-card').on('click', function() {
+                            const configId = $(this).data('id');
+                            window.location.href = `dettagli_configurazione.php?id=${configId}`;
+                        });
+                    } else {
+                        container.html('<p style="color:red">Nessuna configurazione</p>');
+                    }
+                    
+
                 },
                 error: function(xhr, status, error) {
                     console.error('Errore durante la richiesta:', status, error);
@@ -103,7 +135,7 @@ $token = $_SESSION['jwt'];
                     'Authorization': 'Bearer <?php echo $token; ?>'
                 },
                 success: function(data) {
-                    console.log(data);
+                    // console.log(data);
                     const container = $('#quotate');
                     
                     const tipi = {};  // Oggetto per raccogliere le configurazioni per tipologia
@@ -165,15 +197,17 @@ $token = $_SESSION['jwt'];
         <!-- Corpo della pagina -->
         <div id="your">
             <h5>Le mie configurazioni</h5>
-
-        </div>
+            <div id="your-configurations" class="config-section">
+                <!-- Configurazioni personali verranno aggiunte qui dinamicamente -->
+            </div>
         <?php 
             if(isset($_SESSION['LogedIn']) && $_SESSION['LogedIn'] === true) {
-                echo '<button type="button" class="btn btn-outline-secondary" onclick="window.location.href=\'new_configurazione.php\'">Crea la tua configurazione</button>';   
+                echo '<button type="button" class="btn btn-outline-secondary mb-3" onclick="window.location.href=\'new_configurazione.php\'">Crea nuova</button>';   
             } else {
                 echo '<a class="link" href="../user/login.php">Accedi per creare la tua configurazione</a>';   
             }
         ?>
+        </div>
         <div id="quotate">
             <h5>Configurazioni consigliate</h5>
             <div class="d-flex flex-wrap">

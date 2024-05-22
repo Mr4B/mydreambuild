@@ -52,22 +52,18 @@ $_SESSION['navbar'] = $navbar;
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <!-- Aggiorna bootstrap -->
-<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js" crossorigin="anonymous"></script>-->
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Home</title>
-<link rel="stylesheet" type="text/css" href="stile.css">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
-<script src="https://code.jquery.com/jquery-3.6.3.min.js" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" type="text/css" href="stile.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <script type="text/javascript">
         $(document).ready(function(){
+            // Carosello
             $.ajax({
-                // url: 'http://10.25.0.15/~s_bttkvn05l18d488f/capolavoro-main/app/webservices/ws_articoli.php?action=get_carosello',
                 url: 'http://localhost/mydreambuild/capolavoro/app/webservices/ws_articoli.php?action=get_carosello',
                 type: 'GET',
                 dataType: 'json',
@@ -76,43 +72,34 @@ $_SESSION['navbar'] = $navbar;
                     'Authorization': 'Bearer <?php echo $token; ?>'
                 },
                 success: function(data) {
-                    console.log(data);
-                    // Creazione tabella con tutti i prodotti
-                   
                     $("#carousel-inner").html(createCarosello(data));
                     $('#carosello').carousel();
-                    // $("#carousel-inner").html("ciao");
                 },
                 error: function(xhr, status, error) {
                     console.error('Errore durante la richiesta:', status, error);
-                    $("#table").html("Errore");
+                    $("#carousel-inner").html("Errore durante il recupero dei dati del carosello.");
                 }
             });
-            
+
             function createCarosello(data) {
-                // Check if data retrieval was successful
                 if (!data || !data.length) {
                     return '<div>Errore durante il recupero dei dati</div>';
                 }
 
-                // Initialize empty string to store carousel HTML
                 var carouselHTML = '';
                 var counter = 0;
-                // Loop through each retrieved product in the data array
-                data.forEach(function(product) {
-                    // Define active class for the first item
-                    var activeClass = counter === 0 ? 'active' : '';
-                    
-                    counter ++;
 
-                    // Build the carousel item HTML with image and caption
+                data.forEach(function(product) {
+                    var activeClass = counter === 0 ? 'active' : '';
+                    counter++;
+
                     carouselHTML += `
                     <div class="carousel-item ${activeClass}">
                         <img class="d-block w-100" 
                             src="http://localhost/mydreambuild/capolavoro/app/webservices/ws_immagini.php?id=${product.id_immagine}" width="100" alt="Slide">
                         <div class="carousel-caption d-none d-md-block">
-                        <h4>${product.titolo}</h4>
-                        <p><a href="../articles/read_articolo.php?id=${product.id}" class="carousel-description">${product.summary}</a></p>
+                            <h4>${product.titolo}</h4>
+                            <p><a href="../articles/read_articolo.php?id=${product.id}" class="carousel-description">${product.summary}</a></p>
                         </div>
                     </div>
                     `;
@@ -120,6 +107,46 @@ $_SESSION['navbar'] = $navbar;
                 return carouselHTML;
             }
 
+            // Build consigliate
+            $.ajax({
+                url: 'http://localhost/mydreambuild/capolavoro/app/webservices/ws_configurazioni.php?action=get_defaultconfiguration',
+                type: 'GET',
+                dataType: 'json',
+                headers: {
+                    'Accept': 'application/json',
+                    'Authorization': 'Bearer <?php echo $token; ?>'
+                },
+                success: function(data) {
+                    const container = $('#recommended-builds');
+                    const selectedBuilds = data.slice(0, 8);
+
+                    selectedBuilds.forEach(function(config, index) {
+                        const imgSrc = config.id_immagine ? `http://localhost/mydreambuild/capolavoro/app/webservices/ws_immagini.php?id=${config.id_immagine}` : 'https://via.placeholder.com/150/000000/FFFFFF/?text=No+Image';
+                        const card = `
+                            <div class="col-lg-3 col-md-4 col-sm-6 col-6">
+                                <div class="config-card" data-id="${config.id}">
+                                    <img src="${imgSrc}" alt="Immagine">
+                                    <div class="config-details">
+                                        <h5>${config.denominazione}</h5>
+                                        <p>${config.prezzo_totale}€</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        container.append(card);
+                    });
+
+                    // Aggiungi l'evento click alle card
+                    $('.config-card').on('click', function() {
+                        const configId = $(this).data('id');
+                        window.location.href = `dettagli_configurazione.php?id=${configId}`;
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error('Errore durante la richiesta:', status, error);
+                    $("#recommended-builds").html("Errore durante il recupero delle configurazioni consigliate.");
+                }
+            });
 
             return false;
         });
@@ -128,28 +155,16 @@ $_SESSION['navbar'] = $navbar;
 </head>
 <body>
 
-<!--Esempio di header -->
+    <!--Esempio di header -->
     <div class="container-fluid">
         <header id="header" class role="banner">
             <?php echo $navbar->getNavBar();?>
         </header>
 
-        <!-- Resto della pagina -->
-        <!-- Riprendere gli articoli ordinati in base alla data di pubblicazione -->
-
-        <!--Carosello-->
+        <!-- Carosello -->
         <div class="container2">
-            <div id="carosello" class="carousel" data-ride="carousel" data-interval="100000"> <!--data-interval = tempo di scorrimento delle immagini-->
-                <!--tastini sotto le immagini-->
-                <!-- <ol class="carousel-indicators">
-                    <li data-target="#carosello" data-slide-to="0" class="active"></li>
-                    <li data-target="#carosello" data-slide-to="1"></li>
-                </ol> -->
-                
-                <!--slide che scorrono-->
+            <div id="carosello" class="carousel" data-ride="carousel" data-interval="100000">
                 <div id="carousel-inner" class="carousel-inner"></div>
-
-                <!--freccette per scorrere all'immagine precedente e successiva-->
                 <button class="carousel-control-prev" type="button" data-bs-target="#carosello" data-bs-slide="prev">
                     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                     <span class="visually-hidden">Precedente</span>
@@ -161,6 +176,14 @@ $_SESSION['navbar'] = $navbar;
             </div>
         </div>
 
+        <!-- Build Consigliate -->
+        <div class="container config-section">
+            <h4>Build consigliate</h4>
+            <div id="recommended-builds" class="row">
+                <!-- Configurazioni consigliate verranno aggiunte qui dinamicamente -->
+            </div>
+        </div>
     </div>
+
 </body>
 </html>

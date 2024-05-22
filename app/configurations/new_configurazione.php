@@ -100,10 +100,6 @@ $token = $_SESSION['jwt'];
                     isValid = false;
                     alert("La GPU è obbligatoria.");
                 }
-                if ($("#case_text").data('value') === undefined) {
-                    isValid = false;
-                    alert("Il CASE è obbligatorio.");
-                }
                 if ($("#hdd_text").data('value') === undefined && $("#ssd_text").data('value') === undefined) {
                     isValid = false;
                     alert("Almeno un HDD o un SSD è obbligatorio.");

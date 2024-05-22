@@ -205,38 +205,37 @@ function getConfigurazioni() {
 
 function getMyConfiguration($id_utente) {
     global $conn;
-
+  
     $query = "SELECT * FROM Configurazione WHERE id_utente = ?;";
     $stmt = $conn->prepare($query);
-
+  
     if (!$stmt) {
-        echo json_encode(['errore' => 'Errore nella preparazione della query: ' . $conn->error]);
-        http_response_code(500);
-        exit();
+      echo json_encode(['errore' => 'Errore nella preparazione della query: ' . $conn->error]);
+      http_response_code(500);
+      exit();
     }
-
+  
     $stmt->bind_param("s", $id_utente);
     $stmt->execute();
     $result = $stmt->get_result();
-
+  
+    $lista = [];
     if ($result->num_rows > 0) {
-        $lista = Array();
-
-        while ($row = $result->fetch_assoc()) {
-            $lista[] = $row;
-        }
-
-        // Impostazione del header field Content-Type
-        header("Content-Type: application/json; charset=UTF-8");
-        echo json_encode($lista);
-        http_response_code(200);
-    } else {
-        // Altrimenti, restituisci un errore con il codice di stato HTTP 401.
-        echo json_encode(['errore' => 'Nessun articolo trovato']);
-        http_response_code(404);
+      while ($row = $result->fetch_assoc()) {
+        $lista[] = $row;
+      }
     }
-    exit(); 
-}
+  
+    // Impostazione del header field Content-Type
+    header("Content-Type: application/json; charset=UTF-8");
+    echo json_encode($lista);
+  
+    // In ogni caso, il codice di stato HTTP deve essere 200
+    http_response_code(200);
+  
+    exit();
+  }
+  
 
 function getDefaultConfiguration() {
     global $conn;
