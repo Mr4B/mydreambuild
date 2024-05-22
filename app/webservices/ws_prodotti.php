@@ -187,15 +187,39 @@ switch ($method) {
             // try {
             switch($action) {
                 case 'post_cpu':
-
                     $query = "INSERT INTO Prodotto (id_immagine, id_categoria, marca, modello, descrizione, prezzo, link, frequenza_base, c_frequenza_boost, c_n_core, c_n_thread, c_consumo_energetico, c_dim_cache) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                     $stmt = $conn->prepare($query);
                     $stmt->bind_param("iisssdsddiiii", $data['id_immagine'], $data['id_categoria'], $data['marca'], $data['modello'], $data['descrizione'], $data['prezzo'], $data['link'], $data['frequenza_base'], $data['frequenza_boost'], $data['n_core'], $data['n_thread'], $data['consumo_energetico'], $data['dim_cache']);
-                
                     break;
 
-                case 'post_':
-                    $query = "";
+                case 'post_gpu':
+                    $query = "INSERT INTO Prodotto (id_immagine, id_categoria, marca, modello, descrizione, prezzo, link, g_memoria, g_tipo_memoria, frequenza_base, dimensioni) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    $stmt = $conn->prepare($query);
+                    $stmt->bind_param("iisssdsisds", $data['id_immagine'], $data['id_categoria'], $data['marca'], $data['modello'], $data['descrizione'], $data['prezzo'], $data['link'], $data['g_memoria'], $data['g_tipo_memoria'], $data['frequenza_base'], $data['dimensioni']);
+                    break;
+
+                case 'post_ram':
+                    $query = "INSERT INTO Prodotto (id_immagine, id_categoria, marca, modello, descrizione, prezzo, link, r_dimensione, r_velocita, r_tipo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    $stmt = $conn->prepare($query);
+                    $stmt->bind_param("iisssdsiis", $data['id_immagine'], $data['id_categoria'], $data['marca'], $data['modello'], $data['descrizione'], $data['prezzo'], $data['link'], $data['r_dimensione'], $data['r_velocita'], $data['r_tipo']);
+                    break;
+
+                case 'post_hdd':
+                    $query = "INSERT INTO Prodotto (id_immagine, id_categoria, marca, modello, descrizione, prezzo, link, capacita_gb, fattore_di_forma, a_velocita_rotazione, a_cache_mb, a_velocita_lettura_mb_s, a_velocita_scrittura_mb_s) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    $stmt = $conn->prepare($query);
+                    $stmt->bind_param("iisssdsisiiii", $data['id_immagine'], $data['id_categoria'], $data['marca'], $data['modello'], $data['descrizione'], $data['prezzo'], $data['link'], $data['capacita_gb'], $data['fattore_di_forma'], $data['a_velocita_rotazione'], $data['a_cache_mb'], $data['a_velocita_lettura_mb_s'], $data['a_velocita_scrittura_mb_s']);
+                    break;
+
+                case 'post_ssd':
+                    $query = "INSERT INTO Prodotto (id_immagine, id_categoria, marca, modello, descrizione, prezzo, link, capacita_gb, fattore_di_forma, a_interfaccia, a_velocita_lettura_mb_s, a_velocita_scrittura_mb_s) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    $stmt = $conn->prepare($query);
+                    $stmt->bind_param("iisssdsissii", $data['id_immagine'], $data['id_categoria'], $data['marca'], $data['modello'], $data['descrizione'], $data['prezzo'], $data['link'], $data['capacita_gb'], $data['fattore_di_forma'], $data['a_interfaccia'], $data['a_velocita_lettura_mb_s'], $data['a_velocita_scrittura_mb_s']);
+                    break;
+                // Boolean è i
+                case 'post_case':
+                    $query = "INSERT INTO Prodotto (id_immagine, id_categoria, marca, modello, descrizione, prezzo, link, cs_colore, dimensioni, cs_peso, fattore_di_forma, cs_finestra_laterale) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    $stmt = $conn->prepare($query);
+                    $stmt->bind_param("iisssdsssisi", $data['id_immagine'], $data['id_categoria'], $data['marca'], $data['modello'], $data['descrizione'], $data['prezzo'], $data['link'], $data['cs_colore'], $data['dimensioni'], $data['cs_peso'], $data['fattore_di_forma'], $data['cs_finestra_laterale']);
                     break;
 
                 default:

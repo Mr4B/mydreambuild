@@ -69,9 +69,54 @@ $token = $_SESSION['jwt'];
                         data.consumo_energetico = $("#consumo_energetico").val();
                         data.dim_cache = $("#dim_cache").val();
                         actionUrl += 'post_cpu';
-                        console.log(actionUrl);
+                        // console.log(actionUrl);
                         break;
-                }
+
+                    case 'gpu':
+                        data.g_memoria = $("#g_memoria").val();
+                        data.g_tipo_memoria = $("#tipo_memoria").val();
+                        data.frequenza_base = $("#g_frequenza_base").val();
+                        data.dimensioni = $("#g_dimensioni").val();
+                        actionUrl += 'post_gpu';
+                        break;
+
+                    case 'ram':
+                        data.r_dimensione = $("#r_dimensione").val();
+                        data.r_velocita = $("#r_velocita").val();
+                        data.r_tipo = $("#r_tipo").val();
+                        actionUrl += 'post_ram';
+                        break;
+                        
+                    case 'hdd':
+                        data.capacita_gb = $("#h_capacita").val();
+                        data.fattore_di_forma = $("#h_fattore_forma").val();
+                        data.a_velocita_rotazione = $("#h_velocita").val();
+                        data.a_cache_mb = $("#h_cache").val();
+                        data.a_velocita_lettura_mb_s = $("#h_lettura").val();
+                        data.a_velocita_scrittura_mb_s = $("#h_scrittura").val();
+                        actionUrl += 'post_hdd';
+                        break;
+                    
+                    case 'ssd':
+                        data.capacita_gb = $("#s_capacita").val();
+                        data.fattore_di_forma = $("#s_fattore_forma").val();
+                        data.a_interfaccia = $("#interfaccia").val();
+                        data.a_velocita_lettura_mb_s = $("#s_lettura").val();
+                        data.a_velocita_scrittura_mb_s = $("#s_scrittura").val();
+                        actionUrl += 'post_ssd';
+                        break;
+
+                    case 'case':
+                        data.cs_colore = $("#cs_colore").val();
+                        data.dimensioni = $("#dimensioni").val();
+                        data.cs_peso = $("#peso").val();
+                        data.fattore_di_forma = $("#fattore_di_forma").val();
+                        data.cs_finestra_laterale = $("#vetro").is(":checked") ? 1 : 0;
+                        actionUrl += 'post_case';
+                        break;
+
+                    }
+                    // console.log(data);
 
                 var imageFile = $('#image')[0].files[0];
 
@@ -105,7 +150,7 @@ $token = $_SESSION['jwt'];
                         }
                     });
                 } else {
-                    data.id_immagine = null;
+                    data.id_immagine = '';
                     inviaProdotto(data);
                 }
 
@@ -163,7 +208,7 @@ $token = $_SESSION['jwt'];
         <textarea type="text" name="descrizione" id="descrizione"></textarea>
         <br>
         <label for="prezzo">Prezzo:</label><br>
-        <input type="text" name="prezzo" id="prezzo" required>
+        <input type="number" step="0.01" name="prezzo" id="prezzo" required>€
         <br>
         <label for="link">Link d'acquisto:</label><br>
         <input type="text" name="link" id="link">
@@ -191,33 +236,109 @@ $token = $_SESSION['jwt'];
         </div>
 
         <div id="campi_ram" style="display: none;">
-            <label for="dimensione">Dimensione (GB):</label> <br>
-            <input type="text" name="dimensione" id="dimensione">
+            <label for="r_dimensione">Dimensione (GB):</label> <br>
+            <input type="number" name="r_dimensione" id="r_dimensione">
             <br>
-            <label for="velocita">Velocità (MHz):</label> <br>
-            <input type="text" name="velocita" id="velocita">
+            <label for="r_velocita">Velocità (MHz):</label> <br>
+            <input type="number" step="0.01" name="r_velocita" id="r_velocita">
             <br>
-            <label for="tipo">Tipologia:</label> <br>
-            <input type="text" name="tipo" id="tipo">
+            <label for="r_tipo">Tipologia:</label> <br>
+            <input type="text" name="r_tipo" id="r_tipo">
             <br>
         </div>
 
         <div id="campi_gpu" style="display: none;">
-            <label for="memoria">Memoria:</label> <br>
-            <input type="text" name="memoria" id="memoria">
+            <label for="g_memoria">Memoria (GB):</label> <br>
+            <input type="number" name="g_memoria" id="g_memoria">
             <br>
             <label for="tipo_memoria">Tipologia memoria:</label> <br>
             <input type="text" name="tipo_memoria" id="tipo_memoria">
             <br>
-            <label for="velocita">Velocità:</label> <br>
-            <input type="text" name="velocita" id="velocita">
+            <label for="g_frequenza_base">Frequenza di clock (MHz):</label> <br>
+            <input type="number" step="0.01" name="g_frequenza_base" id="g_frequenza_base">
             <br>
-            <label for="dimensioni">Dimensioni:</label> <br>
-            <input type="text" name="dimensioni" id="dimensioni">
+            <label for="g_dimensioni">Dimensioni:</label> <br>
+            <input type="text" name="g_dimensioni" id="g_dimensioni">
             <br>
         </div>
 
-        <div id="campi_scheda_madre" style="display: none;">
+        
+        <div id="campi_hdd" style="display: none;">
+            <label for="h_capacita">Capacità (GB)</label>
+            <input type="number" name="h_capacita" id="h_capacita">
+            <br>
+            <label for="h_fattore_forma">Fattore di forma</label>
+            <select name="h_fattore_forma" id="h_fattore_forma">
+                <option>-- seleziona valore --</option>
+                <option value="2,5">2,5 pollici</option>
+                <option value="3,5">3,5 pollici</option>
+            </select>
+            <br>
+            <label for="h_velocita">Velocità di rotazione disco rigido</label>
+            <input type="number" name="h_velocita" id="h_velocita">/m
+            <br>
+            <label for="h_cache">Cache (MB)</label>
+            <input type="number" name="h_cache" id="h_cache">
+            <br>
+            <label for="h_lettura">Velocità di lettura (MB/s)</label>
+            <input type="number" name="h_lettura" id="h_lettura">
+            <br>
+            <label for="h_scrittura">Velocità di scrittura (MB/s)</label>
+            <input type="number" name="h_scrittura" id="h_scrittura">
+            <br>
+        </div>
+        
+        <div id="campi_ssd" style="display: none;">
+            <label for="s_capacita">Capacità (GB)</label>
+            <input type="number" name="s_capacita" id="s_capacita">
+            <br>
+            <label for="s_fattore_forma">Fattore di forma</label>
+            <select name="s_fattore_forma" id="s_fattore_forma">
+                <option value="2,5">2,5 pollici</option>
+                <option value="M.2">M.2</option>
+                <option value="mSATA">mSATA</option>
+                <option value="U.2">U.2</option>
+            </select>
+            <br>
+            <label for="interfaccia">Interfaccia</label>
+            <select name="interfaccia" id="interfaccia">
+                <option value="sata">SATA</option>
+                <option value="NVMe">NVMe PCIe</option>
+            </select>
+            <br>
+            <label for="s_lettura">Velocità di lettura (MB/s)</label>
+            <input type="number" name="s_lettura" id="s_lettura">
+            <br>
+            <label for="s_scrittura">Velocità di scrittura (MB/s)</label>
+            <input type="number" name="s_scrittura" id="s_scrittura">
+            <br>
+
+        </div>
+            
+        <div id="campi_case" style="display: none;">
+            <label for="cs_colore">Colore:</label>
+            <input type="text" name="cs_colore" id="cs_colore">
+            <br>
+            <label for="dimensioni">Dimensioni:</label>
+            <input type="text" name="dimensioni" id="dimensioni">
+            <br>
+            <label for="peso">Peso:</label>
+            <input type="number" name="peso" id="peso">
+            <br>
+            <label for="fattore_di_forma">Fattore di forma scheda madre:</label>
+            <select name="fattore_di_forma" id="fattore_di_forma">
+                <option value="E-ATX">E-ATX</option>
+                <option value="ATX">ATX</option>
+                <option value="microATX">microATX</option>
+                <option value="Mini-ITX">Mini-ITX</option>
+            </select>
+            <br>
+            <label for="vetro">Vetro laterale:</label>
+            <input type="checkbox" name="vetro" value="1">
+
+        </div>
+
+        <div id="campi_scheda madre" style="display: none;">
             <label for="formato">Formato:</label> <br>
             <input type="text" name="formato" id="formato">
             <br>
@@ -234,6 +355,14 @@ $token = $_SESSION['jwt'];
             <input type="text" name="pcie" id="pcie">
             <br>
         </div>
+
+        <div id="campi_psu" style="display: none;">
+
+        </div>
+
+    </div>
+    
+
 
         <br>
         <input type="submit" id="submit" name="submit" class="btn btn-outline-info" value="Inserisci prodotto" disabled>

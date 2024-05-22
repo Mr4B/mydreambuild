@@ -48,6 +48,11 @@ switch ($method) {
                 // Ritorna le configurazioni create da un utente
                 getMyConfiguration($id_utente);
                 break;
+            
+            case 'get_tipologie':
+                // Ritorna le configurazioni create da un utente
+                getTipologie();
+                break;
 
             default:
                 echo json_encode(['errore' => 'Indirizzo errato']);
@@ -85,27 +90,14 @@ switch ($method) {
                     postConfigurazione($data);
                     break;
 
-                case '':
-                    $query = "";
+                case 'post_configurazione_mod':
+                    modConfigurazione($data);
                     break;
 
                 default:
                     throw new Exception("Azione non supportata");
                     break;
             }
-
-            $stmt->execute();
-            // $conn->commit();
-            
-            if ($stmt->affected_rows > 0){
-                echo json_encode(["Success" => "Dati aggiunti con successo"]);
-                http_response_code(200);
-                exit();
-            }else {
-                echo json_encode(['errore' => $conn->error]);
-                http_response_code(400); //BAD REQUEST
-                exit();
-            }    
 
 
         } else {
@@ -137,7 +129,7 @@ function postConfigurazione($data) {
 
     try {
         // Query per inserire la configurazione
-        $query = "INSERT INTO Configurazione (denominazione, descrizione, id_utente, prezzo_totale, tipologia) VALUES (?, ?, ?, ?)";
+        $query = "INSERT INTO Configurazione (denominazione, descrizione, id_utente, prezzo_totale, tipologia) VALUES (?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($query);
         $stmt->bind_param("sssds", $data['denominazione'], $data['descrizione'], $data['id_utente'], $data['prezzo_totale'], $data['tipologia']);
         $stmt->execute();
@@ -173,14 +165,6 @@ function postConfigurazione($data) {
         $conn->rollback();
         echo json_encode(['errore' => $e->getMessage()]);
         http_response_code(400); // BAD REQUEST
-    } finally {
-        // Chiusura degli statement
-        if ($stmt) {
-            $stmt->close();
-        }
-        if ($stmt_prodotti) {
-            $stmt_prodotti->close();
-        }
     }
 }
 
@@ -259,8 +243,8 @@ function getDefaultConfiguration() {
 
     $query = "SELECT c.*
                 FROM Configurazione AS c
-                JOIN Utente AS u ON c.id_utente = u.id
-                WHERE u.id_ruolo IN (1, 2);
+                JOIN Utente AS u ON c.id_utente = u.username
+                WHERE u.ruolo IN (1, 2);
                 ";
     $stmt = $conn->prepare($query);
 
@@ -292,3 +276,85 @@ function getDefaultConfiguration() {
     exit(); 
 }
 
+function getTipologie() {
+    global $conn;
+
+    $query = "SELECT *
+                FROM Tipologia;
+                ";
+    $stmt = $conn->prepare($query);
+
+    if (!$stmt) {
+        echo json_encode(['errore' => 'Errore nella preparazione della query: ' . $conn->error]);
+        http_response_code(500);
+        exit();
+    }
+
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        $lista = Array();
+
+        while ($row = $result->fetch_assoc()) {
+            $lista[] = $row;
+        }
+
+        // Impostazione del header field Content-Type
+        header("Content-Type: application/json; charset=UTF-8");
+        echo json_encode($lista);
+        http_response_code(200);
+    } else {
+        // Altrimenti, restituisci un errore con il codice di stato HTTP 401.
+        echo json_encode(['errore' => 'Nessun articolo trovato']);
+        http_response_code(404);
+    }
+    exit(); 
+}
+
+function modConfigurazione($data) {
+    global $conn;
+    
+    // Avvio della transazione
+    $conn->begin_transaction();
+
+    try {
+        // Query per inserire la configurazione
+        $query = "INSERT INTO Configurazione (denominazione, descrizione, id_utente, prezzo_totale, tipologia, id_immagine) VALUES (?, ?, ?, ?, ?, ?)";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("sssdsi", $data['denominazione'], $data['descrizione'], $data['id_utente'], $data['prezzo_totale'], $data['tipologia'], $data['id_immagine']);
+        $stmt->execute();
+
+        if ($stmt->affected_rows <= 0) {
+            throw new Exception('Errore durante l\'inserimento della configurazione: ' . $conn->error);
+        }
+
+        // Ottenere l'ID della configurazione appena inserita
+        $configurazione_id = $stmt->insert_id;
+
+        // Query per inserire i prodotti nella tabella di relazione
+        $query_prodotti = "INSERT INTO prodotti_configurazione (id_configurazione, id_prodotto) VALUES (?, ?)";
+        $stmt_prodotti = $conn->prepare($query_prodotti);
+
+        foreach ($data['prodotti'] as $prodotto_id) {
+            $stmt_prodotti->bind_param("ii", $configurazione_id, $prodotto_id);
+            $stmt_prodotti->execute();
+
+            if ($stmt_prodotti->affected_rows <= 0) {
+                throw new Exception('Errore durante l\'inserimento del prodotto ID ' . $prodotto_id . ': ' . $conn->error);
+            }
+        }
+
+        // Completare la transazione
+        $conn->commit();
+
+        echo json_encode(["Success" => "Dati aggiunti con successo"]);
+        http_response_code(200);
+
+    } catch (Exception $e) {
+        // Annullare la transazione in caso di errore
+        $conn->rollback();
+        echo json_encode(['errore' => $e->getMessage()]);
+        http_response_code(400); // BAD REQUEST
+    }
+}

@@ -57,7 +57,7 @@ class NavBar {
                       <ul class='dropdown-menu dropdown-menu-start' aria-labelledby='gestione'>
                         <li><a class='dropdown-item' href='../product/gestione_prodotti.php'>Prodotti</a></li>
                         <li><a class='dropdown-item' href='../articles/gestione_articoli.php'>Articoli</a></li>
-                        <li><a class='dropdown-item' href='../configurations/configurazione.php'>Configurazioni</a></li>
+                        <li><a class='dropdown-item' href='../configurations/gestione_configurazioni.php'>Configurazioni</a></li>
                       </ul>
                     </li>";
         }

@@ -1,4 +1,4 @@
-#cpu_risultati {
+#cpu_risultati, #gpu_risultati, #ram_risultati, #hdd_risultati, #ssd_risultati, #case_risultati {
     position: absolute;
     width: 100%;
     max-height: 200px;
@@ -9,12 +9,12 @@
     display: none;
   }
   
-  #cpu_risultati li {
+  #cpu_risultati li, #gpu_risultati li, #ram_risultati li, #hdd_risultati li , #ssd_risultati li, #case_risultati li{
     padding: 5px;
     border-bottom: 1px solid #eee;
   }
   
-  #cpu_risultati li:hover {
+  #cpu_risultati li:hover, #gpu_risultati li:hover, #ram_risultati li:hover, #hdd_risultati li:hover , #ssd_risultati li:hover, #case_risultati li:hover {
     background-color: #f0f0f0;
   }
   

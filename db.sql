@@ -68,14 +68,27 @@ CREATE TABLE Configurazione (
     id_utente VARCHAR(255),
     prezzo_totale DECIMAL(10,2) NOT NULL,
     tipologia VARCHAR(255),
+    id_immagine INT,
     FOREIGN KEY (id_utente) REFERENCES Utente(username) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (tipologia) REFERENCES Tipologia(denominazione) ON DELETE CASCADE ON UPDATE CASCADE
+    FOREIGN KEY (id_immagine) REFERENCES Immagini(id_immagine) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 ALTER TABLE Configurazione
 ADD CONSTRAINT fk_tipologia
 FOREIGN KEY (tipologia) REFERENCES Tipologia(denominazione)
 ON DELETE CASCADE;
+
+ALTER TABLE `mydreambuild`.`configurazione` 
+ADD COLUMN `id_immagine` INT NULL AFTER `tipologia`,
+ADD INDEX `configurazione_ibfk_3_idx` (`id_immagine` ASC) VISIBLE;
+;
+ALTER TABLE `mydreambuild`.`configurazione` 
+ADD CONSTRAINT `configurazione_ibfk_3`
+  FOREIGN KEY (`id_immagine`)
+  REFERENCES `mydreambuild`.`immagini` (`id_immagine`)
+  ON DELETE SET NULL
+  ON UPDATE CASCADE;
 
 CREATE TABLE Tipologia (
     denominazione VARCHAR(255) PRIMARY KEY
@@ -123,7 +136,7 @@ CREATE TABLE Prodotto (
     c_dim_cache INT,
 -- gpu
     g_memoria INT,
-    g_tipo_memoria VARCHAR(255),
+    g_tipo_memoria VARCHAR(255), -- GGDR6
 -- motherboard
     m_formato VARCHAR(255),
     m_chipset VARCHAR(255),
@@ -136,12 +149,11 @@ CREATE TABLE Prodotto (
     r_velocita INT, -- MHz
     r_tipo VARCHAR(50), -- ddrx
 -- archiviazione
-    a_tipo_archiviazione VARCHAR(255),
-    capacita_gb INT, -- Anche GPU
+    capacita_gb INT,
     fattore_di_forma VARCHAR(255), -- 3,5 pollici, m.2, ecc. ANCHE PER LA PSU E CASE (atx)
     a_velocita_rotazione INT,
-    a_cache_mb INT,
-    a_interfaccia VARCHAR(255), -- NVMe PCIe, sata 6 0 gestiti da client
+    a_cache_mb INT, -- elimina
+    a_interfaccia VARCHAR(255), -- NVMe PCIe gestiti da client solo ssd
     a_velocita_lettura_mb_s INT,
     a_velocita_scrittura_mb_s INT,
 -- psu
@@ -162,6 +174,9 @@ CREATE TABLE Prodotto (
 
 ALTER TABLE `mydreambuild`.`prodotto` 
 CHANGE COLUMN `id_prodotto` `id_prodotto` INT NOT NULL AUTO_INCREMENT ;
+
+ALTER TABLE `mydreambuild`.`prodotto` 
+DROP COLUMN `a_tipo_archiviazione`;
 
 
 CREATE TABLE Categoria (

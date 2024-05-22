@@ -20,6 +20,30 @@ $token = $_SESSION['jwt'];
     <link rel="stylesheet" type="text/css" href="stile.css">  
     <script type="text/javascript">
         $(document).ready(function() {
+
+            var tipologie = [];
+            $.ajax({
+                url: 'http://localhost/mydreambuild/capolavoro/app/webservices/ws_configurazioni.php?action=get_tipologie',
+                // url: 'http://10.25.0.15/~s_bttkvn05l18d488f/capolavoro-main/app/webservices/ws_prodotti.php?action=get_categorie',
+                type: 'GET',
+                dataType: 'json',
+                headers: {
+                    'Accept': 'application/json',
+                    'Authorization': 'Bearer <?php echo $token; ?>'
+                },
+                success: function(data) {
+                    tipologie = data;
+                    $.each(data, function(index, tipologia) {
+                        $("#tipologia").append('<option value="' + tipologia.denominazione + '" >' + tipologia.denominazione + '</option>');
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error('Errore durante il recupero delle categorie: ', status, error);
+                    $("#table").html("Errore");
+                }
+            });     
+
+
             // Funzione generica per la ricerca delle componenti
             var totale = 0;
 
@@ -126,29 +150,70 @@ $token = $_SESSION['jwt'];
                     descrizione: $("#descrizione").val(),
                     id_utente: "<?php echo $_SESSION['username']; ?>",
                     prezzo_totale: totale,
-                    prodotti: prodottiArray
+                    prodotti: prodottiArray,
+                    tipologia: $("#tipologia").val(),
                 };
-                console.log(data)
+                // console.log(data)
 
-                $.ajax({
-                    url: 'http://localhost/mydreambuild/capolavoro/app/webservices/ws_configurazioni.php?action=post_configurazione',
-                    type: 'POST',
-                    dataType: 'json',
-                    headers: {
-                        'Accept': 'application/json',
-                        "Authorization": "Bearer <?php echo $token; ?>"
-                    },
-                    contentType: "application/json",
-                    data: JSON.stringify(data),
-                    success: function(result) {
-                        console.log(result);
-                        $("#response").html(result.Success);
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Errore durante l\'inserimento dell\'articolo :', status, error);
-                        $("#response").html("Errore durante l'inserimento dell'articolo");
-                    }
-                });
+                // Per l'eventuale caricamento dell'immagine
+                var imageFile = $('#image')[0].files[0];
+
+                if (imageFile) {
+                    var formData = new FormData();
+                    formData.append('image', imageFile);
+
+                    $.ajax({
+                        url: 'http://localhost/mydreambuild/capolavoro/app/webservices/ws_immagini.php',
+                        // url: 'http://10.25.0.15/~s_bttkvn05l18d488f/capolavoro-main/app/webservices/ws_immagini.php',
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        headers: {
+                            "Authorization": "Bearer <?php echo $token; ?>"
+                        },
+                        success: function(response) {
+                            if (response.id_immagine) {
+                                data.id_immagine = response.id_immagine;
+                                // console.log(data);
+                                inviaProdotto(data);
+                            } else {
+                                console.error('Errore durante il caricamento dell\'immagine:', response.errore);
+                                $("#response").html("Errore durante il caricamento dell'immagine");
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Errore durante il caricamento dell\'immagine:', status, error);
+                            $("#response").html("Errore durante il caricamento dell'immagine");
+                        }
+                    });
+                } else {
+                    data.id_immagine = '';
+                    inviaProdotto(data);
+                }
+                // 
+
+                function inviaProdotto(data) {
+                    $.ajax({
+                        url: 'http://localhost/mydreambuild/capolavoro/app/webservices/ws_configurazioni.php?action=post_configurazione_mod',
+                        type: 'POST',
+                        dataType: 'json',
+                        headers: {
+                            'Accept': 'application/json',
+                            "Authorization": "Bearer <?php echo $token; ?>"
+                        },
+                        contentType: "application/json",
+                        data: JSON.stringify(data),
+                        success: function(result) {
+                            console.log(result);
+                            $("#response").html(result.Success);
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Errore durante l\'inserimento dell\'articolo :', status, error);
+                            $("#response").html("Errore durante l'inserimento dell'articolo");
+                        }
+                    });
+                }
             });
         });
     </script>
@@ -165,6 +230,14 @@ $token = $_SESSION['jwt'];
         <label for="descrizione">Descrizione:</label><br>
         <textarea class="form-control" type="text" name="descrizione" id="descrizione"></textarea>
         <br>
+        <label for="tipologia">Tipologia:</label><br>
+        <select name="tipologia" id="tipologia">
+            <option selected>-- seleziona tipologia --</option>
+        </select><br><br>
+
+        <label for="image">Seleziona immagine:</label>
+        <input type="file" id="image" name="image" accept="image/*">
+        <br><br>
         <div class="cpu">
             <label for="cpu">CPU:</label>
             <input type="text" id="cpu_text" name="cpu_text" placeholder="Nessuna cpu" required>
@@ -204,48 +277,3 @@ $token = $_SESSION['jwt'];
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 </body>
 </html>
-<!-- 
-
-<h4>Cerca clienti dal nome mentre si digita</h4>
-    <input type="text" id="search_input" placeholder="Cerca..."><br><br>
-    <div id="customer"></div>
-
-//GET filtrato scrivendo
-        $("#search_input").on("input", function() {
-            var string = $(this).val();
-            // La barra di ricerca contiene del testo
-            if (string.trim().length > 0) {
-                $.ajax({
-                    url: 'http://10.25.0.15/~s_bttkvn05l18d488f/tps/webservice/webservice_officina/webservice.php?action=get_customerbyname&search=' + encodeURIComponent(string),
-                    type: 'GET',
-                    dataType: 'json',
-                    headers: {
-                        'Accept': 'application/json'
-                    },
-                    success: function(data) {
-                        // Stampa i dati ricevuti
-                        if(data.length === 0) {
-                            $("#search_input").empty();
-                            $("#customer").html("Nessun risultato");
-                        }
-                        else {
-                            //buildTableMeccanico(data, "get_bymodel");
-                            $("#customer").empty();
-                            buildTableCustomer(data, "customer");
-                            console.log(data);
-                        }
-                        $(".button").removeAttr("disabled");
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Errore durante la richiesta:', status, error, '\ndata: ');
-                        $(".button").removeAttr("disabled");
-                    }
-
-                });
-            }
-            else {
-                $("#results").empty();
-            }
-        });
-
- -->
