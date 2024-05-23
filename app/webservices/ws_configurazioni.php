@@ -48,6 +48,11 @@ switch ($method) {
                 // Ritorna le configurazioni create da un utente
                 getMyConfiguration($id_utente);
                 break;
+
+            case 'get_byid':
+                // Ritorna le configurazioni create da un utente
+                getByID($id);
+                break;
             
             case 'get_tipologie':
                 // Ritorna le configurazioni create da un utente
@@ -356,4 +361,61 @@ function modConfigurazione($data) {
         echo json_encode(['errore' => $e->getMessage()]);
         http_response_code(400); // BAD REQUEST
     }
+}
+
+
+function getByID($id) {
+    global $conn;
+  
+    $query = "SELECT * FROM Configurazione WHERE id = ?;";
+    $stmt = $conn->prepare($query);
+  
+    if (!$stmt) {
+      echo json_encode(['errore' => 'Errore nella preparazione della query: ' . $conn->error]);
+      http_response_code(500);
+      exit();
+    }
+  
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+  
+    $lista = [];
+    if ($result->num_rows > 0) {
+      while ($row = $result->fetch_assoc()) {
+        $lista[] = $row;
+      }
+    }
+
+    $query = "SELECT * FROM prodotti_configurazione WHERE id_configurazione = ?;";
+    $stmt = $conn->prepare($query);
+  
+    if (!$stmt) {
+      echo json_encode(['errore' => 'Errore nella preparazione della query: ' . $conn->error]);
+      http_response_code(500);
+      exit();
+    }
+  
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $prodotti = [];
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $prodotti[] = $row;
+        }
+    }
+
+    $lista[0]['prodotti'] = $prodotti;
+  
+    // Impostazione del header field Content-Type
+    header("Content-Type: application/json; charset=UTF-8");
+    echo json_encode($lista);
+  
+    // In ogni caso, il codice di stato HTTP deve essere 200
+    http_response_code(200);
+  
+    exit();
+   
 }

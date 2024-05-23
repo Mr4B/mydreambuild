@@ -65,3 +65,53 @@
   font-size: 1em;
   color: #555;
 }
+
+.tipologia {
+  display: inline-block;
+  padding: 3px 10px;
+  background-color: #ffcc00; /* Scegli il colore di sfondo che preferisci */
+  color: white; /* Colore del testo */
+  border-radius: 10px; /* Bordi arrotondati */
+  font-size: 0.875em; /* Dimensione del font, regolabile a piacere */
+  text-align: center;
+  cursor: pointer;
+  margin: 5px 0; /* Margine per separarlo dagli altri elementi */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Ombra per effetto di profondità */
+}
+
+#corpo {
+  padding: 20px;
+}
+
+.prodotto {
+  background-color: white;
+  border: 1px solid #dee2e6;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+}
+
+.prodotto:hover {
+  transform: scale(1.01);
+}
+
+.prodotto img {
+  max-width: 100px;
+  margin-right: 15px;
+}
+
+.prodotto .details {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.prodotto .details h5 {
+  margin: 0 0 10px;
+}
+
+.prodotto .details p {
+  margin: 0;
+  color: #6c757d;
+}

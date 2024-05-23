@@ -27,16 +27,22 @@ if(isset($_SESSION['LogedIn']) && $_SESSION['LogedIn'] === true) {
         $token = $_SESSION['jwt'];
     }
 } else {
-    // Crea il token per l'utente guest
+    if(!isset($_SESSION['jwt'])) {
+        // Crea il token per l'utente guest
+    
+        // Creazione del payload del token con il ruolo
+        $payload = array(
+            "ruolo" => 4,
+            "exp" => time() + 3600*2 // Scadenza del token impostata a 2 ora (3600 secondi)
+        );
+        $token = $gestioneJWT->encode($payload);
+        $_SESSION['jwt'] = $token;
+        $_SESSION['ruolo'] = 4;
+    } else {
+        $token = $_SESSION['jwt'];
+    }
 
-    // Creazione del payload del token con il ruolo
-    $payload = array(
-        "ruolo" => 4,
-        "exp" => time() + 3600*2 // Scadenza del token impostata a 2 ora (3600 secondi)
-    );
-    $token = $gestioneJWT->encode($payload);
-    $_SESSION['jwt'] = $token;
-    $_SESSION['ruolo'] = 4;
+    $gestioneJWT->validate($token);
 }
 
 // NAVBAR
@@ -55,7 +61,7 @@ $_SESSION['navbar'] = $navbar;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
-    <link rel="stylesheet" type="text/css" href="stile.css">
+    <link rel="stylesheet" type="text/css" href="stile_home.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.3.min.js" crossorigin="anonymous"></script>
@@ -125,7 +131,7 @@ $_SESSION['navbar'] = $navbar;
                         const card = `
                             <div class="col-lg-3 col-md-4 col-sm-6 col-6">
                                 <div class="config-card" data-id="${config.id}">
-                                    <img src="${imgSrc}" alt="Immagine">
+                                    <img  src="${imgSrc}" alt="Immagine">
                                     <div class="config-details">
                                         <h5>${config.denominazione}</h5>
                                         <p>${config.prezzo_totale}€</p>
@@ -139,7 +145,7 @@ $_SESSION['navbar'] = $navbar;
                     // Aggiungi l'evento click alle card
                     $('.config-card').on('click', function() {
                         const configId = $(this).data('id');
-                        window.location.href = `dettagli_configurazione.php?id=${configId}`;
+                        window.location.href = `../configurations/dettagli_configurazione.php?id=${configId}`;
                     });
                 },
                 error: function(xhr, status, error) {

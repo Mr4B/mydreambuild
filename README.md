@@ -20,8 +20,10 @@ exit
 
 
 Lavori da fare:
-- Pagina per la visualizzazione delle configurazioni
 - Sistemare tutti gli stili delle pagine
 - Criptare le password nel db (venerdì)
 - Popolare il db
-- nella pagina configurazioni accentrare le scritte principali ?
+- Pagina del profilo della persona
+- Pagina di modifica dei prodotti
+- Pagina per assegnare i moderatori (accessibile solo dall'admin)
+- Pagina dettagli del prodotto

@@ -108,6 +108,53 @@ switch ($method) {
         }
         break;
 
+        case 'PUT':
+            // Solo un utente autorizzato può accedere a questo codice
+            $token = $gestioneJWT->getJWT($headers);
+            $userRole = $gestioneJWT->decode($token);
+    
+            if ($userRole->ruolo === '1' || $userRole->ruolo === '2') {
+                // Recupera l'ID dell'immagine da modificare
+                $id_immagine = isset($_GET['id']) ? intval($_GET['id']) : null;
+    
+                if ($id_immagine === null) {
+                    echo json_encode(['errore' => 'ID immagine mancante']);
+                    http_response_code(400); // BAD REQUEST
+                    exit();
+                }
+    
+                // Recupera i nuovi dati dell'immagine
+                $titolo = $_FILES['image']['name'];
+                $dimensioni = $_FILES['image']['size'];
+                $immagine = file_get_contents($_FILES['image']['tmp_name']);
+                $tipo = $_FILES['image']['type'];
+    
+                // Prepara e esegue la query per aggiornare l'immagine nel database
+                $query = "UPDATE Immagini SET titolo = ?, immagine = ?, dimensioni = ?, tipo = ? WHERE id_immagine = ?";
+                $stmt = $conn->prepare($query);
+    
+                if (!$stmt) {
+                    echo json_encode(['errore' => 'Errore nella preparazione della query']);
+                    http_response_code(500); // INTERNAL SERVER ERROR
+                    exit();
+                }
+    
+                $stmt->bind_param("sbisi", $titolo, $null, $dimensioni, $tipo, $id_immagine);
+                $stmt->send_long_data(1, $immagine);
+    
+                if ($stmt->execute()) {
+                    echo json_encode(["Success" => "Immagine aggiornata con successo"]);
+                    http_response_code(200); // OK
+                } else {
+                    echo json_encode(['errore' => 'Errore durante l\'aggiornamento dell\'immagine']);
+                    http_response_code(500); // INTERNAL SERVER ERROR
+                }
+            } else {
+                echo json_encode(['errore' => 'Unauthorized']);
+                http_response_code(401); // UNAUTHORIZED
+            }
+            break;
+
     default:
         echo json_encode(['errore' => 'Metodo non supportato']);
         http_response_code(405); // METHOD NOT ALLOWED

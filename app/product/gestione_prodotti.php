@@ -17,6 +17,11 @@ $token = $_SESSION['jwt'];
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!-- Script jQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>    
+    <style>
+        tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+    </style>
     <script type="text/javascript">
         $(document).ready(function(){
             $.ajax({
@@ -37,7 +42,7 @@ $token = $_SESSION['jwt'];
                         table += '<td>' + product.id_prodotto + '</td>';
                         if (product.id_immagine) {
                             // table += '<td><img src="http://10.25.0.15/~s_bttkvn05l18d488f/capolavoro-main/app/webservices/ws_immagini.php?id=' + product.id_immagine + '" width="120"></td>';
-                            table += '<td><img class="image" src="http://localhost/mydreambuild/capolavoro/app/webservices/ws_immagini.php?id=' + product.id_immagine + '" width="90"></td>';
+                            table += '<td><img class="img" src="http://localhost/mydreambuild/capolavoro/app/webservices/ws_immagini.php?id=' + product.id_immagine + '" width="90"></td>';
                         } else {
                             table += '<td>No</td>';
                         }
