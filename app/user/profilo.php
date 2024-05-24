@@ -59,7 +59,7 @@ $token = $_SESSION['jwt'];
         <?php 
         echo '<h1>'.$_SESSION['username'].'</h1>';
         ?>
-        <?php $footer = new Footer(); echo $footer->getFooter(); ?>
+        <?php /* $footer = new Footer(); echo $footer->getFooter();  */?>
     </div>
     
     <!-- Script Bootstrap -->

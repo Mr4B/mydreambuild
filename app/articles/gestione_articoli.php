@@ -37,7 +37,7 @@ $token = $_SESSION['jwt'];
                 success: function(data) {
                     console.log(data);
                     // Creazione tabella con tutti i prodotti
-                    var table = '<table class="table"><thead><tr><th class="col-1">ID Articolo</th><th>Immagine</th><th>Titolo</th><th>Pubblicato</th><th>Data pubblicazione</th><th></th></tr></thead><tbody>';
+                    var table = '<table class="table table-striped"><thead><tr><th class="col-1">ID Articolo</th><th>Immagine</th><th>Titolo</th><th>Pubblicato</th><th>Data pubblicazione</th><th></th></tr></thead><tbody>';
                     $.each(data, function(index, product) {
                         table += '<tr>';
                         table += '<td class="col-1">' + product.id + '</td>';
