@@ -26,3 +26,7 @@ Lavori da fare:
 - Pagina di modifica dei prodotti
 - Pagina per assegnare i moderatori (accessibile solo dall'admin)
 - Pagina dettagli del prodotto
+
+
+
+per schema e/r: https://www.drawio.com/blog/insert-sql

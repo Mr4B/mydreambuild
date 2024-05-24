@@ -13,7 +13,9 @@ $id = isset($_GET['id']) ? $_GET['id'] : '';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nuovo prodotto</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>  
     <style>
         body {
@@ -331,6 +333,50 @@ $id = isset($_GET['id']) ? $_GET['id'] : '';
                 }
             });
 
+
+            $("#delete").click(function(){
+                if (confirm('Sei sicuro di voler eliminare questo record?')) {
+                    $.ajax({
+                        url: 'http://localhost/mydreambuild/capolavoro/app/webservices/ws_prodotti.php?id=<?php echo $id; ?>',
+                        type: 'DELETE',
+                        headers: {
+                            'Authorization': 'Bearer <?php echo $token; ?>'
+                        },
+                        success: function(result) {
+                            alert(result.message);
+                            // Ricarica la pagina o esegui altre azioni necessarie dopo l'eliminazione
+                            // window.location.reload();
+                        },
+                        error: function(xhr, status, error) {
+                            alert('Errore durante l\'eliminazione del record: ' + xhr.responseText);
+                        }
+                    });
+                }
+            });
+
+
+            /* function eliminaProdotto() {
+                $.ajax({
+                        url: 'http://localhost/mydreambuild/capolavoro/app/webservices/ws_prodotti.php?id=<?php echo $id; ?>',
+                        type: 'PUT',
+                        dataType: 'json',
+                        headers: {
+                            'Accept': 'application/json',
+                            "Authorization": "Bearer <?php echo $token; ?>"
+                        },
+                        contentType: "application/json",
+                        data: JSON.stringify(data),
+                        success: function(result) {
+                            console.log(result);
+                            $("#response").html(result.Success);
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Errore durante l\'inserimento del prodotto:', status, error);
+                            $("#response").html("Errore durante l'inserimento del prodotto");
+                        }
+                    });
+            } */
+
             return false;
         });
     </script>
@@ -532,7 +578,8 @@ $id = isset($_GET['id']) ? $_GET['id'] : '';
         </div>
         
         <br>
-        <input class="form-control" type="submit" id="submit" name="submit" class="btn btn-outline-info btn-custom" value="Salva modifiche" disabled>
+        <input type="submit" id="submit" name="submit" class="btn btn-outline-secondary btn-custom mb-3" value="Salva modifiche" disabled><br>
+        <input type="button" id="delete" name="delete" class="btn btn-danger btn-custom" value="Elimina">
     </form>
     </div>
     </div>
@@ -572,6 +619,5 @@ $id = isset($_GET['id']) ? $_GET['id'] : '';
     
 
 </script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 </body>
 </html>

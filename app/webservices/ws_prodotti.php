@@ -358,8 +358,39 @@ switch ($method) {
         break;
 
     case 'DELETE':
-
+        $userRole = $gestioneJWT->decode($token);
+        if($userRole -> ruolo === '1' || $userRole-> ruolo === '2') {
+            $id = isset($_GET['id']) ? $_GET['id'] : '';
+            deleteProdotto($id);
+        } else {
+            echo json_encode(['errore' => 'Unauthorized']);
+            http_response_code(401); //BAD REQUEST
+        }
         break;
+}
+
+function deleteProdotto($id) {
+    global $conn;
+
+    if (empty($id)) {
+        http_response_code(400);
+        echo json_encode(["message" => "ID del prodotto mancante."]);
+        return;
+    }
+
+    $query = "DELETE FROM Prodotto WHERE id_prodotto = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param('i', $id);
+
+    if ($stmt->execute()) {
+        http_response_code(200);
+        echo json_encode(["message" => "Prodotto eliminato con successo."]);
+    } else {
+        http_response_code(500);
+        echo json_encode(["message" => "Errore nell'eliminazione del prodotto."]);
+    }
+
+    $stmt->close();
 }
 
 function searchProduct($search, $cat) {
