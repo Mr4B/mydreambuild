@@ -92,8 +92,12 @@ class NavBar {
               <div class='collapse navbar-collapse' id='nav-content'>
                 <ul class='navbar-nav me-auto'>
                   <li class='nav-item'>
+                    <a class='nav-link' href='../articles/articoli.php'>Articoli</a>
+                  </li>
+                  <li class='nav-item'>
                     <a class='nav-link' href='../configurations/configurazione.php'>Configurazioni</a>
-                  </li>";
+                  </li>
+                  ";
 
         if ($this->role <= 2) {
           $html .= "

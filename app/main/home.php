@@ -2,6 +2,7 @@
 // include 'shared/navbar.php';
 session_start();
 require_once('../shared/navbar.php');
+require_once('../shared/footer.php');
 require_once('../webservices/common/auth.php');
 
 $gestioneJWT = new TokenJWT('ciao');
@@ -66,6 +67,81 @@ $_SESSION['navbar'] = $navbar;
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.3.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <style>
+        .container2 {
+    justify-content: center;
+    align-items: center;
+    width: 75%;
+    margin-bottom: 5%; /* Ridotto lo spazio tra il carosello e la sezione successiva */
+    margin: 0 auto;
+}
+
+/* Ingrossa leggermente il carosello */
+.carousel img {
+    max-width: 100%;
+    height: 700px;
+    margin: 0 auto; /* Centra l'immagine all'interno del carosello */
+    object-fit: cover;
+}
+
+.carousel-description {
+    color: #ffffff; /* Colore del testo bianco */
+}
+
+.carousel-description:hover,
+.carousel-description:active {
+    color: #ffffff; /* Colore del testo bianco al passaggio del mouse e al clic */
+}
+
+.config-section {
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.config-section h4 {
+    font-size: 2em; /* Aumenta la dimensione del titolo delle build consigliate */
+    margin-bottom: 20px;
+    margin-top: 20px;
+    padding: 10px;
+    color: #198754;
+}
+
+.config-card {
+    text-align: center;
+    background-color: #ffffff; /* Sfondo bianco */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.2s;
+    margin-bottom: 20px;
+}
+
+.config-card:hover {
+    transform: scale(1.05); /* Ingrandisce leggermente la card al passaggio del mouse */
+}
+
+.config-card img {
+    width: 100%;
+    height: 280px; /* Imposta un'altezza fissa per le immagini delle card */
+    object-fit: cover;
+}
+
+.config-card .config-details {
+    padding: 10px;
+    background-color: #ffffff; /* Sfondo bianco */
+}
+
+.config-card .config-details h5 {
+    margin: 0;
+    font-size: 1.5em; /* Aumenta la dimensione del titolo delle configurazioni */
+}
+
+.config-card .config-details p {
+    margin: 5px 0 0;
+    font-size: 1.2em; /* Aumenta la dimensione del prezzo */
+    color: #555;
+}
+
+    </style>
     <script type="text/javascript">
         $(document).ready(function(){
             // Carosello
@@ -189,6 +265,7 @@ $_SESSION['navbar'] = $navbar;
                 <!-- Configurazioni consigliate verranno aggiunte qui dinamicamente -->
             </div>
         </div>
+        <?php $footer = new Footer(); echo $footer->getFooter(); ?>
     </div>
 
 </body>

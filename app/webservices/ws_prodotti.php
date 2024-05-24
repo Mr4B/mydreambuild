@@ -289,32 +289,32 @@ switch ($method) {
                     break;
 
                 case 'put_gpu':
-                    $query = "UPDATE Prodotto (id_immagine, id_categoria, marca, modello, descrizione, prezzo, link, g_memoria, g_tipo_memoria, frequenza_base, dimensioni) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    $query = "UPDATE Prodotto SET marca = ?, modello = ?, descrizione = ?, prezzo = ?, link = ?, g_memoria = ?, g_tipo_memoria = ?, frequenza_base = ?, dimensioni = ? WHERE id_prodotto = ?";
                     $stmt = $conn->prepare($query);
-                    $stmt->bind_param("iisssdsisds", $data['id_immagine'], $data['id_categoria'], $data['marca'], $data['modello'], $data['descrizione'], $data['prezzo'], $data['link'], $data['g_memoria'], $data['g_tipo_memoria'], $data['frequenza_base'], $data['dimensioni']);
+                    $stmt->bind_param("sssdsisdsi", $data['marca'], $data['modello'], $data['descrizione'], $data['prezzo'], $data['link'], $data['g_memoria'], $data['g_tipo_memoria'], $data['frequenza_base'], $data['dimensioni'], $data['id_prodotto']);
                     break;
 
                 case 'put_ram':
-                    $query = "UPDATE Prodotto (id_immagine, id_categoria, marca, modello, descrizione, prezzo, link, r_dimensione, r_velocita, r_tipo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    $query = "UPDATE Prodotto SET marca = ?, modello = ?, descrizione = ?, prezzo = ?, link = ?, r_dimensione = ?, r_velocita = ?, r_tipo= ? WHERE id_prodotto = ?";
                     $stmt = $conn->prepare($query);
-                    $stmt->bind_param("iisssdsiis", $data['id_immagine'], $data['id_categoria'], $data['marca'], $data['modello'], $data['descrizione'], $data['prezzo'], $data['link'], $data['r_dimensione'], $data['r_velocita'], $data['r_tipo']);
+                    $stmt->bind_param("sssdsiisi", $data['marca'], $data['modello'], $data['descrizione'], $data['prezzo'], $data['link'], $data['r_dimensione'], $data['r_velocita'], $data['r_tipo'], $data['id_prodotto']);
                     break;
 
                 case 'put_hdd':
-                    $query = "UPDATE Prodotto (id_immagine, id_categoria, marca, modello, descrizione, prezzo, link, capacita_gb, fattore_di_forma, a_velocita_rotazione, a_cache_mb, a_velocita_lettura_mb_s, a_velocita_scrittura_mb_s) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    $query = "UPDATE Prodotto SET marca = ?, modello = ?, descrizione = ?, prezzo = ?, link = ?, capacita_gb = ?, fattore_di_forma = ?, a_velocita_rotazione = ?, a_cache_mb = ?, a_velocita_lettura_mb_s = ?, a_velocita_scrittura_mb_s = ? WHERE id_prodotto = ?";
                     $stmt = $conn->prepare($query);
-                    $stmt->bind_param("iisssdsisiiii", $data['id_immagine'], $data['id_categoria'], $data['marca'], $data['modello'], $data['descrizione'], $data['prezzo'], $data['link'], $data['capacita_gb'], $data['fattore_di_forma'], $data['a_velocita_rotazione'], $data['a_cache_mb'], $data['a_velocita_lettura_mb_s'], $data['a_velocita_scrittura_mb_s']);
+                    $stmt->bind_param("sssdsisiiiii", $data['marca'], $data['modello'], $data['descrizione'], $data['prezzo'], $data['link'], $data['capacita_gb'], $data['fattore_di_forma'], $data['a_velocita_rotazione'], $data['a_cache_mb'], $data['a_velocita_lettura_mb_s'], $data['a_velocita_scrittura_mb_s'], $data['id_prodotto']);
                     break;
 
                 case 'put_ssd':
-                    $query = "UPDATE Prodotto (id_immagine, id_categoria, marca, modello, descrizione, prezzo, link, capacita_gb, fattore_di_forma, a_interfaccia, a_velocita_lettura_mb_s, a_velocita_scrittura_mb_s) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    $query = "UPDATE Prodotto SET marca = ?, modello = ?, descrizione = ?, prezzo = ?, link = ?, capacita_gb = ?, fattore_di_forma = ?, a_interfaccia = ?, a_velocita_lettura_mb_s = ?, a_velocita_scrittura_mb_s = ? WHERE id_prodotto = ?";
                     $stmt = $conn->prepare($query);
-                    $stmt->bind_param("iisssdsissii", $data['id_immagine'], $data['id_categoria'], $data['marca'], $data['modello'], $data['descrizione'], $data['prezzo'], $data['link'], $data['capacita_gb'], $data['fattore_di_forma'], $data['a_interfaccia'], $data['a_velocita_lettura_mb_s'], $data['a_velocita_scrittura_mb_s']);
+                    $stmt->bind_param("sssdsissiii", $data['marca'], $data['modello'], $data['descrizione'], $data['prezzo'], $data['link'], $data['capacita_gb'], $data['fattore_di_forma'], $data['a_interfaccia'], $data['a_velocita_lettura_mb_s'], $data['a_velocita_scrittura_mb_s'], $data['id_prodotto']);
                     break;
                 case 'put_case':
-                    $query = "UPDATE Prodotto (id_immagine, id_categoria, marca, modello, descrizione, prezzo, link, cs_colore, dimensioni, cs_peso, fattore_di_forma, cs_finestra_laterale) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    $query = "UPDATE Prodotto SET marca = ?, modello = ?, descrizione = ?, prezzo = ?, link = ?, cs_colore = ?, dimensioni = ?, cs_peso = ?, fattore_di_forma = ?, cs_finestra_laterale = ? WHERE id_prodotto = ?";
                     $stmt = $conn->prepare($query);
-                    $stmt->bind_param("iisssdsssisi", $data['id_immagine'], $data['id_categoria'], $data['marca'], $data['modello'], $data['descrizione'], $data['prezzo'], $data['link'], $data['cs_colore'], $data['dimensioni'], $data['cs_peso'], $data['fattore_di_forma'], $data['cs_finestra_laterale']);
+                    $stmt->bind_param("sssdsssisii", $data['marca'], $data['modello'], $data['descrizione'], $data['prezzo'], $data['link'], $data['cs_colore'], $data['dimensioni'], $data['cs_peso'], $data['fattore_di_forma'], $data['cs_finestra_laterale'], $data['id_prodotto']);
                     break;
 
                 case 'put_motherboard':

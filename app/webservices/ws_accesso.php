@@ -204,7 +204,10 @@ function addUser($data) {
 
     $query = "INSERT INTO Utente (username, password,  email, nome, cognome, ruolo) VALUES (?,?,?,?,?,?)";
     $stmt = $conn->prepare($query);
-    $stmt->bind_param("sssssi", $data['username'], $data['password'], $data['email'], $data['nome'], $data['cognome'], $data['ruolo']);
+
+    $hashed_password = password_hash($data['password'], PASSWORD_DEFAULT);
+
+    $stmt->bind_param("sssssi", $data['username'], $hashed_password, $data['email'], $data['nome'], $data['cognome'], $data['ruolo']);
 
     // Esecuzione query
     $stmt->execute();
@@ -225,7 +228,7 @@ function addUser($data) {
 function login($username, $password) {
     global $conn;
 
-    $query = "SELECT * FROM Utente WHERE username = ? AND password = ?";
+    $query = "SELECT * FROM Utente WHERE username = ?";
     $stmt = $conn->prepare($query);
 
     if (!$stmt) {
@@ -234,17 +237,22 @@ function login($username, $password) {
         exit();
     }
 
-    $stmt->bind_param("ss", $username, $password);
+    $stmt->bind_param("s", $username);
     $stmt->execute();
     $result = $stmt->get_result();
 
     if ($result->num_rows > 0) {
         $user = $result->fetch_assoc();
-        echo json_encode($user);
-        http_response_code(200);
+        if(password_verify($password, $user['password'])) {
+            echo json_encode($user);
+            http_response_code(200);
+        } else {
+            echo json_encode(['errore' => 'Password non valida']);
+            http_response_code(400);
+        }
     } else {
         // Altrimenti, restituisci un errore con il codice di stato HTTP 401.
-        echo json_encode(['errore' => 'Credenziali non valide']);
+        echo json_encode(['errore' => 'Utente inesistente']);
         http_response_code(400);
     }
     exit(); // Termina lo script dopo il login

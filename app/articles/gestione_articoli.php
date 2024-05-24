@@ -1,10 +1,10 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['isLoged']) || $_SESSION['isLoged'] !== true) {
+/* if (!isset($_SESSION['isLoged']) || $_SESSION['isLoged'] !== true) {
     header('Location: ../user/login.php'); // Reindirizza alla pagina di login
     exit; // Termina l'esecuzione dello script
-}
+} */
 
 require_once('../shared/navbar.php');   
 include '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'db_connect.php';

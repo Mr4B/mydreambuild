@@ -21,7 +21,6 @@ exit
 
 Lavori da fare:
 - Sistemare tutti gli stili delle pagine
-- Criptare le password nel db (venerdì)
 - Popolare il db
 - Pagina del profilo della persona
 - Pagina di modifica dei prodotti

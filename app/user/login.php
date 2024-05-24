@@ -41,14 +41,8 @@ $token = $_SESSION['jwt'];
         margin-bottom: 15px;
         }
 
-        .btn-primary {
-        background-color: #388e3c; /* Green button color */
-        border-color: #388e3c; /* Green border for consistency */
-        }
-
-        .btn-primary:hover {
-        background-color: #2e7d32; /* Darker green on hover */
-        border-color: #2e7d32;
+        #response {
+          color: red;
         }
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -77,11 +71,12 @@ $token = $_SESSION['jwt'];
                     $_SESSION['LogedIn'] = true;
                     ?>
                     $("#response").html("Login avvenuto con successo");
+                    
                     window.location.href = "../main/home.php?ruolo=" + data.ruolo + "&username=" + data.username;
                 },
                 error: function(xhr, status, error) {
                     // console.error('Errore durante la richiesta:', status, error);
-                    $("#response").html("Username o password errati");
+                    $("#response").html(xhr.responseJSON.errore);
                 }
             });            
             return false;
@@ -106,7 +101,7 @@ $token = $_SESSION['jwt'];
               <input type="password" id="password" name="password" class="form-control" required>
             </div>
             <div class="form-group">
-              <input type="submit" class="btn btn-primary" value="Login">
+              <input type="submit" class="btn btn-success" value="Login">
             </div>
           </form>
           <div id="response"></div>

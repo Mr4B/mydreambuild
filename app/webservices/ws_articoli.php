@@ -36,7 +36,6 @@ switch ($method) {
 
         switch($action) {
             case 'get_articoli':
-                // Ritorna i 4 articoli più recenti (funziona)
                 getArticoli();
                 break;
 
@@ -51,6 +50,10 @@ switch ($method) {
 
             case 'get_articolo':
                 getArticolo($id);
+                break;
+
+            case 'get_pubblicati':
+                getPubblicati();
                 break;
 
             default:
@@ -257,4 +260,38 @@ function getArticolo($id) {
     }
     exit(); // Termina lo script dopo il login
 
+}
+
+function getPubblicati() {
+    global $conn;
+
+    $query = "SELECT * FROM Articolo WHERE pubblicato = 1 ORDER BY data_pubblicazione DESC;";
+    $stmt = $conn->prepare($query);
+
+    if (!$stmt) {
+        echo json_encode(['errore' => 'Errore nella preparazione della query: ' . $conn->error]);
+        http_response_code(500);
+        exit();
+    }
+
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        $lista = Array();
+
+        while ($row = $result->fetch_assoc()) {
+            $lista[] = $row;
+        }
+
+        // Impostazione del header field Content-Type
+        header("Content-Type: application/json; charset=UTF-8");
+        echo json_encode($lista);
+        http_response_code(200);
+    } else {
+        // Altrimenti, restituisci un errore con il codice di stato HTTP 401.
+        echo json_encode(['errore' => 'Nessun articolo trovato']);
+        http_response_code(404);
+    }
+    exit(); // Termina lo script dopo il login
 }

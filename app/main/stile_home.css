@@ -50,9 +50,8 @@
 
 .config-card img {
     width: 100%;
-    height: 100%; /* Imposta un'altezza fissa per le immagini delle card */
+    height: 150px; /* Imposta un'altezza fissa per le immagini delle card */
     object-fit: cover;
-    transform: scale(0.90); /* Ingrandisce leggermente la card al passaggio del mouse */
 }
 
 .config-card .config-details {

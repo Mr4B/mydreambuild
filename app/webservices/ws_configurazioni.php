@@ -248,7 +248,8 @@ function getDefaultConfiguration() {
     $query = "SELECT c.*
                 FROM Configurazione AS c
                 JOIN Utente AS u ON c.id_utente = u.username
-                WHERE u.ruolo IN (1, 2);
+                WHERE u.ruolo IN (1, 2)
+                ORDER BY c.tipologia;
                 ";
     $stmt = $conn->prepare($query);
 

@@ -3,6 +3,7 @@
 <?php
 session_start();
 require_once('../shared/navbar.php');   
+require_once('../shared/footer.php');
 include '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'db_connect.php';
 $navbar = new NavBar();
 if(isset($_SESSION['LogedIn']) && $_SESSION['LogedIn'] === true) 
@@ -102,7 +103,7 @@ $id = isset($_GET['id']) ? $_GET['id'] : ''; // Riprende l'id corretto
         </header>
         <!-- Corpo della pagina -->
         <div id="corpo" class="container"></div>
-        
+        <?php $footer = new Footer(); echo $footer->getFooter(); ?>
     </div>
     <!-- Script Bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>

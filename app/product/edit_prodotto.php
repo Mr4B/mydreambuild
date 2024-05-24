@@ -217,6 +217,7 @@ $id = isset($_GET['id']) ? $_GET['id'] : '';
 
                     case 'psu':
 
+                        actionUrl += 'put_psu';
                         break;
 
                     }

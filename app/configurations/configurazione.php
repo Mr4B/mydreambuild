@@ -3,6 +3,7 @@
 session_start();
 
 require_once('../shared/navbar.php');   
+require_once('../shared/footer.php');
 include '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'db_connect.php';
 $navbar = new NavBar();
 if(isset($_SESSION['LogedIn']) && $_SESSION['LogedIn'] === true) {
@@ -39,9 +40,10 @@ $token = $_SESSION['jwt'];
                     'Authorization': 'Bearer <?php echo $token; ?>'
                 },
                 success: function(data) {
-                    // console.log(data);
+                    console.log(data);
                     const container = $('#your-configurations');
-                    if(data.lengh > 0) {
+                    // console.log(data.length);
+                    if(data.length) {
 
                         
                         const cardContainer = $('<div class="config-card-container"></div>');
@@ -50,11 +52,10 @@ $token = $_SESSION['jwt'];
                             const imgSrc = config.id_immagine ? `http://localhost/mydreambuild/capolavoro/app/webservices/ws_immagini.php?id=${config.id_immagine}` : 'https://via.placeholder.com/150/000000/FFFFFF/?text=No+Image';
                             const card = `
                             <div class="config-card" data-id="${config.id}">
-                            <img src="${imgSrc}" alt="Immagine">
-                            <div class="config-details">
-                            <h5>${config.denominazione}</h5>
-                            <p>${config.prezzo_totale}€</p>
-                            </div>
+                                <div class="config-details">
+                                    <h5>${config.denominazione}</h5>
+                                    <p>${config.prezzo_totale}€</p>
+                                </div>
                             </div>
                             `;
                             cardContainer.append(card);
@@ -169,7 +170,7 @@ $token = $_SESSION['jwt'];
                 <!-- Configurazioni consigliate verranno aggiunte qui dinamicamente -->
             </div>
         </div>
-
+        <?php $footer = new Footer(); echo $footer->getFooter(); ?>
     </div>
     
     <!-- Script Bootstrap -->
