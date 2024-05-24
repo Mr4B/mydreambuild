@@ -187,9 +187,9 @@ switch ($method) {
             // try {
             switch($action) {
                 case 'post_cpu':
-                    $query = "INSERT INTO Prodotto (id_immagine, id_categoria, marca, modello, descrizione, prezzo, link, frequenza_base, c_frequenza_boost, c_n_core, c_n_thread, c_consumo_energetico, c_dim_cache) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    $query = "INSERT INTO Prodotto (id_immagine, id_categoria, marca, modello, descrizione, prezzo, link, frequenza_base, c_frequenza_boost, c_n_core, c_n_thread, c_consumo_energetico, c_dim_cache, socket) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                     $stmt = $conn->prepare($query);
-                    $stmt->bind_param("iisssdsddiiii", $data['id_immagine'], $data['id_categoria'], $data['marca'], $data['modello'], $data['descrizione'], $data['prezzo'], $data['link'], $data['frequenza_base'], $data['frequenza_boost'], $data['n_core'], $data['n_thread'], $data['consumo_energetico'], $data['dim_cache']);
+                    $stmt->bind_param("iisssdsddiiiis", $data['id_immagine'], $data['id_categoria'], $data['marca'], $data['modello'], $data['descrizione'], $data['prezzo'], $data['link'], $data['frequenza_base'], $data['frequenza_boost'], $data['n_core'], $data['n_thread'], $data['consumo_energetico'], $data['dim_cache'], $data['socket']);
                     break;
 
                 case 'post_gpu':
@@ -222,11 +222,15 @@ switch ($method) {
                     break;
 
                 case 'post_motherboard':
-
+                    $query = "INSERT INTO Prodotto (id_immagine, id_categoria, marca, modello, descrizione, prezzo, link, m_formato, socket, m_chipset, m_numero_slot_ram, m_tipologia_ram, m_versione_pcie) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    $stmt = $conn->prepare($query);
+                    $stmt->bind_param("iisssdssssiss", $data['id_immagine'], $data['id_categoria'], $data['marca'], $data['modello'], $data['descrizione'], $data['prezzo'], $data['link'], $data['m_formato'], $data['socket'], $data['m_chipset'], $data['m_numero_slot_ram'], $data['m_tipologia_ram'], $data['m_versione_pcie']);
                     break;
                 
                 case 'post_psu':
-
+                    $query = "INSERT INTO Prodotto (id_immagine, id_categoria, marca, modello, descrizione, prezzo, link, fattore_di_forma, p_watt, p_schema_alimentazione) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    $stmt = $conn->prepare($query);
+                    $stmt->bind_param("iisssdssis", $data['id_immagine'], $data['id_categoria'], $data['marca'], $data['modello'], $data['descrizione'], $data['prezzo'], $data['link'], $data['fattore_di_forma'], $data['p_watt'], $data['p_schema_alimentazione']);
                     break;
 
                 default:
@@ -318,11 +322,15 @@ switch ($method) {
                     break;
 
                 case 'put_motherboard':
-
+                    $query = "UPDATE Prodotto SET marca = ?, modello = ?, descrizione = ?, prezzo = ?, link = ?, m_formato = ?, socket = ?, m_chipset = ?, m_numero_slot_ram = ?, m_tipologia_ram = ?, m_versione_pcie = ? WHERE id_prodotto = ?";
+                    $stmt = $conn->prepare($query);
+                    $stmt->bind_param("sssdssssissi", $data['id_immagine'], $data['id_categoria'], $data['marca'], $data['modello'], $data['descrizione'], $data['prezzo'], $data['link'], $data['m_formato'], $data['socket'], $data['m_chipset'], $data['m_numero_slot_ram'], $data['m_tipologia_ram'], $data['m_versione_pcie'], $data['id_prodotto']);
                     break;
                 
                 case 'put_psu':
-
+                    $query = "UPDATE Prodotto SET marca = ?, modello = ?, descrizione = ?, prezzo = ?, link = ?, fattore_di_forma = ? p_watt = ? p_schema_alimentazione = ? WHERE id_prodotto = ?";
+                    $stmt = $conn->prepare($query);
+                    $stmt->bind_param("sssdssisi", $data['id_immagine'], $data['id_categoria'], $data['marca'], $data['modello'], $data['descrizione'], $data['prezzo'], $data['link'], $data['fattore_di_forma'], $data['p_watt'], $data['p_schema_alimentazione'], $data['id_prodotto']);
                     break;
 
                 default:

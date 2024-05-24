@@ -79,6 +79,7 @@ CREATE TABLE IF NOT EXISTS Prodotto (
     c_n_thread INT,
     c_consumo_energetico INT,
     c_dim_cache INT,
+    sockcet VARCHAR(255), -- anche CPU
     -- gpu
     g_memoria INT,
     g_tipo_memoria VARCHAR(255), -- GGDR6

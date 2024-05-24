@@ -121,6 +121,8 @@ $token = $_SESSION['jwt'];
             searchComponent('.cpu', '#cpu_text', '#cpu_risultati', 1);
             searchComponent('.gpu', '#gpu_text', '#gpu_risultati', 2);
             searchComponent('.ram', '#ram_text', '#ram_risultati', 3);
+            searchComponent('.motherboard', '#motherboard_text', '#motherboard_risultati', 4);
+            searchComponent('.psu', '#psu_text', '#psu_risultati', 5);
             searchComponent('.hdd', '#hdd_text', '#hdd_risultati', 6);
             searchComponent('.ssd', '#ssd_text', '#ssd_risultati', 7);
             searchComponent('.case', '#case_text', '#case_risultati', 8);
@@ -141,6 +143,10 @@ $token = $_SESSION['jwt'];
                     isValid = false;
                     alert("La GPU è obbligatoria.");
                 }
+                if ($("#motherboard_text").data('value') === undefined) {
+                    isValid = false;
+                    alert("La Scheda madre è obbligatoria.");
+                }
                 if ($("#hdd_text").data('value') === undefined && $("#ssd_text").data('value') === undefined) {
                     isValid = false;
                     alert("Almeno un HDD o un SSD è obbligatorio.");
@@ -157,6 +163,8 @@ $token = $_SESSION['jwt'];
                 if ($("#hdd_text").data('value') !== undefined) prodottiArray.push($("#hdd_text").data('value'));
                 if ($("#ssd_text").data('value') !== undefined) prodottiArray.push($("#ssd_text").data('value'));
                 if ($("#case_text").data('value') !== undefined) prodottiArray.push($("#case_text").data('value'));
+                if ($("#motherboard_text").data('value') !== undefined) prodottiArray.push($("#motherboard_text").data('value'));
+                if ($("#psu_text").data('value') !== undefined) prodottiArray.push($("#psu_text").data('value'));
 
                 var data = {
                     denominazione: $("#nome").val(),
@@ -178,8 +186,9 @@ $token = $_SESSION['jwt'];
                     contentType: "application/json",
                     data: JSON.stringify(data),
                     success: function(result) {
-                        console.log(result);
+                        // console.log(result);
                         $("#response").html(result.Success);
+                        window.location.href = "configurazione.php";
                     },
                     error: function(xhr, status, error) {
                         console.error('Errore durante l\'inserimento dell\'articolo :', status, error);
@@ -209,6 +218,11 @@ $token = $_SESSION['jwt'];
             <input class="form-control" type="text" id="cpu_text" name="cpu_text" placeholder="Nessuna cpu" required>
             <ul id="cpu_risultati"></ul>
         </div>
+        <div class="mb-3 component-group motherboard">
+            <label for="motherboard" class="form-label">Scheda madre:</label>
+            <input class="form-control" type="text" id="motherboard_text" name="motherboard_text" placeholder="Nessuna scheda madre" required>
+            <ul id="motherboard_risultati"></ul>
+        </div>
         <div class="mb-3 component-group ram">
             <label for="ram" class="form-label">RAM:</label>
             <input class="form-control" type="text" id="ram_text" name="ram_text" placeholder="Nessuna ram" required>
@@ -231,8 +245,13 @@ $token = $_SESSION['jwt'];
         </div>
         <div class="mb-3 component-group case">
             <label for="case" class="form-label">CASE:</label>
-            <input class="form-control" type="text" id="case_text" name="case_text" placeholder="Nessuna case" required>
+            <input class="form-control" type="text" id="case_text" name="case_text" placeholder="Nessuna case">
             <ul id="case_risultati"></ul>
+        </div>
+        <div class="mb-3 component-group psu">
+            <label for="psu" class="form-label">Alimentatore:</label>
+            <input class="form-control" type="text" id="psu_text" name="psu_text" placeholder="Nessun alimentatore">
+            <ul id="psu_risultati"></ul>
         </div>
         <div class="mb-3">
             <input type="submit" id="submit" name="submit" class="btn btn-primary" value="Salva">

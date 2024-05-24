@@ -68,6 +68,7 @@ $token = $_SESSION['jwt'];
                         data.n_thread = $("#n_thread").val();
                         data.consumo_energetico = $("#consumo_energetico").val();
                         data.dim_cache = $("#dim_cache").val();
+                        data.socket = $("#c_socket").val();
                         actionUrl += 'post_cpu';
                         // console.log(actionUrl);
                         break;
@@ -113,6 +114,23 @@ $token = $_SESSION['jwt'];
                         data.fattore_di_forma = $("#fattore_di_forma").val();
                         data.cs_finestra_laterale = $("#vetro").is(":checked") ? 1 : 0;
                         actionUrl += 'post_case';
+                        break;
+
+                    case 'scheda madre':
+                        data.m_formato = $("#formato").val();
+                        data.socket = $("#m_socket").val();
+                        data.m_chipset = $("#chipset").val();
+                        data.m_numero_slot_ram = $("#n_ram").val();
+                        data.m_tipologia_ram = $("#tipo_ram").val();
+                        data.m_version_pcie = $("#pcie").val();
+                        actionUrl += 'post_motherboard';
+                        break;
+
+                    case 'psu':
+                        data.fattore_di_forma = $("#p_fattore_di_forma").val(),
+                        data.p_watt = $("#watt").val();
+                        data.p_schema_alimentazione = $("#p_schema_alimentazione").val();
+                        actionUrl += 'post_psu';
                         break;
 
                     }
@@ -213,8 +231,11 @@ $token = $_SESSION['jwt'];
         <label for="link">Link d'acquisto:</label><br>
         <input type="text" name="link" id="link">
         <br>
-
+        
         <div id="campi_cpu" style="display: none;">
+            <label for="c_socket">Socket:</label><br>
+            <input type="text" name="c_socket" id="c_socket">
+            <br>
             <label for="frequenza_base">Frequenza base:</label> <br>
             <input type="number" step="0.01" name="frequenza_base" id="frequenza_base">
             <br>
@@ -342,10 +363,13 @@ $token = $_SESSION['jwt'];
             <label for="formato">Formato:</label> <br>
             <input type="text" name="formato" id="formato">
             <br>
+            <label for="m_socket">Socket:</label> <br>
+            <input type="text" name="m_socket" id="m_socket">
+            <br>
             <label for="chipset">Chipset:</label> <br>
             <input type="text" name="chipset" id="chipset">
             <br>
-            <label for="n_ram">Slot Ram:</label> <br>
+            <label for="n_ram">Numero slot Ram:</label> <br>
             <input type="number" name="n_ram" id="n_ram">
             <br>
             <label for="tipo_ram">Tipologia ram:</label> <br>
@@ -357,12 +381,26 @@ $token = $_SESSION['jwt'];
         </div>
 
         <div id="campi_psu" style="display: none;">
-
+            <label for="p_fattore_di_forma">Fattore di forma scheda madre:</label><br>
+            <select name="p_fattore_di_forma" id="p_fattore_di_forma">
+                <option value="ATX">ATX</option>
+                <option value="SFX">SFX</option>
+                <option value="TFX">TFX</option>
+                <option value="CFX">CFX</option>
+                <option value="EPS">EPS</option>
+            </select>
+            <br>
+            <label for="watt">Watt:</label> <br>
+            <input type="number" name="watt" id="watt">
+            <br>
+            <label for="p_schema_alimentazione">Schema di cablaggio:</label> <br>
+            <select name="p_schema_alimentazione" id="p_schema_alimentazione">
+                <option value="Non modulare">Non modulare</option>
+                <option value="Semi-modulare">Semi-modulare</option>
+                <option value="Modulare">Modulare</option>
+            </select>
+            <br>
         </div>
-
-    </div>
-    
-
 
         <br>
         <input type="submit" id="submit" name="submit" class="btn btn-outline-info" value="Inserisci prodotto" disabled>

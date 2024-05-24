@@ -17,7 +17,53 @@ $token = $_SESSION['jwt'];
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="stile.css">  
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        form {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 2rem;
+        }
+        .form-control {
+            margin-bottom: 1rem;
+        }
+        .component-group {
+            position: relative;
+        }
+        .component-group ul {
+            list-style-type: none;
+            padding-left: 0;
+            position: absolute;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            max-height: 200px;
+            overflow-y: auto;
+            width: 100%;
+            display: none;
+            z-index: 1000;
+            margin-top: 0.25rem;
+        }
+        .component-group ul li {
+            padding: 0.5rem;
+            cursor: pointer;
+        }
+        .component-group ul li:hover {
+            background-color: #f1f1f1;
+        }
+        .component-group ul li a {
+            text-decoration: none;
+            color: #333;
+            display: flex;
+            align-items: center;
+        }
+        .component-group ul li a img {
+            margin-right: 0.5rem;
+        }
+    </style>
     <script type="text/javascript">
         $(document).ready(function() {
 
@@ -101,6 +147,8 @@ $token = $_SESSION['jwt'];
             searchComponent('.cpu', '#cpu_text', '#cpu_risultati', 1);
             searchComponent('.gpu', '#gpu_text', '#gpu_risultati', 2);
             searchComponent('.ram', '#ram_text', '#ram_risultati', 3);
+            searchComponent('.motherboard', '#motherboard_text', '#motherboard_risultati', 4);
+            searchComponent('.psu', '#psu_text', '#psu_risultati', 5);
             searchComponent('.hdd', '#hdd_text', '#hdd_risultati', 6);
             searchComponent('.ssd', '#ssd_text', '#ssd_risultati', 7);
             searchComponent('.case', '#case_text', '#case_risultati', 8);
@@ -110,29 +158,6 @@ $token = $_SESSION['jwt'];
             $("#configurazione").submit(function(event) {
                 event.preventDefault();
 
-                // Verifica che tutti i campi obbligatori siano compilati
-                let isValid = true;
-                if ($("#cpu_text").data('value') === undefined) {
-                    isValid = false;
-                    alert("La CPU è obbligatoria.");
-                }
-                if ($("#ram_text").data('value') === undefined) {
-                    isValid = false;
-                    alert("La RAM è obbligatoria.");
-                }
-                if ($("#gpu_text").data('value') === undefined) {
-                    isValid = false;
-                    alert("La GPU è obbligatoria.");
-                }
-                if ($("#hdd_text").data('value') === undefined && $("#ssd_text").data('value') === undefined) {
-                    isValid = false;
-                    alert("Almeno un HDD o un SSD è obbligatorio.");
-                }
-
-                if (!isValid) {
-                    return; // Interrompe l'invio del form se i campi obbligatori non sono compilati
-                }
-
                 var prodottiArray = [];
                 if ($("#cpu_text").data('value') !== undefined) prodottiArray.push($("#cpu_text").data('value'));
                 if ($("#ram_text").data('value') !== undefined) prodottiArray.push($("#ram_text").data('value'));
@@ -140,6 +165,8 @@ $token = $_SESSION['jwt'];
                 if ($("#hdd_text").data('value') !== undefined) prodottiArray.push($("#hdd_text").data('value'));
                 if ($("#ssd_text").data('value') !== undefined) prodottiArray.push($("#ssd_text").data('value'));
                 if ($("#case_text").data('value') !== undefined) prodottiArray.push($("#case_text").data('value'));
+                if ($("#motherboard_text").data('value') !== undefined) prodottiArray.push($("#motherboard_text").data('value'));
+                if ($("#psu_text").data('value') !== undefined) prodottiArray.push($("#psu_text").data('value'));
 
                 var data = {
                     denominazione: $("#nome").val(),
@@ -234,35 +261,45 @@ $token = $_SESSION['jwt'];
         <label for="image">Seleziona immagine:</label>
         <input type="file" id="image" name="image" accept="image/*">
         <br><br>
-        <div class="cpu">
+        <div class="mb-3 component-group cpu">
             <label for="cpu">CPU:</label>
-            <input type="text" id="cpu_text" name="cpu_text" placeholder="Nessuna cpu" required>
+            <input class="form-control" type="text" id="cpu_text" name="cpu_text" placeholder="Nessuna cpu" required>
             <ul id="cpu_risultati"></ul>
         </div>
-        <div class="ram">
+        <div class="mb-3 component-group ram">
             <label for="ram">RAM:</label>
-            <input type="text" id="ram_text" name="ram_text" placeholder="Nessuna ram" required>
+            <input class="form-control" type="text" id="ram_text" name="ram_text" placeholder="Nessuna ram" required>
             <ul id="ram_risultati"></ul>
         </div>
-        <div class="gpu">
+        <div class="mb-3 component-group gpu">
             <label for="gpu">GPU:</label>
-            <input type="text" id="gpu_text" name="gpu_text" placeholder="Nessuna gpu" required>
+            <input class="form-control" type="text" id="gpu_text" name="gpu_text" placeholder="Nessuna gpu" required>
             <ul id="gpu_risultati"></ul>
         </div>
-        <div class="hdd">
+        <div class="mb-3 component-group hdd">
             <label for="hdd">HDD:</label>
-            <input type="text" id="hdd_text" name="hdd_text" placeholder="Nessun hdd">
+            <input class="form-control" type="text" id="hdd_text" name="hdd_text" placeholder="Nessun hdd">
             <ul id="hdd_risultati"></ul>
         </div>
-        <div class="ssd">
+        <div class="mb-3 component-group ssd">
             <label for="ssd">SSD:</label>
-            <input type="text" id="ssd_text" name="ssd_text" placeholder="Nessuna ssd">
+            <input class="form-control" type="text" id="ssd_text" name="ssd_text" placeholder="Nessuna ssd">
             <ul id="ssd_risultati"></ul>
         </div>
-        <div class="case">
+        <div class="mb-3 component-group case">
             <label for="case">CASE:</label>
-            <input type="text" id="case_text" name="case_text" placeholder="Nessuna case" required>
+            <input class="form-control" type="text" id="case_text" name="case_text" placeholder="Nessuna case" required>
             <ul id="case_risultati"></ul>
+        </div>
+        <div class="mb-3 component-group motherboard">
+            <label for="motherboard" class="form-label">Scheda madre:</label>
+            <input class="form-control" type="text" id="motherboard_text" name="motherboard_text" placeholder="Nessuna scheda madre" required>
+            <ul id="motherboard_risultati"></ul>
+        </div>
+        <div class="mb-3 component-group psu">
+            <label for="psu" class="form-label">Alimentatore:</label>
+            <input class="form-control" type="text" id="psu_text" name="psu_text" placeholder="Nessun alimentatore" required>
+            <ul id="psu_risultati"></ul>
         </div>
         <br>
         <input type="submit" id="submit" name="submit" class="btn btn-outline-info" value="Salva">
