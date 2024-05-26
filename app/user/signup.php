@@ -1,5 +1,6 @@
 <?php
 session_start();
+include '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'db_connect.php';
 $token = $_SESSION['jwt'];
 ?>
 
@@ -73,7 +74,7 @@ $token = $_SESSION['jwt'];
                 ruolo : 3
             };
             $.ajax({
-                url: 'http://localhost/mydreambuild/capolavoro/app/webservices/ws_accesso.php?action=signup',
+                url: '<?php echo $url; ?>app/webservices/ws_accesso.php?action=signup',
                 type: 'POST',
                 dataType: 'json',
                 headers: {

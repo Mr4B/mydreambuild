@@ -1,8 +1,7 @@
-<!-- Pagina (in cui puoi accedere solo da loggato) dove si crea la configurazione -->
-
 <?php
 session_start();
 require_once('../shared/navbar.php');   
+include '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'db_connect.php';
 $navbar = new NavBar();
 $navbar->setLogin($_SESSION['username'], $_SESSION['ruolo']);
 $token = $_SESSION['jwt'];
@@ -69,8 +68,7 @@ $token = $_SESSION['jwt'];
 
             var tipologie = [];
             $.ajax({
-                url: 'http://localhost/mydreambuild/capolavoro/app/webservices/ws_configurazioni.php?action=get_tipologie',
-                // url: 'http://10.25.0.15/~s_bttkvn05l18d488f/capolavoro-main/app/webservices/ws_prodotti.php?action=get_categorie',
+                url: '<?php echo $url; ?>app/webservices/ws_configurazioni.php?action=get_tipologie',
                 type: 'GET',
                 dataType: 'json',
                 headers: {
@@ -101,7 +99,7 @@ $token = $_SESSION['jwt'];
                     const searchTerm = input.val().toLowerCase();
 
                     $.ajax({
-                        url: `http://localhost/mydreambuild/capolavoro/app/webservices/ws_prodotti.php?action=search_product&search=${encodeURIComponent(searchTerm)}&cat=${category}`,
+                        url: `<?php echo $url; ?>app/webservices/ws_prodotti.php?action=search_product&search=${encodeURIComponent(searchTerm)}&cat=${category}`,
                         type: 'GET',
                         dataType: 'json',
                         headers: {
@@ -116,7 +114,7 @@ $token = $_SESSION['jwt'];
                             } else {
                                 data.forEach(function(componente) {
                                     const listItem = $('<li>');
-                                    listItem.html(`<a href="#" data-value="${componente.id_prodotto}">${componente.id_immagine ? `<img class="d-block" src="http://localhost/mydreambuild/capolavoro/app/webservices/ws_immagini.php?id=${componente.id_immagine}" width="60" alt="Immagine">` : ''} ${componente.marca} ${componente.modello} - ${componente.prezzo}€</a>`);
+                                    listItem.html(`<a href="#" data-value="${componente.id_prodotto}">${componente.id_immagine ? `<img class="d-block" src="<?php echo $url; ?>app/webservices/ws_immagini.php?id=${componente.id_immagine}" width="60" alt="Immagine">` : ''} ${componente.marca} ${componente.modello} - ${componente.prezzo}€</a>`);
                                     listItem.on('click', function() {
                                         input.val(`${componente.marca} ${componente.modello} - ${componente.prezzo}€`);
                                         input.data('value', componente.id_prodotto);
@@ -186,8 +184,7 @@ $token = $_SESSION['jwt'];
                     formData.append('image', imageFile);
 
                     $.ajax({
-                        url: 'http://localhost/mydreambuild/capolavoro/app/webservices/ws_immagini.php',
-                        // url: 'http://10.25.0.15/~s_bttkvn05l18d488f/capolavoro-main/app/webservices/ws_immagini.php',
+                        url: '<?php echo $url; ?>app/webservices/ws_immagini.php',
                         type: 'POST',
                         data: formData,
                         processData: false,
@@ -218,7 +215,7 @@ $token = $_SESSION['jwt'];
 
                 function inviaProdotto(data) {
                     $.ajax({
-                        url: 'http://localhost/mydreambuild/capolavoro/app/webservices/ws_configurazioni.php?action=post_configurazione_mod',
+                        url: '<?php echo $url; ?>app/webservices/ws_configurazioni.php?action=post_configurazione_mod',
                         type: 'POST',
                         dataType: 'json',
                         headers: {

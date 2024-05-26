@@ -2,6 +2,7 @@
 <?php
 session_start();
 
+include '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'db_connect.php';
 require_once('../shared/navbar.php');   
 require_once('../shared/footer.php');
 include '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'db_connect.php';
@@ -30,7 +31,7 @@ $token = $_SESSION['jwt'];
             
             // Configurazioni consigliate
             $.ajax({
-                url: 'http://localhost/mydreambuild/capolavoro/app/webservices/ws_accesso.php?action=',
+                url: '<?php echo $url; ?>app/webservices/ws_accesso.php?action=',
                 type: 'GET',
                 dataType: 'json',
                 headers: {

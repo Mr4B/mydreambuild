@@ -1,6 +1,6 @@
 # Capolavoro
 
-Questo git conterrà il sito web "(nome che non ho)", nonchè utilizzato come capolavoro per l'esame (forse)
+Questo git conterrà il sito web "mydreambuild", nonchè utilizzato come capolavoro per l'esame
 
 per fare un commit e push
 (terminale git/cartella corrente)

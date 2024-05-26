@@ -29,4 +29,11 @@ function getConnection() {
     // echo "<br> Connession: " . mysqli_get_host_info($conn);
     return $conn;
 }
+
+// Url da cambiare, in base alle cartelle, per accedere alle risorse
+$url = "http://localhost/mydreambuild/capolavoro/";
+/* 
+<?php echo $url; ?>
+include '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'db_connect.php';
+ */    
 ?>

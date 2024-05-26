@@ -26,8 +26,7 @@ $token = $_SESSION['jwt'];
     <script type="text/javascript">
         $(document).ready(function(){
             $.ajax({
-                // url: 'http://10.25.0.15/~s_bttkvn05l18d488f/capolavoro-main/app/webservices/ws_prodotti.php?action=get_products',
-                url: 'http://localhost/mydreambuild/capolavoro/app/webservices/ws_articoli.php?action=get_articoli',
+                url: '<?php echo $url; ?>app/webservices/ws_articoli.php?action=get_articoli',
                 type: 'GET',
                 dataType: 'json',
                 headers: {
@@ -42,8 +41,7 @@ $token = $_SESSION['jwt'];
                         table += '<tr>';
                         table += '<td class="col-1">' + product.id + '</td>';
                         if (product.id_immagine) {
-                            // table += '<td><img src="http://10.25.0.15/~s_bttkvn05l18d488f/capolavoro-main/app/webservices/ws_immagini.php?id=' + product.id_immagine + '" width="120"></td>';
-                            table += '<td><img class="image" src="http://localhost/mydreambuild/capolavoro/app/webservices/ws_immagini.php?id=' + product.id_immagine + '" width="90"></td>';
+                            table += '<td><img class="image" src="<?php echo $url; ?>app/webservices/ws_immagini.php?id=' + product.id_immagine + '" width="90"></td>';
                         } else {
                             table += '<td>No</td>';
                         }

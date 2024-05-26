@@ -1,5 +1,6 @@
 <?php
 session_start();
+include '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'db_connect.php';
 require_once('../shared/navbar.php');   
 $navbar = new NavBar();
 $navbar->setLogin($_SESSION['username'], $_SESSION['ruolo']);
@@ -48,7 +49,7 @@ $id = isset($_GET['id']) ? $_GET['id'] : '';
             // Funzione per ottenere le categorie
             function getCategorie() {
                 return $.ajax({
-                    url: 'http://localhost/mydreambuild/capolavoro/app/webservices/ws_prodotti.php?action=get_categorie',
+                    url: '<?php echo $url; ?>app/webservices/ws_prodotti.php?action=get_categorie',
                     type: 'GET',
                     dataType: 'json',
                     headers: {
@@ -68,7 +69,7 @@ $id = isset($_GET['id']) ? $_GET['id'] : '';
             // Funzione per ottenere i valori del prodotto da modificare
             function getProdotto() {
                 return $.ajax({
-                    url: 'http://localhost/mydreambuild/capolavoro/app/webservices/ws_prodotti.php?action=get_byID&id=<?php echo $id; ?>',
+                    url: '<?php echo $url; ?>app/webservices/ws_prodotti.php?action=get_byID&id=<?php echo $id; ?>',
                     type: 'GET',
                     dataType: 'json',
                     headers: {
@@ -101,7 +102,7 @@ $id = isset($_GET['id']) ? $_GET['id'] : '';
                 // console.log(data);
                 if(data.id_immagine) {
                     currentImage = data.id_immagine;
-                    $("#immagine").html(`<img src="http://localhost/mydreambuild/capolavoro/app/webservices/ws_immagini.php?id=${data.id_immagine}">`); // Stampo l'immagine se è presente
+                    $("#immagine").html(`<img src="<?php echo $url; ?>app/webservices/ws_immagini.php?id=${data.id_immagine}">`); // Stampo l'immagine se è presente
                 }
 
                 $("#marca").val(data.marca);
@@ -192,8 +193,7 @@ $id = isset($_GET['id']) ? $_GET['id'] : '';
                 };
 
                 // Cambia l'url al webservices desiderato
-                var actionUrl = 'http://localhost/mydreambuild/capolavoro/app/webservices/ws_prodotti.php?action=';
-                // var actionUrl = 'http://10.25.0.15/~s_bttkvn05l18d488f/capolavoro-main/app/webservices/ws_prodotti.php?action=';
+                var actionUrl = '<?php echo $url; ?>app/webservices/ws_prodotti.php?action=';
 
 
                 switch (categoria.toLowerCase()) {
@@ -279,7 +279,7 @@ $id = isset($_GET['id']) ? $_GET['id'] : '';
                     formData.append('image', imageFile);
 
                     $.ajax({
-                        url: 'http://localhost/mydreambuild/capolavoro/app/webservices/ws_immagini.php?id=' + currentImage,
+                        url: '<?php echo $url; ?>app/webservices/ws_immagini.php?id=' + currentImage,
                         type: 'PUT',
                         data: formData,
                         processData: false,
@@ -337,7 +337,7 @@ $id = isset($_GET['id']) ? $_GET['id'] : '';
             $("#delete").click(function(){
                 if (confirm('Sei sicuro di voler eliminare questo record?')) {
                     $.ajax({
-                        url: 'http://localhost/mydreambuild/capolavoro/app/webservices/ws_prodotti.php?id=<?php echo $id; ?>',
+                        url: '<?php echo $url; ?>app/webservices/ws_prodotti.php?id=<?php echo $id; ?>',
                         type: 'DELETE',
                         headers: {
                             'Authorization': 'Bearer <?php echo $token; ?>'
@@ -353,29 +353,6 @@ $id = isset($_GET['id']) ? $_GET['id'] : '';
                     });
                 }
             });
-
-
-            /* function eliminaProdotto() {
-                $.ajax({
-                        url: 'http://localhost/mydreambuild/capolavoro/app/webservices/ws_prodotti.php?id=<?php echo $id; ?>',
-                        type: 'PUT',
-                        dataType: 'json',
-                        headers: {
-                            'Accept': 'application/json',
-                            "Authorization": "Bearer <?php echo $token; ?>"
-                        },
-                        contentType: "application/json",
-                        data: JSON.stringify(data),
-                        success: function(result) {
-                            console.log(result);
-                            $("#response").html(result.Success);
-                        },
-                        error: function(xhr, status, error) {
-                            console.error('Errore durante l\'inserimento del prodotto:', status, error);
-                            $("#response").html("Errore durante l'inserimento del prodotto");
-                        }
-                    });
-            } */
 
             return false;
         });

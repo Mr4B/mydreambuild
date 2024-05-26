@@ -27,7 +27,7 @@ $id = isset($_GET['id']) ? $_GET['id'] : ''; // Riprende l'id corretto
     <script type="text/javascript">
         $(document).ready(function(){
     $.ajax({
-        url: 'http://localhost/mydreambuild/capolavoro/app/webservices/ws_configurazioni.php?action=get_byid&id=' + <?php echo $id; ?>,
+        url: '<?php echo $url; ?>app/webservices/ws_configurazioni.php?action=get_byid&id=' + <?php echo $id; ?>,
         type: 'GET',
         dataType: 'json',
         headers: {
@@ -56,7 +56,7 @@ $id = isset($_GET['id']) ? $_GET['id'] : ''; // Riprende l'id corretto
 
         data.prodotti.forEach(element => {
             $.ajax({
-                url: 'http://localhost/mydreambuild/capolavoro/app/webservices/ws_prodotti.php?action=get_byID&id=' + element.id_prodotto,
+                url: '<?php echo $url; ?>app/webservices/ws_prodotti.php?action=get_byID&id=' + element.id_prodotto,
                 type: 'GET',
                 dataType: 'json',
                 headers: {
@@ -77,10 +77,10 @@ $id = isset($_GET['id']) ? $_GET['id'] : ''; // Riprende l'id corretto
     }
 
     function buildProdotto(prodotto) {
-        const imgSrc = prodotto.id_immagine ? `http://localhost/mydreambuild/capolavoro/app/webservices/ws_immagini.php?id=${prodotto.id_immagine}` : 'https://via.placeholder.com/150/000000/FFFFFF/?text=No+Image';
+        const imgSrc = prodotto.id_immagine ? `<?php echo $url; ?>app/webservices/ws_immagini.php?id=${prodotto.id_immagine}` : 'https://via.placeholder.com/150/000000/FFFFFF/?text=No+Image';
         const html = `
             <div class="prodotto d-flex align-items-center">
-                <a href="../product/dettagli_prodotto.php?id=${prodotto.id}" class="text-decoration-none text-dark">
+                <a href="../product/dettagli_prodotto.php?id=${prodotto.id_prodotto}" class="text-decoration-none text-dark">
                     <img src="${imgSrc}" alt="Immagine">
                     <div class="details">
                         <h5>${prodotto.marca} ${prodotto.modello}</h5>

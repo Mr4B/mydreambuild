@@ -4,6 +4,8 @@ session_start();
 require_once('../shared/navbar.php');
 require_once('../shared/footer.php');
 require_once('../webservices/common/auth.php');
+include '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'db_connect.php';
+
 
 $gestioneJWT = new TokenJWT('ciao');
 if(isset($_SESSION['LogedIn']) && $_SESSION['LogedIn'] === true) {
@@ -146,7 +148,7 @@ $_SESSION['navbar'] = $navbar;
         $(document).ready(function(){
             // Carosello
             $.ajax({
-                url: 'http://localhost/mydreambuild/capolavoro/app/webservices/ws_articoli.php?action=get_carosello',
+                url: '<?php echo $url; ?>app/webservices/ws_articoli.php?action=get_carosello',
                 type: 'GET',
                 dataType: 'json',
                 headers: {
@@ -178,7 +180,7 @@ $_SESSION['navbar'] = $navbar;
                     carouselHTML += `
                     <div class="carousel-item ${activeClass}">
                         <img class="d-block w-100" 
-                            src="http://localhost/mydreambuild/capolavoro/app/webservices/ws_immagini.php?id=${product.id_immagine}" width="100" alt="Slide">
+                            src="<?php echo $url; ?>app/webservices/ws_immagini.php?id=${product.id_immagine}" width="100" alt="Slide">
                         <div class="carousel-caption d-none d-md-block">
                             <h4>${product.titolo}</h4>
                             <p><a href="../articles/read_articolo.php?id=${product.id}" class="carousel-description">${product.summary}</a></p>
@@ -191,7 +193,7 @@ $_SESSION['navbar'] = $navbar;
 
             // Build consigliate
             $.ajax({
-                url: 'http://localhost/mydreambuild/capolavoro/app/webservices/ws_configurazioni.php?action=get_defaultconfiguration',
+                url: '<?php echo $url; ?>app/webservices/ws_configurazioni.php?action=get_defaultconfiguration',
                 type: 'GET',
                 dataType: 'json',
                 headers: {
@@ -203,7 +205,7 @@ $_SESSION['navbar'] = $navbar;
                     const selectedBuilds = data.slice(0, 8);
 
                     selectedBuilds.forEach(function(config, index) {
-                        const imgSrc = config.id_immagine ? `http://localhost/mydreambuild/capolavoro/app/webservices/ws_immagini.php?id=${config.id_immagine}` : 'https://via.placeholder.com/150/000000/FFFFFF/?text=No+Image';
+                        const imgSrc = config.id_immagine ? `<?php echo $url; ?>app/webservices/ws_immagini.php?id=${config.id_immagine}` : 'https://via.placeholder.com/150/000000/FFFFFF/?text=No+Image';
                         const card = `
                             <div class="col-lg-3 col-md-4 col-sm-6 col-6">
                                 <div class="config-card" data-id="${config.id}">

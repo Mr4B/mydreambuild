@@ -55,8 +55,7 @@ $id = isset($_GET['id']) ? $_GET['id'] : '';
     <script type="text/javascript">
         $(document).ready(function(){
             $.ajax({
-                // url: 'http://10.25.0.15/~s_bttkvn05l18d488f/capolavoro-main/app/webservices/ws_articoli.php?action=get_articolo&id=' + <?php /* echo $id; */ ?>,
-                url: 'http://localhost/mydreambuild/capolavoro/app/webservices/ws_articoli.php?action=get_articolo&id=' + <?php echo $id; ?>,
+                url: '<?php echo $url; ?>app/webservices/ws_articoli.php?action=get_articolo&id=' + <?php echo $id; ?>,
                 type: 'GET',
                 dataType: 'json',
                 headers: {
@@ -77,7 +76,7 @@ $id = isset($_GET['id']) ? $_GET['id'] : '';
                 console.log(data);
                 var corpo = `<div class='article-container'>
                     <h1>${data.titolo}</h1>
-                    <img src="http://localhost/mydreambuild/capolavoro/app/webservices/ws_immagini.php?id=${data.id_immagine}" alt="Slide">
+                    <img src="<?php echo $url; ?>app/webservices/ws_immagini.php?id=${data.id_immagine}" alt="Slide">
                     <p>${data.testo}</p>
                 </div>`;
                 return corpo;

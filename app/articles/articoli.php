@@ -60,7 +60,7 @@ $token = $_SESSION['jwt'];
         $(document).ready(function(){
             
             $.ajax({
-                url: 'http://localhost/mydreambuild/capolavoro/app/webservices/ws_articoli.php?action=get_pubblicati',
+                url: '<?php echo $url; ?>app/webservices/ws_articoli.php?action=get_pubblicati',
                 type: 'GET',
                 dataType: 'json',
                 headers: {
@@ -76,7 +76,7 @@ $token = $_SESSION['jwt'];
                             <div class="row">
                                 <div class="col-md-3">
                                     <div class="article-thumbnail">
-                                        <img src="http://localhost/mydreambuild/capolavoro/app/webservices/ws_immagini.php?id=${article.id_immagine}" alt="Thumbnail">
+                                        <img src="<?php echo $url; ?>app/webservices/ws_immagini.php?id=${article.id_immagine}" alt="Thumbnail">
                                     </div>
                                 </div>
                                 <div class="col-md-8">

@@ -1,5 +1,6 @@
 <?php
 session_start();
+include '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'db_connect.php';
 require_once('../shared/navbar.php');   
 $navbar = new NavBar();
 $navbar->setLogin($_SESSION['username'], $_SESSION['ruolo']);
@@ -18,8 +19,7 @@ $token = $_SESSION['jwt'];
         $(document).ready(function(){
             var categorie = [];
             $.ajax({
-                url: 'http://localhost/mydreambuild/capolavoro/app/webservices/ws_prodotti.php?action=get_categorie',
-                // url: 'http://10.25.0.15/~s_bttkvn05l18d488f/capolavoro-main/app/webservices/ws_prodotti.php?action=get_categorie',
+                url: '<?php echo $url; ?>app/webservices/ws_prodotti.php?action=get_categorie',
                 type: 'GET',
                 dataType: 'json',
                 headers: {
@@ -56,8 +56,7 @@ $token = $_SESSION['jwt'];
                 };
 
                 // Cambia l'url al webservices desiderato
-                var actionUrl = 'http://localhost/mydreambuild/capolavoro/app/webservices/ws_prodotti.php?action=';
-                // var actionUrl = 'http://10.25.0.15/~s_bttkvn05l18d488f/capolavoro-main/app/webservices/ws_prodotti.php?action=';
+                var actionUrl = '<?php echo $url; ?>app/webservices/ws_prodotti.php?action=';
 
 
                 switch (categoriaTrovata.definizione.toLowerCase()) {
@@ -143,8 +142,7 @@ $token = $_SESSION['jwt'];
                     formData.append('image', imageFile);
 
                     $.ajax({
-                        url: 'http://localhost/mydreambuild/capolavoro/app/webservices/ws_immagini.php',
-                        // url: 'http://10.25.0.15/~s_bttkvn05l18d488f/capolavoro-main/app/webservices/ws_immagini.php',
+                        url: '<?php echo $url; ?>app/webservices/ws_immagini.php',
                         type: 'POST',
                         data: formData,
                         processData: false,

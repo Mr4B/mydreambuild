@@ -25,18 +25,22 @@ $token = $_SESSION['jwt'];
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>    
     <style>
         .image {
-            max-width: 100px;
+            max-width: 110px;
             height: auto;
         }
 
         .btn-new-config {
             margin-bottom: 20px;
         }
+
+        .id {
+            width: 100px;
+        }
     </style>
     <script type="text/javascript">
         $(document).ready(function(){
             $.ajax({
-                url: 'http://localhost/mydreambuild/capolavoro/app/webservices/ws_configurazioni.php?action=get_defaultconfiguration',
+                url: '<?php echo $url; ?>app/webservices/ws_configurazioni.php?action=get_defaultconfiguration',
                 type: 'GET',
                 dataType: 'json',
                 headers: {
@@ -48,16 +52,17 @@ $token = $_SESSION['jwt'];
                     var table = '<table class="table table-striped"><thead><tr><th>ID Configurazione</th><th>Immagine</th><th>Denominazione</th><th>Tipologia</th><th>Prezzo Totale</th><th></th></tr></thead><tbody>';
                     $.each(data, function(index, configuration) {
                         table += '<tr>';
-                        table += '<td>' + configuration.id + '</td>';
+                        table += '<td class="id">' + configuration.id + '</td>';
                         if (configuration.id_immagine) {
-                            table += '<td><img class="image" src="http://localhost/mydreambuild/capolavoro/app/webservices/ws_immagini.php?id=' + configuration.id_immagine + '"></td>';
+                            table += '<td><img class="image" src="<?php echo $url; ?>app/webservices/ws_immagini.php?id=' + configuration.id_immagine + '"></td>';
                         } else {
                             table += '<td>No</td>';
                         }
                         table += '<td>' + configuration.denominazione + '</td>';
                         table += '<td>' + configuration.tipologia + '</td>';
                         table += '<td>' + configuration.prezzo_totale + '€</td>';
-                        table += '<td><a href="edit_configurazione.php?id=' + configuration.id + '" class="btn btn-primary">Modifica</a></td>';
+                        // table += '<td><a href="edit_configurazione.php?id=' + configuration.id + '"><img src="../img/edit.png" alt="modifica" width="25" height="25"></a></td>';
+                        table += '<td><a href="#"><img src="../img/edit.png" alt="modifica" width="25" height="25"></a></td>';
                         table += '</tr>';
                     });
                     table += '</tbody></table>';

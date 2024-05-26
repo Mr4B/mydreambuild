@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once('../shared/navbar.php');   
+include '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'db_connect.php';
 $navbar = new NavBar();
 $navbar->setLogin($_SESSION['username'], $_SESSION['ruolo']);
 $token = $_SESSION['jwt'];
@@ -41,8 +42,7 @@ $token = $_SESSION['jwt'];
                     data_pubblicazione = null;
 
                 // Cambia l'url al webservices desiderato
-                var actionUrl = 'http://localhost/mydreambuild/capolavoro/app/webservices/ws_articoli.php?action=insert_articolo';
-                // var actionUrl = 'http://10.25.0.15/~s_bttkvn05l18d488f/capolavoro-main/app/webservices/ws_prodotti.php?action=';
+                var actionUrl = '<?php echo $url; ?>app/webservices/ws_articoli.php?action=insert_articolo';
 
                 var imageFile = $('#image')[0].files[0];
 
@@ -52,8 +52,7 @@ $token = $_SESSION['jwt'];
                     formData.append('image', imageFile);
 
                     $.ajax({
-                        url: 'http://localhost/mydreambuild/capolavoro/app/webservices/ws_immagini.php',
-                        // url: 'http://10.25.0.15/~s_bttkvn05l18d488f/capolavoro-main/app/webservices/ws_immagini.php',
+                        url: '<?php echo $url; ?>app/webservices/ws_immagini.php',
                         type: 'POST',
                         data: formData,
                         processData: false,

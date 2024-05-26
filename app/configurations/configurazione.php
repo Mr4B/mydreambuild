@@ -32,7 +32,7 @@ $token = $_SESSION['jwt'];
             // Accede a questo codice solamente se l'utente è loggato
             // Le mie configurazioni
             $.ajax({
-                url: 'http://localhost/mydreambuild/capolavoro/app/webservices/ws_configurazioni.php?action=get_myconfiguration&id_utente=<?php if(isset($_SESSION['LogedIn']) && $_SESSION['LogedIn'] === true) echo $_SESSION['username']; else 'errore'; ?>',
+                url: '<?php echo $url; ?>app/webservices/ws_configurazioni.php?action=get_myconfiguration&id_utente=<?php if(isset($_SESSION['LogedIn']) && $_SESSION['LogedIn'] === true) echo $_SESSION['username']; else 'errore'; ?>',
                 type: 'GET',
                 dataType: 'json',
                 headers: {
@@ -49,7 +49,7 @@ $token = $_SESSION['jwt'];
                         const cardContainer = $('<div class="config-card-container"></div>');
                         
                         data.forEach(function(config) {
-                            const imgSrc = config.id_immagine ? `http://localhost/mydreambuild/capolavoro/app/webservices/ws_immagini.php?id=${config.id_immagine}` : 'https://via.placeholder.com/150/000000/FFFFFF/?text=No+Image';
+                            const imgSrc = config.id_immagine ? `<?php echo $url; ?>app/webservices/ws_immagini.php?id=${config.id_immagine}` : 'https://via.placeholder.com/150/000000/FFFFFF/?text=No+Image';
                             const card = `
                             <div class="config-card" data-id="${config.id}">
                                 <div class="config-details">
@@ -83,7 +83,7 @@ $token = $_SESSION['jwt'];
             
             // Configurazioni consigliate
             $.ajax({
-                url: 'http://localhost/mydreambuild/capolavoro/app/webservices/ws_configurazioni.php?action=get_defaultconfiguration',
+                url: '<?php echo $url; ?>app/webservices/ws_configurazioni.php?action=get_defaultconfiguration',
                 type: 'GET',
                 dataType: 'json',
                 headers: {
@@ -114,7 +114,7 @@ $token = $_SESSION['jwt'];
                         const cardContainer = section.find('.config-card-container');
                         
                         tipi[tipo].forEach(function(config) {
-                            const imgSrc = config.id_immagine ? `http://localhost/mydreambuild/capolavoro/app/webservices/ws_immagini.php?id=${config.id_immagine}` : 'https://via.placeholder.com/150/000000/FFFFFF/?text=No+Image';
+                            const imgSrc = config.id_immagine ? `<?php echo $url; ?>app/webservices/ws_immagini.php?id=${config.id_immagine}` : 'https://via.placeholder.com/150/000000/FFFFFF/?text=No+Image';
                             const card = `
                                 <div class="config-card" data-id="${config.id}">
                                     <img src="${imgSrc}" alt="Immagine">
