@@ -55,13 +55,13 @@ class Footer {
             <div class='container'>
                 <div class='row w-100'>
                     <div class='col-md-4 col-12 social-icons text-md-start text-center mb-2 mb-md-0'>
-                        <a href='https://t.me/tuo_profiliotelegram' target='_blank'>
+                        <a href='https://t.me/Mr_4B' target='_blank'>
                             <img src='../img/telegram.png' alt='Telegram'>
                         </a>
-                        <a href='https://instagram.com/tuo_profiloinstagram' target='_blank'>
+                        <a href='https://www.instagram.com/kevinbattistelli_/' target='_blank'>
                             <img src='../img/instagram.png' alt='Instagram'>
                         </a>
-                        <a href='https://facebook.com/tuo_profilofacebook' target='_blank'>
+                        <a href='https://www.facebook.com/kevin.battistelli.35/' target='_blank'>
                             <img src='../img/facebook.png' alt='Facebook'>
                         </a>
                     </div>
