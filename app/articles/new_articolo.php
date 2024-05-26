@@ -14,16 +14,58 @@ $token = $_SESSION['jwt'];
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nuovo prodotto</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+        h2 {
+            margin-bottom: 20px;
+            text-align: center;
+            color: #333;
+        }
+        form {
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        form label {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        form input[type="text"],
+        form textarea,
+        form input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        form textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        .form-check {
+            margin-top: 10px;
+        }
+        .btn {
+            margin-top: 20px;
+        }
+        #response {
+            margin-top: 20px;
+            color: red;
+        }
+    </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>    
     <script type="text/javascript">
         $(document).ready(function(){
             $("#articolo").submit(function(event){
                 event.preventDefault();
 
-                // var pubblicato = $("#pubblica").val();
-                var pubblicato = $("input[name='pubblica']").is(":checked") ? true : false;
-                // console.log(pubblicato);
-
+                var pubblicato = $("input[name='pubblica']").is(":checked");
                 var data = {
                     titolo: $("#titolo").val(),
                     summary: $("#summary").val(),
@@ -35,18 +77,16 @@ $token = $_SESSION['jwt'];
                 if(pubblicato) {
                     var today = new Date();
                     var dd = String(today.getDate()).padStart(2, '0');
-                    var mm = String(today.getMonth() + 1).padStart(2, '0'); // Gennaio è 0!
+                    var mm = String(today.getMonth() + 1).padStart(2, '0');
                     var yyyy = today.getFullYear();
                     data.data_pubblicazione = yyyy + '-' + mm + '-' + dd;
-                }else
-                    data_pubblicazione = null;
+                } else {
+                    data.data_pubblicazione = null;
+                }
 
-                // Cambia l'url al webservices desiderato
                 var actionUrl = '<?php echo $url; ?>app/webservices/ws_articoli.php?action=insert_articolo';
-
                 var imageFile = $('#image')[0].files[0];
 
-                // Se l'immagine esiste allora la carica
                 if (imageFile) {
                     var formData = new FormData();
                     formData.append('image', imageFile);
@@ -63,16 +103,12 @@ $token = $_SESSION['jwt'];
                         success: function(response) {
                             if (response.id_immagine) {
                                 data.id_immagine = response.id_immagine;
-                                // console.log(data);
                                 inviaProdotto(data);
-                                window.location.href = "gestione_articoli.php";
                             } else {
-                                console.error('Errore durante il caricamento dell\'immagine:', response.errore);
                                 $("#response").html("Errore durante il caricamento dell'immagine");
                             }
                         },
                         error: function(xhr, status, error) {
-                            console.error('Errore durante il caricamento dell\'immagine:', status, error);
                             $("#response").html("Errore durante il caricamento dell'immagine");
                         }
                     });
@@ -82,7 +118,6 @@ $token = $_SESSION['jwt'];
                 }
 
                 function inviaProdotto(data) {
-                    console.log(data);
                     $.ajax({
                         url: actionUrl,
                         type: 'POST',
@@ -94,18 +129,14 @@ $token = $_SESSION['jwt'];
                         contentType: "application/json",
                         data: JSON.stringify(data),
                         success: function(result) {
-                            console.log(result);
                             $("#response").html(result.Success);
                         },
                         error: function(xhr, status, error) {
-                            console.error('Errore durante l\'inserimento dell\'articolo :', status, error);
-                            $("#response").html("Errore durante l'inserimento dell\'articolo ");
+                            $("#response").html("Errore durante l'inserimento dell'articolo");
                         }
                     });
                 }
             });
-
-            return false;
         });
     </script>
 </head>
@@ -116,26 +147,27 @@ $token = $_SESSION['jwt'];
     </header>
     <h2>Scrivi un articolo</h2>
     <form id="articolo" enctype="multipart/form-data">
-        <label for="titolo">Titolo:</label><br>
-        <input type="text" name="titolo" id="titolo" >
-        <br>
-        <label for="summary">Sottotitolo:</label><br>
-        <input type="text" name="summary" id="summary" >
-        <br>
-        <label for="corpo">Corpo:</label><br>
-        <textarea type="text" name="corpo" id="corpo" ></textarea>
-        <br><br>
-        <label for="image">Seleziona immagine:</label><br>
-        <input type="file" id="image" name="image" accept="image/*" >
-        <br><br>
-        <label for="pubblica">Pubblica l'articolo:</label>
-        <input type="checkbox" name="pubblica" value="1">
-        <!-- <input type="hidden" name="redattore" value=""> -->
-        <br>
-        <br>
-
-        <br>
-        <input type="submit" id="submit" name="submit" class="btn btn-outline-info" value="Inserisci prodotto">
+        <div class="mb-3">
+            <label for="titolo">Titolo:</label>
+            <input type="text" class="form-control" name="titolo" id="titolo" required>
+        </div>
+        <div class="mb-3">
+            <label for="summary">Sottotitolo:</label>
+            <input type="text" class="form-control" name="summary" id="summary" required>
+        </div>
+        <div class="mb-3">
+            <label for="corpo">Corpo:</label>
+            <textarea class="form-control" name="corpo" id="corpo" required></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="image">Seleziona immagine:</label>
+            <input type="file" class="form-control" id="image" name="image" accept="image/*">
+        </div>
+        <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" name="pubblica" value="1">
+            <label class="form-check-label" for="pubblica">Pubblica l'articolo</label>
+        </div>
+        <button type="submit" id="submit" name="submit" class="btn btn-outline-info">Inserisci articolo</button>
     </form>
     <div id="response"></div>
 </div>

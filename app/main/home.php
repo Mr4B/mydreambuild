@@ -211,7 +211,7 @@ $_SESSION['navbar'] = $navbar;
                                 <div class="config-card" data-id="${config.id}">
                                     <img  src="${imgSrc}" alt="Immagine">
                                     <div class="config-details">
-                                        <h5>${config.denominazione}</h5>
+                                        <h3>${config.denominazione}</h3>
                                         <p>${config.prezzo_totale}€</p>
                                     </div>
                                 </div>

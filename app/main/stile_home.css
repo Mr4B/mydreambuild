@@ -7,10 +7,11 @@
 }
 
 /* Ingrossa leggermente il carosello */
-.carousel img {
+.carousel-item img {
     max-width: 100%;
-    height: auto;
+    height: 700px;
     margin: 0 auto; /* Centra l'immagine all'interno del carosello */
+    object-fit: cover;
 }
 
 .carousel-description {

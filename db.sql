@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS Immagini (
     id_immagine INT AUTO_INCREMENT PRIMARY KEY,
     titolo VARCHAR(255), -- posso salvare con main quelle principali e poi farci una query
     dimensioni INT,
-    immagine BLOB,
+    immagine LONGBLOB,
     tipo VARCHAR(45) -- jpeg, png, ecc..
 );
 
@@ -79,7 +79,7 @@ CREATE TABLE IF NOT EXISTS Prodotto (
     c_n_thread INT,
     c_consumo_energetico INT,
     c_dim_cache INT,
-    sockcet VARCHAR(255), -- anche CPU
+    socket VARCHAR(255), -- anche CPU
     -- gpu
     g_memoria INT,
     g_tipo_memoria VARCHAR(255), -- GGDR6
@@ -117,7 +117,7 @@ CREATE TABLE IF NOT EXISTS Prodotto (
 
 CREATE TABLE IF NOT EXISTS prodotti_configurazione (
     id_configurazione INT,
-    id_prodotto VARCHAR(255),
+    id_prodotto INT,
     PRIMARY KEY(id_configurazione, id_prodotto),
     FOREIGN KEY (id_configurazione) REFERENCES Configurazione(id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (id_prodotto) REFERENCES Prodotto(id_prodotto) ON DELETE CASCADE ON UPDATE CASCADE
@@ -196,8 +196,8 @@ CREATE TABLE IF NOT EXISTS prodotti_configurazione (
     INSERT INTO Categoria (definizione) VALUES ('GPU');
     INSERT INTO Categoria (definizione) VALUES ('CPU');
     INSERT INTO Categoria (definizione) VALUES ('Scheda Madre');
-    INSERT INTO Categoria (definizione) VALUES ('Alimentatore');
-    INSERT INTO Categoria (definizione) VALUES ('Hard Disk');
+    INSERT INTO Categoria (definizione) VALUES ('PSU');
+    INSERT INTO Categoria (definizione) VALUES ('HDD');
     INSERT INTO Categoria (definizione) VALUES ('SSD');
     INSERT INTO Categoria (definizione) VALUES ('Dissipatore');
     INSERT INTO Categoria (definizione) VALUES ('Case');

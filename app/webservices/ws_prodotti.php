@@ -284,7 +284,6 @@ switch ($method) {
             // echo $data;
             // $conn->begin_transaction();
 
-            // DA FINIRE DI MODIFICARE!!!!
             switch($action) {
                 case 'put_cpu':
                     $query = "UPDATE Prodotto SET marca = ?, modello = ?, descrizione = ?, prezzo = ?, link = ?, frequenza_base = ?, c_frequenza_boost = ?, c_n_core = ?, c_n_thread = ?, c_consumo_energetico = ?, c_dim_cache = ? WHERE id_prodotto = ?";

@@ -119,9 +119,9 @@ $token = $_SESSION['jwt'];
                 });
             }
 
-            searchComponent('.cpu', '#cpu_text', '#cpu_risultati', 1);
+            searchComponent('.cpu', '#cpu_text', '#cpu_risultati', 3);
             searchComponent('.gpu', '#gpu_text', '#gpu_risultati', 2);
-            searchComponent('.ram', '#ram_text', '#ram_risultati', 3);
+            searchComponent('.ram', '#ram_text', '#ram_risultati', 1);
             searchComponent('.motherboard', '#motherboard_text', '#motherboard_risultati', 4);
             searchComponent('.psu', '#psu_text', '#psu_risultati', 5);
             searchComponent('.hdd', '#hdd_text', '#hdd_risultati', 6);

@@ -138,6 +138,7 @@ $token = $_SESSION['jwt'];
                 var imageFile = $('#image')[0].files[0];
 
                 if (imageFile) {
+                    console.log("Sono dentro imageFile");
                     var formData = new FormData();
                     formData.append('image', imageFile);
 
@@ -166,7 +167,7 @@ $token = $_SESSION['jwt'];
                         }
                     });
                 } else {
-                    data.id_immagine = '';
+                    data.id_immagine = null;
                     inviaProdotto(data);
                 }
 
@@ -185,6 +186,7 @@ $token = $_SESSION['jwt'];
                         success: function(result) {
                             console.log(result);
                             $("#response").html(result.Success);
+                            window.location.href = "gestione_prodotti.php";
                         },
                         error: function(xhr, status, error) {
                             console.error('Errore durante l\'inserimento del prodotto:', status, error);

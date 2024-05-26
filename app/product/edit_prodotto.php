@@ -101,6 +101,7 @@ $id = isset($_GET['id']) ? $_GET['id'] : '';
             function popolaDati(data) {
                 // console.log(data);
                 if(data.id_immagine) {
+                    console.log("Sono dentro il popolaDati");
                     currentImage = data.id_immagine;
                     $("#immagine").html(`<img src="<?php echo $url; ?>app/webservices/ws_immagini.php?id=${data.id_immagine}">`); // Stampo l'immagine se è presente
                 }
@@ -277,10 +278,11 @@ $id = isset($_GET['id']) ? $_GET['id'] : '';
                     // Se entra qui significa che è stata inserita un immagine
                     var formData = new FormData();
                     formData.append('image', imageFile);
-
-                    $.ajax({
-                        url: '<?php echo $url; ?>app/webservices/ws_immagini.php?id=' + currentImage,
-                        type: 'PUT',
+                    // console.log(currentImage);
+                    if(currentImage == '') {
+                        $.ajax({
+                        url: '<?php echo $url; ?>app/webservices/ws_immagini.php',
+                        type: 'POST',
                         data: formData,
                         processData: false,
                         contentType: false,
@@ -289,9 +291,9 @@ $id = isset($_GET['id']) ? $_GET['id'] : '';
                         },
                         success: function(response) {
                             if (response.id_immagine) {
-                                // data.id_immagine = response.id_immagine;
+                                data.id_immagine = response.id_immagine;
                                 // console.log(data);
-                                modificaProdotto(data);
+                                inviaProdotto(data);
                             } else {
                                 console.error('Errore durante il caricamento dell\'immagine:', response.errore);
                                 $("#response").html("Errore durante il caricamento dell'immagine");
@@ -302,6 +304,33 @@ $id = isset($_GET['id']) ? $_GET['id'] : '';
                             $("#response").html("Errore durante il caricamento dell'immagine");
                         }
                     });
+                    } else {
+                        $.ajax({
+                            url: '<?php echo $url; ?>app/webservices/ws_immagini.php?id=' + currentImage,
+                            type: 'PUT',
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            headers: {
+                                "Authorization": "Bearer <?php echo $token; ?>"
+                            },
+                            success: function(response) {
+                                console.log(response);
+                                if (response.Success) {
+                                    // data.id_immagine = response.id_immagine;
+                                    // console.log(data);
+                                    modificaProdotto(data);
+                                } else {
+                                    console.error('Errore durante il caricamento dell\'immagine:', response.errore);
+                                    $("#response").html("Errore durante il caricamento dell'immagine");
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                console.error('Errore durante il caricamento dell\'immagine:', status, error);
+                                $("#response").html("Errore durante il caricamento dell'immagine");
+                            }
+                        });
+                    }
                 } else {
                     // data.id_immagine = currentImage;
                     modificaProdotto(data);
@@ -343,9 +372,10 @@ $id = isset($_GET['id']) ? $_GET['id'] : '';
                             'Authorization': 'Bearer <?php echo $token; ?>'
                         },
                         success: function(result) {
-                            alert(result.message);
+                            // alert(result.message);
                             // Ricarica la pagina o esegui altre azioni necessarie dopo l'eliminazione
                             // window.location.reload();
+                            window.location.href = "gestione_prodotti.php";
                         },
                         error: function(xhr, status, error) {
                             alert('Errore durante l\'eliminazione del record: ' + xhr.responseText);
