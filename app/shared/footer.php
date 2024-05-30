@@ -69,7 +69,7 @@ class Footer {
                         <img src='../img/logo.png' alt='Logo'>
                     </div>
                     <div class='col-md-4 col-12 contact text-md-end text-center'>
-                        <a href='../user/segnala_problema.php'>
+                        <a href='mailto:kevinbattistelli99+mydreabuild@gmail.com'>
                             <img src='../img/mail.png' alt='Mail'>
                             <span>Segnala un problema</span>
                         </a>

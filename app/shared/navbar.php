@@ -106,10 +106,18 @@ class NavBar {
                       <ul class='dropdown-menu' aria-labelledby='gestione'>
                         <li><a class='dropdown-item' href='../product/gestione_prodotti.php'>Prodotti</a></li>
                         <li><a class='dropdown-item' href='../articles/gestione_articoli.php'>Articoli</a></li>
-                        <li><a class='dropdown-item' href='../configurations/gestione_configurazioni.php'>Configurazioni</a></li>
-                      </ul>
+                        <li><a class='dropdown-item' href='../configurations/gestione_configurazioni.php'>Configurazioni</a></li>";
+                        if ($this->role == 1) {
+                          $html.= "
+                          <li>
+                            <a class='dropdown-item' href='../user/user_management.php'>Utenti</a>
+                          </li>
+                          ";
+                        }
+                      $html .= "</ul>
                     </li>";
         }
+        
 
         $html .= "
                 </ul>

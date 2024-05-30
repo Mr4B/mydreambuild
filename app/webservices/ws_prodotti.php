@@ -222,7 +222,7 @@ switch ($method) {
                     break;
 
                 case 'post_motherboard':
-                    $query = "INSERT INTO Prodotto (id_immagine, id_categoria, marca, modello, descrizione, prezzo, link, m_formato, socket, m_chipset, m_numero_slot_ram, m_tipologia_ram, m_versione_pcie) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    $query = "INSERT INTO Prodotto (id_immagine, id_categoria, marca, modello, descrizione, prezzo, link, m_formato, socket, m_chipset, m_numero_slot_ram, m_tipologia_ram, m_version_pcie) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                     $stmt = $conn->prepare($query);
                     $stmt->bind_param("iisssdssssiss", $data['id_immagine'], $data['id_categoria'], $data['marca'], $data['modello'], $data['descrizione'], $data['prezzo'], $data['link'], $data['m_formato'], $data['socket'], $data['m_chipset'], $data['m_numero_slot_ram'], $data['m_tipologia_ram'], $data['m_versione_pcie']);
                     break;

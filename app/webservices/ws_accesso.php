@@ -37,7 +37,7 @@ switch ($method) {
 
         // Recupera il valore del parametro "action" dall'URL
         $action = isset($_GET['action']) ? $_GET['action'] : '';
-        $email = isset($_GET['email']) ? $_GET['email'] : '';
+        $username = isset($_GET['username']) ? $_GET['username'] : '';
         $role = isset($_GET['role']) ? $_GET['role'] : '';
 
         switch($action) {
@@ -50,7 +50,11 @@ switch ($method) {
                 break;
             
             case 'user':
-                $query = "SELECT * FROM Utente WHERE username = ?;";
+                $query = "SELECT username, email, nome, cognome, ruolo FROM Utente WHERE username = ?;";
+                break;
+            
+            case 'get_roles':
+                $query = "SELECT * FROM Ruolo";
                 break;
 
             default:
@@ -61,8 +65,8 @@ switch ($method) {
 
         $stmt = $conn->prepare($query);
         
-        if($email!='') {
-            $stmt->bind_param("s", $email);
+        if($username!='') {
+            $stmt->bind_param("s", $username);
         }
         
         if($role!='') {
@@ -128,13 +132,16 @@ switch ($method) {
         break;
 
     case 'PUT':
+        
+        $action = isset($_GET['action']) ? $_GET['action'] : '';
+
         // Recupera il payload (body of message)
         $payload = file_get_contents('php://input');
 
         // Trasformazione del payload in array che contiene i dati
         if ($content_type == 'application/json') {
             $data = json_decode($payload, true);
-            $username = isset($data['username']) ? $data['username'] : '';
+            // $username = isset($data['username']) ? $data['username'] : '';
             // Altri dati che desideri modificare
         } else {
             echo json_encode(['errore' => 'Content-Type non ammesso']);
@@ -142,21 +149,22 @@ switch ($method) {
             exit();
         }
 
-        // Esegui la query per aggiornare l'utente
-        $query = "UPDATE Utente SET nome=?, cognome=?, ruolo=?, email=? WHERE username=?";
-        $stmt = $conn->prepare($query);
-        $stmt->bind_param("ssiss", $data['nome'], $data['cognome'], $data['ruolo'], $data['email'], $username);
-        $stmt->execute();
+        header("Content-Type: application/json; charset=UTF-8");
 
-        // Verifica se l'aggiornamento è andato a buon fine
-        if ($stmt->affected_rows > 0) {
-            echo json_encode(["Success" => "Utente aggiornato con successo"]);
-            http_response_code(200);
-        } else {
-            echo json_encode(['errore' => 'Errore durante l\'aggiornamento dell\'utente']);
-            http_response_code(400); //BAD REQUEST
+        switch($action) {
+            case 'update_role':
+                updateRole($data);
+                break;
+
+            case 'update_user':
+                updateUser($data);
+                break;
+
+            default:
+                echo json_encode(['errore' => 'Indirizzo errato']);
+                http_response_code(400);
+                break;
         }
-        exit();
         break;
 
     case 'DELETE':
@@ -256,4 +264,63 @@ function login($username, $password) {
         http_response_code(400);
     }
     exit(); // Termina lo script dopo il login
+}
+
+function updateRole($data) {
+    global $conn;
+
+    // Verifica che i dati necessari siano presenti
+    if (!isset($data['ruolo']) || !isset($data['username'])) {
+        echo json_encode(['errore' => 'Dati mancanti: ruolo o username non specificati']);
+        http_response_code(400); // BAD REQUEST
+        exit();
+    }
+
+    // Prepara la query per aggiornare l'utente
+    $query = "UPDATE Utente SET ruolo=? WHERE username=?";
+    if ($stmt = $conn->prepare($query)) {
+        // Lega i parametri
+        if ($stmt->bind_param("is", $data['ruolo'], $data['username'])) {
+            // Esegui la query
+            if ($stmt->execute()) {
+                // Verifica se l'aggiornamento è andato a buon fine
+                if ($stmt->affected_rows > 0) {
+                    echo json_encode(["Success" => "Utente aggiornato con successo"]);
+                    http_response_code(200); // OK
+                } else {
+                    echo json_encode(['errore' => 'Nessuna modifica effettuata. Utente non trovato o ruolo già assegnato']);
+                    http_response_code(400); // BAD REQUEST
+                }
+            } else {
+                echo json_encode(['errore' => 'Errore durante l\'esecuzione della query: ' . $stmt->error]);
+                http_response_code(500); // INTERNAL SERVER ERROR
+            }
+        } else {
+            echo json_encode(['errore' => 'Errore durante il binding dei parametri: ' . $stmt->error]);
+            http_response_code(500); // INTERNAL SERVER ERROR
+        }
+        $stmt->close();
+    } else {
+        echo json_encode(['errore' => 'Errore durante la preparazione della query: ' . $conn->error]);
+        http_response_code(500); // INTERNAL SERVER ERROR
+    }
+}
+
+function updateUser($data) {
+    global $conn;
+    // Esegui la query per aggiornare l'utente
+    $query = "UPDATE Utente SET nome=?, cognome=?, ruolo=?, email=? WHERE username=?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("ssiss", $data['nome'], $data['cognome'], $data['ruolo'], $data['email'], $username);
+    $stmt->execute();
+
+    // Verifica se l'aggiornamento è andato a buon fine
+    if ($stmt->affected_rows > 0) {
+        echo json_encode(["Success" => "Utente aggiornato con successo"]);
+        http_response_code(200);
+    } else {
+        echo json_encode(['errore' => 'Errore durante l\'aggiornamento dell\'utente']);
+        http_response_code(400); //BAD REQUEST
+    }
+    exit();
 }

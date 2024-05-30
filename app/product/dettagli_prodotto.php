@@ -101,7 +101,11 @@ $id = isset($_GET['id']) ? $_GET['id'] : '';
                 $("#modello").text(data.modello);
                 $("#descrizione").text(data.descrizione);
                 $("#prezzo").text(data.prezzo);
-                $("#link").text(data.link);
+
+                // Make the link clickable
+                if(data.link) {
+                    $("#link").html(`<a href="${data.link}" target="_blank">${data.link}</a>`);
+                }
 
                 switch (categoria.toLowerCase()) {
                     case 'cpu':
@@ -369,4 +373,3 @@ $id = isset($_GET['id']) ? $_GET['id'] : '';
     }
 </script>
 </html>
-

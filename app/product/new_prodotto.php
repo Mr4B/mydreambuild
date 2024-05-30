@@ -381,7 +381,7 @@ $token = $_SESSION['jwt'];
         </div>
 
         <div id="campi_psu" style="display: none;">
-            <label for="p_fattore_di_forma">Fattore di forma scheda madre:</label><br>
+            <label for="p_fattore_di_forma">Fattore di forma:</label><br>
             <select name="p_fattore_di_forma" id="p_fattore_di_forma">
                 <option value="ATX">ATX</option>
                 <option value="SFX">SFX</option>

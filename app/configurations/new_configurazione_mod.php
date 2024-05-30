@@ -116,6 +116,7 @@ $token = $_SESSION['jwt'];
                                     const listItem = $('<li>');
                                     listItem.html(`<a href="#" data-value="${componente.id_prodotto}">${componente.id_immagine ? `<img class="d-block" src="<?php echo $url; ?>app/webservices/ws_immagini.php?id=${componente.id_immagine}" width="60" alt="Immagine">` : ''} ${componente.marca} ${componente.modello} - ${componente.prezzo}€</a>`);
                                     listItem.on('click', function() {
+                                        event.preventDefault();
                                         input.val(`${componente.marca} ${componente.modello} - ${componente.prezzo}€`);
                                         input.data('value', componente.id_prodotto);
                                         totale += parseFloat(componente.prezzo);
@@ -142,9 +143,9 @@ $token = $_SESSION['jwt'];
             }
 
             // Chiama la funzione per ciascuna componente
-            searchComponent('.cpu', '#cpu_text', '#cpu_risultati', 1);
+            searchComponent('.cpu', '#cpu_text', '#cpu_risultati', 3);
             searchComponent('.gpu', '#gpu_text', '#gpu_risultati', 2);
-            searchComponent('.ram', '#ram_text', '#ram_risultati', 3);
+            searchComponent('.ram', '#ram_text', '#ram_risultati', 1);
             searchComponent('.motherboard', '#motherboard_text', '#motherboard_risultati', 4);
             searchComponent('.psu', '#psu_text', '#psu_risultati', 5);
             searchComponent('.hdd', '#hdd_text', '#hdd_risultati', 6);
@@ -245,7 +246,7 @@ $token = $_SESSION['jwt'];
     </header>
     <form id="configurazione" enctype="multipart/form-data">
         <label for="nome">Nome:</label>
-        <input class="form-control" type="text" name="nome" id="nome" required>
+        <input class="form-control" type="text" name="nome" id="nome" autocomplete="off">
         <br>
         <label for="descrizione">Descrizione:</label><br>
         <textarea class="form-control" type="text" name="descrizione" id="descrizione"></textarea>
@@ -260,42 +261,42 @@ $token = $_SESSION['jwt'];
         <br><br>
         <div class="mb-3 component-group cpu">
             <label for="cpu">CPU:</label>
-            <input class="form-control" type="text" id="cpu_text" name="cpu_text" placeholder="Nessuna cpu" required>
+            <input class="form-control" type="text" id="cpu_text" name="cpu_text" placeholder="Nessuna cpu" autocomplete="off">
             <ul id="cpu_risultati"></ul>
         </div>
         <div class="mb-3 component-group ram">
             <label for="ram">RAM:</label>
-            <input class="form-control" type="text" id="ram_text" name="ram_text" placeholder="Nessuna ram" required>
+            <input class="form-control" type="text" id="ram_text" name="ram_text" placeholder="Nessuna ram" autocomplete="off">
             <ul id="ram_risultati"></ul>
         </div>
         <div class="mb-3 component-group gpu">
             <label for="gpu">GPU:</label>
-            <input class="form-control" type="text" id="gpu_text" name="gpu_text" placeholder="Nessuna gpu" required>
+            <input class="form-control" type="text" id="gpu_text" name="gpu_text" placeholder="Nessuna gpu" autocomplete="off">
             <ul id="gpu_risultati"></ul>
         </div>
         <div class="mb-3 component-group hdd">
             <label for="hdd">HDD:</label>
-            <input class="form-control" type="text" id="hdd_text" name="hdd_text" placeholder="Nessun hdd">
+            <input class="form-control" type="text" id="hdd_text" name="hdd_text" autocomplete="off" placeholder="Nessun hdd">
             <ul id="hdd_risultati"></ul>
         </div>
         <div class="mb-3 component-group ssd">
             <label for="ssd">SSD:</label>
-            <input class="form-control" type="text" id="ssd_text" name="ssd_text" placeholder="Nessuna ssd">
+            <input class="form-control" type="text" id="ssd_text" name="ssd_text" autocomplete="off" placeholder="Nessuna ssd">
             <ul id="ssd_risultati"></ul>
         </div>
         <div class="mb-3 component-group case">
             <label for="case">CASE:</label>
-            <input class="form-control" type="text" id="case_text" name="case_text" placeholder="Nessuna case" required>
+            <input class="form-control" type="text" id="case_text" name="case_text" autocomplete="off" placeholder="Nessuna case">
             <ul id="case_risultati"></ul>
         </div>
         <div class="mb-3 component-group motherboard">
             <label for="motherboard" class="form-label">Scheda madre:</label>
-            <input class="form-control" type="text" id="motherboard_text" name="motherboard_text" placeholder="Nessuna scheda madre" required>
+            <input class="form-control" type="text" id="motherboard_text" name="motherboard_text" autocomplete="off" placeholder="Nessuna scheda madre">
             <ul id="motherboard_risultati"></ul>
         </div>
         <div class="mb-3 component-group psu">
             <label for="psu" class="form-label">Alimentatore:</label>
-            <input class="form-control" type="text" id="psu_text" name="psu_text" placeholder="Nessun alimentatore" required>
+            <input class="form-control" type="text" id="psu_text" name="psu_text" autocomplete="off" placeholder="Nessun alimentatore">
             <ul id="psu_risultati"></ul>
         </div>
         <br>

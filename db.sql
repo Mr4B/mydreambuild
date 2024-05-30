@@ -3,15 +3,15 @@
     dump e restore: https://phoenixnap.com/kb/how-to-backup-restore-a-mysql-database
 */
 
-CREATE DATABASE IF NOT EXISTS mydreambuild;
+CREATE DATABASE mydreambuild;
 USE mydreambuild;
 
-CREATE TABLE IF NOT EXISTS Ruolo (
+CREATE TABLE Ruolo (
     id INTEGER PRIMARY KEY,
     denominazione VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS Utente (
+CREATE TABLE Utente (
     username VARCHAR(255) PRIMARY KEY,
     password VARCHAR(255) NOT NULL,
     email VARCHAR(255),
@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS Utente (
     FOREIGN KEY (ruolo) REFERENCES Ruolo(id) ON DELETE NO ACTION ON UPDATE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS Immagini (
+CREATE TABLE Immagini (
     id_immagine INT AUTO_INCREMENT PRIMARY KEY,
     titolo VARCHAR(255), -- posso salvare con main quelle principali e poi farci una query
     dimensioni INT,
@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS Immagini (
     tipo VARCHAR(45) -- jpeg, png, ecc..
 );
 
-CREATE TABLE IF NOT EXISTS Articolo (
+CREATE TABLE Articolo (
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
     pubblicato BOOLEAN DEFAULT FALSE,
     data_pubblicazione DATE DEFAULT NULL,
@@ -42,11 +42,11 @@ CREATE TABLE IF NOT EXISTS Articolo (
     FOREIGN KEY (id_immagine) REFERENCES Immagini(id_immagine) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS Tipologia (
+CREATE TABLE Tipologia (
     denominazione VARCHAR(255) PRIMARY KEY
 );
 
-CREATE TABLE IF NOT EXISTS Configurazione (
+CREATE TABLE Configurazione (
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
     denominazione VARCHAR(255),
     descrizione TEXT,
@@ -59,13 +59,13 @@ CREATE TABLE IF NOT EXISTS Configurazione (
     FOREIGN KEY (id_immagine) REFERENCES Immagini(id_immagine) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS Categoria (
+CREATE TABLE Categoria (
     id INT PRIMARY KEY AUTO_INCREMENT,
     definizione VARCHAR(255) NOT NULL 
 );
 
-CREATE TABLE IF NOT EXISTS Prodotto (
-    id_prodotto INT PRIMARY KEY AUTO_INCREMENT, -- studiarsi una primarykey fatta bene che mi aiuti nella ricerca
+CREATE TABLE Prodotto (
+    id_prodotto INT PRIMARY KEY AUTO_INCREMENT,
     id_categoria INT NOT NULL,
     marca VARCHAR(255) NOT NULL,
     modello VARCHAR(255) NOT NULL,
@@ -100,6 +100,7 @@ CREATE TABLE IF NOT EXISTS Prodotto (
     a_interfaccia VARCHAR(255), -- NVMe PCIe gestiti da client solo ssd
     a_velocita_lettura_mb_s INT,
     a_velocita_scrittura_mb_s INT,
+    a_cache_mb INT,
     -- psu
     p_watt INT,
     p_schema_alimentazione VARCHAR(255), -- modulare, semi-modulare, ...
@@ -115,7 +116,7 @@ CREATE TABLE IF NOT EXISTS Prodotto (
     FOREIGN KEY (id_categoria) REFERENCES Categoria(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS prodotti_configurazione (
+CREATE TABLE prodotti_configurazione (
     id_configurazione INT,
     id_prodotto INT,
     PRIMARY KEY(id_configurazione, id_prodotto),
