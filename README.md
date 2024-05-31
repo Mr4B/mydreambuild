@@ -2,6 +2,12 @@
 
 Questo git conterrà il sito web "mydreambuild", nonchè utilizzato come capolavoro per l'esame
 
+Per farlo funzionare:
+
+- scaricare la libreria php-jwt e inserirla nella cartella vendor/firebase
+- modificare i link in base alla cartella dove viene hostato, nel file db_connect.php (es: http://localhost/mydreambuild/)
+
+
 per fare un commit e push
 (terminale git/cartella corrente)
 
@@ -31,4 +37,3 @@ Lavori da fare:
 
 per schema e/r: https://www.drawio.com/blog/insert-sql
 
-scaricare la libreria php-jwt per farlo funzionare e modificare i link in base alla cartella dove viene hostato, nel file db_connect.php
