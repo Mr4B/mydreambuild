@@ -30,3 +30,5 @@ Lavori da fare:
 
 
 per schema e/r: https://www.drawio.com/blog/insert-sql
+
+scaricare la libreria php-jwt per farlo funzionare e modificare i link in base alla cartella dove viene hostato, nel file db_connect.php
